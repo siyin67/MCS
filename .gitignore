@@ -1,0 +1,13 @@
+# 编译产物
+game.exe
+*.exe
+*.dll
+*.o
+*.obj
+
+# VSCode 配置（不想提交的话）
+.vscode/
+
+# 临时文件
+*.log
+debug.log
