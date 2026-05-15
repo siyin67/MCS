@@ -25,7 +25,7 @@ public:
 
     bool isEmpty() const;
 
-    void handleInput();
+    void handleInput(sf::RenderWindow &window);
     void update(float deltaTime);
     void render(sf::RenderWindow &window);
 };

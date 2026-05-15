@@ -1,10 +1,12 @@
 #include "Application.h"
+#include "Resourcemanager/ResourceManager.h"
 #include "States/MenuState.h"
 #include "States/GameState.h"
 
 Application::Application()
     : isRunning_(true)
 {
+    ResourceManager::GetInstance().LoadFromFile("assets/resources.txt");
     window_.create(sf::VideoMode({1280, 720}), "SFML works!");
     window_.setMaximumSize(sf::Vector2u(2560, 1440));
     window_.setMinimumSize(sf::Vector2u(1280, 720));
@@ -22,7 +24,7 @@ void Application::run()
 
         handleGlobalEvents();
 
-        stateManager_.handleInput();
+        stateManager_.handleInput(window_);
 
         stateManager_.update(deltaTime);
 

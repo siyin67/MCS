@@ -43,10 +43,10 @@ bool StateManager::isEmpty() const
     return states_.empty();
 }
 
-void StateManager::handleInput()
+void StateManager::handleInput(sf::RenderWindow& window)
 {
     if (auto *state = getCurrentState())
-        state->handleInput();
+        state->handleInput(window);
 }
 
 void StateManager::update(float deltaTime)

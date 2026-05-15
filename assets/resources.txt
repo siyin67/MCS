@@ -1,0 +1,29 @@
+# ==========================================
+# 资源管理器配置文件
+# 格式: ID=路径
+# 支持类型: 纹理(.png/.jpg/.bmp) | 字体(.ttf/.otf) | 音效(.wav/.ogg)
+# ==========================================
+
+# ========== 背景纹理 ==========
+menu_bg=assets/images/backgrounds/menubackground.png
+
+# ========== 玩家纹理 ==========
+player=assets/images/players/Player_Steve.png
+
+# ========== 怪物纹理 ==========
+
+
+# ========== 武器纹理 ==========
+
+
+# ========== UI 纹理 ==========
+menu_button=assets/images/UI/menu_button.png
+menu_title=assets/images/UI/menu_title.png
+
+# ========== 子弹/特效纹理 ==========
+
+# ========== 字体 ==========
+main_font=assets/fonts/minecraft.ttf
+# ========== 音效 ==========
+
+# ========== 背景音乐 ==========
