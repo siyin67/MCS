@@ -53,10 +53,14 @@ void MenuState::handleInput(sf::RenderWindow &window)
     {
         start_button_.setOutlineThickness(3);
         start_button_.setOutlineColor(sf::Color::White);
+
         if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
         {
-            std::cout << "Start Game" << std::endl;
-            stateManager_->changeState(std::make_unique<GameState>());
+
+            auto gameState = std::make_unique<GameState>();
+
+            stateManager_->changeState(std::move(gameState));
+
             return;
         }
     }

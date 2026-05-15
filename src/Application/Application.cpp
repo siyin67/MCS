@@ -18,6 +18,7 @@ Application::Application()
 
 void Application::run()
 {
+    std::cout << "Application::run started" << std::endl;
     while (window_.isOpen() && isRunning_)
     {
         float deltaTime = clock_.restart().asSeconds();
@@ -32,6 +33,7 @@ void Application::run()
         stateManager_.render(window_);
         window_.display();
     }
+    std::cout << "Application::run ended" << std::endl;
 }
 
 void Application::handleGlobalEvents()
