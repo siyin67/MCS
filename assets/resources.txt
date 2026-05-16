@@ -5,6 +5,7 @@
 # ==========================================
 
 # ========== 背景纹理 ==========
+map1=assets/images/maps/map1.png
 menu_bg=assets/images/backgrounds/menubackground.png
 
 # ========== 玩家纹理 ==========

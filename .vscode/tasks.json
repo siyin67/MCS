@@ -1,0 +1,42 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build",
+            "type": "shell",
+            "command": "C:/msys64/ucrt64/bin/g++.exe",
+            "args": [
+                "src/main.cpp",
+                "src/Application/Application.cpp",
+                "src/Application/Statemanager.cpp",
+                "src/Application/States/MenuState.cpp",
+                "src/Application/States/GameState.cpp",
+                "src/Resourcemanager/ResourceManager.cpp",
+                "src/Player/player.cpp",
+                "-I",
+                "src",
+                "-o",
+                "bin/game.exe",
+                "-std=c++20",
+                "-I",
+                "C:/msys64/ucrt64/include",
+                "-L",
+                "C:/msys64/ucrt64/lib",
+                "-lmingw32",
+                "-lsfml-graphics",
+                "-lsfml-window",
+                "-lsfml-system",
+                "-lsfml-main",
+                "-static-libgcc",
+                "-static-libstdc++",
+                "-lsfml-audio",
+                "-mconsole"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        }
+    ]
+}
