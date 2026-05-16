@@ -2,6 +2,7 @@
 #include "GameState.h"
 #include "MenuState.h"
 #include "PauseState.h"
+#include "GameOverState.h"
 #include "Resourcemanager/ResourceManager.h"
 #include "../Statemanager.h"
 #include <iostream>
@@ -25,23 +26,25 @@ GameState::GameState()
 
 void GameState::handleInput(sf::RenderWindow &window)
 {
-    /*if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape))
-    {
-        stateManager_->changeState(std::make_unique<MenuState>());
-        // stateManager_->changeState(std::move(std::make_unique<MenuState>()));
-        return;
-    }*/
-    // 按 ESC 暂停（不是直接返回菜单）
     static bool wasPressed = false;
-    bool isPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape);
 
-    if (isPressed && !wasPressed)
+    // 按 ESC 暂停
+    bool escPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape);
+    if (escPressed && !wasPressed)
     {
         std::cout << "Game paused" << std::endl;
         stateManager_->pushState(std::make_unique<PauseState>());
     }
 
-    wasPressed = isPressed;
+    // 按数字 0 触发游戏结束
+    bool zeroPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num0);
+    if (zeroPressed && !wasPressed)
+    {
+        std::cout << "Game over triggered by 0 key" << std::endl;
+        stateManager_->pushState(std::make_unique<GameOverState>());
+    }
+
+    wasPressed = escPressed || zeroPressed;
 }
 
 void GameState::update(float deltaTime)

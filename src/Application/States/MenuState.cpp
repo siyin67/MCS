@@ -45,20 +45,29 @@ MenuState::MenuState() : font_("assets/fonts/minecraft.ttf"), text_start_(font_)
 
 void MenuState::handleInput(sf::RenderWindow &window)
 {
+    static bool wasPressed = false;
+
     // 获取鼠标位置
     sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+    float mouseX = static_cast<float>(mousePos.x);
+    float mouseY = static_cast<float>(mousePos.y);
+
+    bool leftPressed = sf::Mouse::isButtonPressed(sf::Mouse::Button::Left);
 
     // 检查鼠标是否在开始按钮上
-    if (start_button_.getGlobalBounds().contains({static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)}))
+    if (start_button_.getGlobalBounds().contains({mouseX, mouseY}))
     {
         start_button_.setOutlineThickness(3);
         start_button_.setOutlineColor(sf::Color::White);
 
-        if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+        // 按下时触发
+        if (leftPressed && !wasPressed)
         {
-            std::cout << "Escape is pressed";
+            std::cout << "Start Game" << std::endl;
             stateManager_->changeState(std::make_unique<GameState>());
-            // stateManager_->changeState(std::move(std::make_unique<GameState>()));
+
+            // 添加短暂延迟，防止切换后鼠标弹起触发新界面
+            sf::sleep(sf::milliseconds(100));
             return;
         }
     }
@@ -68,22 +77,23 @@ void MenuState::handleInput(sf::RenderWindow &window)
     }
 
     // 检查鼠标是否在退出按钮上
-    if (exit_button_.getGlobalBounds().contains({static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)}))
+    if (exit_button_.getGlobalBounds().contains({mouseX, mouseY}))
     {
         exit_button_.setOutlineThickness(3);
         exit_button_.setOutlineColor(sf::Color::White);
-        // 点击退出游戏
-        if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+
+        if (leftPressed && !wasPressed)
         {
             std::cout << "Exit Game" << std::endl;
-            exit(0); // 退出程序
+            exit(0);
         }
     }
     else
     {
-        // 恢复默认边框（无边框或细边框）
         exit_button_.setOutlineThickness(0);
     }
+
+    wasPressed = leftPressed;
 }
 void MenuState::update(float deltaTime)
 {
