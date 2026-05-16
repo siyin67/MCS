@@ -4,6 +4,7 @@ game.exe
 *.o
 *.obj
 *.vscode
+*.json
 # 临时文件
 *.log
 debug.log
