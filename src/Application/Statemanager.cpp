@@ -26,6 +26,16 @@ void StateManager::changeState(std::unique_ptr<IState> state)
     pushState(std::move(state));
 }
 
+void StateManager::clearAndPush(std::unique_ptr<IState> state)
+{
+    states_.clear(); // 清空整个栈
+    if (state)
+    {
+        state->setStateManager(this);
+        states_.push_back(std::move(state));
+    }
+}
+
 IState *StateManager::getCurrentState()
 {
     if (states_.empty())
@@ -52,7 +62,6 @@ void StateManager::update(float deltaTime)
 
 void StateManager::render(sf::RenderWindow &window)
 {
-    // 从底向上全部渲染（叠加效果）
     for (auto &state : states_)
     {
         state->render(window);

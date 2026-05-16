@@ -12,6 +12,7 @@
                 "src/Application/States/MenuState.cpp",
                 "src/Application/States/GameState.cpp",
                 "src/Application/States/PauseState.cpp",
+                "src/Application/States/GameOverState.cpp",
                 "src/Resourcemanager/ResourceManager.cpp",
                 "src/Player/player.cpp",
                 "-I",
