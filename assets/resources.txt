@@ -12,8 +12,7 @@ menu_bg=assets/images/backgrounds/menubackground.png
 player=assets/images/players/Player_Steve.png
 
 # ========== 怪物纹理 ==========
-
-
+zombie=assets/images/monsters/Zombie.png
 # ========== 武器纹理 ==========
 
 
