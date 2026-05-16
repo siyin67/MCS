@@ -1,8 +1,8 @@
 #include "MenuState.h"
-#include "../StateManager.h"
 #include <iostream>
 #include "Resourcemanager/ResourceManager.h"
 #include "GameState.h"
+#include "../Statemanager.h"
 
 MenuState::MenuState() : font_("assets/fonts/minecraft.ttf"), text_start_(font_), text_exit_(font_)
 
@@ -56,11 +56,9 @@ void MenuState::handleInput(sf::RenderWindow &window)
 
         if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
         {
-
-            auto gameState = std::make_unique<GameState>();
-
-            stateManager_->changeState(std::move(gameState));
-
+            std::cout << "Escape is pressed";
+            stateManager_->changeState(std::make_unique<GameState>());
+            // stateManager_->changeState(std::move(std::make_unique<GameState>()));
             return;
         }
     }
@@ -94,6 +92,7 @@ void MenuState::update(float deltaTime)
 
 void MenuState::render(sf::RenderWindow &window)
 {
+    window.setView(window.getDefaultView());
     sf::Vector2u windowSize = window.getSize();
     background_.setSize(sf::Vector2f(windowSize.x, windowSize.y));
     // 设置文字和按钮位置文字分别是开始游戏和退出游戏位于两个按钮正中央两个按钮中间适当间隔排列在整个窗口中部偏离中线一点

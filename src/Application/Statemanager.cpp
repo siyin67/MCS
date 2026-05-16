@@ -5,7 +5,7 @@ void StateManager::pushState(std::unique_ptr<IState> state)
     if (state)
     {
         state->setStateManager(this);
-        states_.push(std::move(state));
+        states_.push_back(std::move(state));
     }
 }
 
@@ -13,7 +13,7 @@ void StateManager::popState()
 {
     if (!states_.empty())
     {
-        states_.pop();
+        states_.pop_back();
     }
 }
 
@@ -21,21 +21,16 @@ void StateManager::changeState(std::unique_ptr<IState> state)
 {
     if (!states_.empty())
     {
-        states_.pop();
+        states_.pop_back();
     }
-
-    if (state)
-    {
-        state->setStateManager(this);
-        states_.push(std::move(state));
-    }
+    pushState(std::move(state));
 }
 
 IState *StateManager::getCurrentState()
 {
     if (states_.empty())
         return nullptr;
-    return states_.top().get();
+    return states_.back().get();
 }
 
 bool StateManager::isEmpty() const
@@ -43,20 +38,23 @@ bool StateManager::isEmpty() const
     return states_.empty();
 }
 
-void StateManager::handleInput(sf::RenderWindow& window)
+void StateManager::handleInput(sf::RenderWindow &window)
 {
-    if (auto *state = getCurrentState())
-        state->handleInput(window);
+    if (getCurrentState())
+        getCurrentState()->handleInput(window);
 }
 
 void StateManager::update(float deltaTime)
 {
-    if (auto *state = getCurrentState())
-        state->update(deltaTime);
+    if (getCurrentState())
+        getCurrentState()->update(deltaTime);
 }
 
 void StateManager::render(sf::RenderWindow &window)
 {
-    if (auto *state = getCurrentState())
+    // 从底向上全部渲染（叠加效果）
+    for (auto &state : states_)
+    {
         state->render(window);
+    }
 }
