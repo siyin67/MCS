@@ -10,6 +10,25 @@ Monster::Monster()
     shape_.setPosition(position_);
 }
 
+void Monster::setSkill(std::function<void(Monster &, const sf::Vector2f &)> skill, float cooldown)
+{
+    // 暂未实现
+    (void)skill;
+    (void)cooldown;
+}
+
+void Monster::updateSkill(float deltaTime, const sf::Vector2f &playerPos)
+{
+    // 暂未实现
+    (void)deltaTime;
+    (void)playerPos;
+}
+
+void Monster::useSkill(const sf::Vector2f &playerPos)
+{
+    // 暂未实现
+    (void)playerPos;
+}
 void Monster::update(float deltaTime, const sf::Vector2f &playerPos)
 {
     // 移动逻辑
