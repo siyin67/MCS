@@ -9,6 +9,9 @@ private:
     int health_;
     int maxHealth_;
 
+    sf::ConvexShape arrow_;
+    sf::Vector2f attackDirection_;
+
 public:
     Player();
 
@@ -24,4 +27,7 @@ public:
     int getHealth() const;
     bool isAlive() const;
     float getHealthPercent() const;
+
+    void updateAttackDirection(const sf::RenderWindow &window);
+    sf::Vector2f getAttackDirection() const { return attackDirection_; }
 };

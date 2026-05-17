@@ -34,7 +34,6 @@ GameState::GameState()
 void GameState::handleInput(sf::RenderWindow &window)
 {
     static bool wasPressed = false;
-
     // 按 ESC 暂停
     bool escPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape);
     if (escPressed && !wasPressed)
@@ -58,12 +57,16 @@ void GameState::update(float deltaTime)
 {
     // 更新玩家
     player_.update(deltaTime);
+    // 更新攻击方向
+    // player_.updateAttackDirection(*window_);
     // Spawner 自动管理波次和生成
     spawner_.update(deltaTime, player_.getPosition(), monsters_);
 
     // 更新怪物
     for (auto &m : monsters_)
-        m->update(deltaTime, player_.getPosition());
+    {
+        m->update(deltaTime, player_.getPosition(), monsters_);
+    }
     // 碰撞检测（暂无）
     // 删除死亡怪物
     for (auto it = monsters_.begin(); it != monsters_.end();)
@@ -85,6 +88,7 @@ void GameState::update(float deltaTime)
 
 void GameState::render(sf::RenderWindow &window)
 {
+    player_.updateAttackDirection(window);
     window.setView(camera_);
     window.draw(background_);
     for (auto &m : monsters_)

@@ -23,7 +23,8 @@ public:
     virtual ~Monster() = default;
 
     // 基础更新
-    virtual void update(float deltaTime, const sf::Vector2f &playerPos);
+    virtual void update(float deltaTime, const sf::Vector2f &playerPos,
+                        const std::vector<std::unique_ptr<Monster>> &allMonsters);
     virtual void render(sf::RenderWindow &window);
     virtual void takeDamage(int damage);
 

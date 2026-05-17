@@ -19,7 +19,7 @@ zombie=assets/images/monsters/Zombie.png
 # ========== UI 纹理 ==========
 menu_button=assets/images/UI/menu_button.png
 menu_title=assets/images/UI/menu_title.png
-
+point_arrow=assets/images/UI/point_arrow.png
 # ========== 子弹/特效纹理 ==========
 
 # ========== 字体 ==========

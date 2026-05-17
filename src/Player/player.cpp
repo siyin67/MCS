@@ -21,6 +21,13 @@ Player::Player()
         shape_.setFillColor(sf::Color::White);
     }
     shape_.setPosition({2500, 2500});
+
+    arrow_.setPointCount(3);
+    arrow_.setPoint(0, sf::Vector2f(100, 0));  // 尖端（45像素外）
+    arrow_.setPoint(1, sf::Vector2f(80, -12)); // 尾部左上
+    arrow_.setPoint(2, sf::Vector2f(80, 12));  // 尾部右下
+    arrow_.setFillColor(sf::Color(135, 206, 235));
+    arrow_.setOutlineThickness(1);
 }
 
 void Player::update(float deltaTime)
@@ -91,6 +98,7 @@ sf::FloatRect Player::getBounds() const
 void Player::render(sf::RenderWindow &window)
 {
     window.draw(shape_);
+    window.draw(arrow_);
 }
 
 int Player::getHealth() const
@@ -106,4 +114,27 @@ bool Player::isAlive() const
 float Player::getHealthPercent() const
 {
     return static_cast<float>(health_) / maxHealth_;
+}
+
+void Player::updateAttackDirection(const sf::RenderWindow &window)
+{
+    sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+    sf::Vector2f worldMousePos = window.mapPixelToCoords(mousePos);
+
+    attackDirection_ = worldMousePos - shape_.getPosition();
+    float length = std::sqrt(attackDirection_.x * attackDirection_.x +
+                             attackDirection_.y * attackDirection_.y);
+
+    if (length > 0.01f)
+    {
+        attackDirection_.x /= length;
+        attackDirection_.y /= length;
+    }
+
+    arrow_.setPosition(shape_.getPosition());
+
+    // 计算角度（度数）
+    float angleDegrees = std::atan2(attackDirection_.y, attackDirection_.x) * 180 / 3.14159f;
+
+    arrow_.setRotation(sf::degrees(angleDegrees));
 }
