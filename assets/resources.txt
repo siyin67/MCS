@@ -6,6 +6,13 @@
 
 # ========== 背景纹理 ==========
 map1=assets/images/maps/map1.png
+grass=assets/images/maps/grass_block_top.png
+dirt=assets/images/maps/dirt.png
+stone=assets/images/maps/stone.png
+cobblestone=assets/images/maps/cobblestone.png
+path=assets/images/maps/dirt_path_top.png
+water=assets/images/maps/water_still.png
+lava=assets/images/maps/lava_still.png
 menu_bg=assets/images/backgrounds/menubackground.png
 
 # ========== 玩家纹理 ==========
