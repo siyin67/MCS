@@ -4,7 +4,7 @@
 #include <iostream>
 
 Spawner::Spawner()
-    : currentWave_(1), monstersToSpawn_(5), monstersSpawned_(0), spawnTimer_(0.0f), spawnInterval_(1.5f), waveTimer_(0.0f), waveDuration_(60.0f), mapSize_{5000.0f, 5000.0f}, spawnDistance_(800.0f)
+    : currentWave_(1), monstersToSpawn_(100), monstersSpawned_(0), spawnTimer_(0.0f), spawnInterval_(1.5f), waveTimer_(0.0f), waveDuration_(60.0f), mapSize_{5000.0f, 5000.0f}, spawnDistance_(800.0f)
 {
 }
 
