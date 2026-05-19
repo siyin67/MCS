@@ -102,6 +102,48 @@ void GameState::render(sf::RenderWindow &window)
         m->render(window);
     player_.render(window);
 }
+class PerlinNoise
+{
+private:
+    static float fade(float t) { return t * t * t * (t * (t * 6 - 15) + 10); }
+    static float lerp(float a, float b, float t) { return a + t * (b - a); }
+    static float grad(int hash, float x, float y)
+    {
+        int h = hash & 7;
+        float u = h < 4 ? x : y;
+        float v = h < 4 ? y : x;
+        return ((h & 1) ? -u : u) + ((h & 2) ? -v : v);
+    }
+
+    static int hash(int x, int y)
+    {
+        unsigned int n = x * 374761393 + y * 668265263;
+        n = (n ^ (n >> 13)) * 1274126177;
+        return (n ^ (n >> 15)) & 255;
+    }
+
+public:
+    static float noise(float x, float y)
+    {
+        int xi = (int)std::floor(x) & 255;
+        int yi = (int)std::floor(y) & 255;
+        float fx = x - std::floor(x);
+        float fy = y - std::floor(y);
+
+        float u = fade(fx);
+        float v = fade(fy);
+
+        int aa = hash(xi, yi);
+        int ab = hash(xi, yi + 1);
+        int ba = hash(xi + 1, yi);
+        int bb = hash(xi + 1, yi + 1);
+
+        float a = lerp(grad(aa, fx, fy), grad(ba, fx - 1, fy), u);
+        float b = lerp(grad(ab, fx, fy - 1), grad(bb, fx - 1, fy - 1), u);
+
+        return (lerp(a, b, v) + 1.0f) / 2.0f; // 返回 0-1
+    }
+};
 
 void GameState::generateMap()
 {
@@ -185,9 +227,9 @@ int GameState::getTileType(int x, int y)
     float moisture = getMoisture(x, y);
 
     // 水
-    if (height < -0.3f)
+    if (height < -0.4f)
         return 5;
-    if (height < -0.2f)
+    if (height < -0.25f)
         return 4; // 沙滩
 
     // 草地（分湿/干）
@@ -195,13 +237,13 @@ int GameState::getTileType(int x, int y)
         return 0;
     if (height < 0.2f)
         return (moisture > 0.5f) ? 0 : 4;
-    if (height < 0.3f)
+    if (height < 0.35f)
         return 0;
-    if (height < 0.4f)
-        return 1; // 泥土
     if (height < 0.5f)
+        return 1; // 泥土
+    if (height < 0.65f)
         return 2; // 石头
-    if (height < 0.6f)
+    if (height < 0.8f)
         return (moisture > 0.5f) ? 2 : 3;
 
     return 3; // 圆石（山顶）
@@ -210,12 +252,13 @@ float GameState::fractalNoise(float x, float y, int octaves)
 {
     float value = 0.0f;
     float amplitude = 1.0f;
-    float frequency = 0.05f; // 提高频率，地形变化更快
+    float persistence = 0.5f;
+    float frequency = 0.03f; // 添加频率
 
     for (int i = 0; i < octaves; i++)
     {
-        value += amplitude * std::sin(x * frequency) * std::cos(y * frequency);
-        amplitude *= 0.5f;
+        value += amplitude * (PerlinNoise::noise(x * frequency, y * frequency) * 2.0f - 1.0f);
+        amplitude *= persistence;
         frequency *= 2.0f;
     }
 
@@ -227,24 +270,27 @@ float GameState::getHeight(int x, int y)
     float fy = static_cast<float>(y);
 
     // 主地形 + 细节扰动
-    float mainHeight = fractalNoise(fx, fy, 3);                  // 主要地形
-    float detail = fractalNoise(fx * 3.0f, fy * 3.0f, 2) * 0.3f; // 细节
+    float mainHeight = fractalNoise(fx * 0.3f, fy * 0.3f, 4);
+    float detail = fractalNoise(fx * 1.2f, fy * 1.2f, 2) * 0.2f;
 
-    float height = mainHeight * 0.7f + detail * 0.3f;
+    float height = mainHeight * 0.8f + detail;
 
-    return height;
+    // 扩大范围让地形变化更明显
+    height = height * 1.2f;
+
+    return std::max(-1.0f, std::min(1.0f, height));
 }
 float GameState::getMoisture(int x, int y)
 {
     float fx = static_cast<float>(x);
     float fy = static_cast<float>(y);
 
-    // 湿度也需要更高的频率
-    float moisture = fractalNoise(fx + 1000.0f, fy + 1000.0f, 3);
+    // 使用不同的频率和偏移
+    float moisture = fractalNoise(fx * 0.15f + 500.0f, fy * 0.15f + 500.0f, 3);
     moisture = (moisture + 1.0f) / 2.0f;
 
     // 添加小尺度变化
-    float micro = fractalNoise(fx * 5.0f, fy * 5.0f, 1) * 0.2f;
+    float micro = fractalNoise(fx * 0.6f, fy * 0.6f, 1) * 0.15f;
     moisture += micro;
     moisture = std::max(0.0f, std::min(1.0f, moisture));
 
