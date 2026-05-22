@@ -4,18 +4,20 @@
 #include <iostream>
 #include "StateManager.h"
 
+/**
+ * @brief
+ */
 class Application
 {
 private:
-    sf::RenderWindow window_;
-    StateManager stateManager_;
-    bool isRunning_;
-    sf::Clock clock_;
+    sf::RenderWindow window_;      
+    StateManager stateManager_;   
+    bool isRunning_;               
+    sf::Clock clock_;              
 
 public:
-    Application();
-    void run();
-
+    Application();                 
+    void run();                    
 private:
-    void handleGlobalEvents();
+    void handleGlobalEvents();     
 };
