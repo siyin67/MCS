@@ -2,6 +2,7 @@
 #include "GameState.h"
 #include "MenuState.h"
 #include "PauseState.h"
+#include "UpgradeState.h"
 #include "GameOverState.h"
 #include "Resourcemanager/ResourceManager.h"
 #include "../Statemanager.h"
@@ -53,7 +54,15 @@ void GameState::handleInput(sf::RenderWindow &window)
         stateManager_->pushState(std::make_unique<GameOverState>());
     }
 
-    wasPressed = escPressed || zeroPressed;
+    // 按数字 9 触发升级界面
+    bool ninePressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num9);
+    if (ninePressed && !wasPressed)
+    {
+        std::cout << "Upgrade triggered by 9 key" << std::endl;
+        stateManager_->pushState(std::make_unique<UpgradeState>(&player_));
+    }
+
+    wasPressed = escPressed || zeroPressed || ninePressed;
 }
 
 void GameState::update(float deltaTime)

@@ -14,6 +14,7 @@ path=assets/images/maps/sand.png
 water=assets/images/maps/water_still.png
 lava=assets/images/maps/lava_still.png
 menu_bg=assets/images/backgrounds/menubackground.png
+upgrade_background=assets/images/backgrounds/upgrade_background.png
 
 # ========== 玩家纹理 ==========
 player=assets/images/players/Player_Steve.png
@@ -21,12 +22,13 @@ player=assets/images/players/Player_Steve.png
 # ========== 怪物纹理 ==========
 zombie=assets/images/monsters/Zombie.png
 # ========== 武器纹理 ==========
-
+iron_sword=assets/images/item/iron_sword.png
 
 # ========== UI 纹理 ==========
 menu_button=assets/images/UI/menu_button.png
 menu_title=assets/images/UI/menu_title.png
 point_arrow=assets/images/UI/point_arrow.png
+upgradeitem_background=assets/images/UI/upgradeitem_background.png
 # ========== 子弹/特效纹理 ==========
 
 # ========== 字体 ==========
