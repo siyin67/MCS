@@ -95,6 +95,22 @@ sf::FloatRect Player::getBounds() const
     return shape_.getGlobalBounds();
 }
 
+// ICollidable 接口实现
+sf::FloatRect Player::getGlobalBounds() const
+{
+    return shape_.getGlobalBounds();
+}
+
+std::vector<sf::Vector2f> Player::getVertices() const
+{
+    return verticesFromBounds(getGlobalBounds());
+}
+
+CollisionType Player::getType() const
+{
+    return CollisionType::PLAYER;
+}
+
 void Player::render(sf::RenderWindow &window)
 {
     window.draw(shape_);

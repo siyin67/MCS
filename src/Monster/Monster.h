@@ -2,8 +2,9 @@
 #include <SFML/Graphics.hpp>
 #include <functional>
 #include <memory>
+#include "collision/Collision.h"
 
-class Monster
+class Monster : public ICollidable
 {
 protected:
     sf::RectangleShape shape_;
@@ -52,4 +53,9 @@ public:
     // 特效标记（供外部使用）
     bool shouldSpawnEffect_ = false;
     sf::Vector2f effectPosition_;
+
+    // ICollidable 接口实现
+    sf::FloatRect getGlobalBounds() const override;
+    std::vector<sf::Vector2f> getVertices() const override;
+    CollisionType getType() const override;
 };

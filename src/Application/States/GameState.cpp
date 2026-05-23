@@ -5,6 +5,7 @@
 #include "GameOverState.h"
 #include "Resourcemanager/ResourceManager.h"
 #include "../Statemanager.h"
+#include "collision/Collision.h"
 #include <iostream>
 #include <cmath>
 #include <algorithm>
@@ -70,7 +71,33 @@ void GameState::update(float deltaTime)
     {
         m->update(deltaTime, player_.getPosition(), monsters_);
     }
-    // 碰撞检测（暂无）
+    // 碰撞检测
+    std::vector<ICollidable *> collidables;
+    collidables.push_back(&player_);
+    for (auto &m : monsters_)
+    {
+        if (m->isAlive())
+            collidables.push_back(m.get());
+    }
+    auto collisionPairs = detectCollisions(collidables);
+
+    // 处理碰撞结果
+    for (auto &[objA, objB] : collisionPairs)
+    {
+        // Player-Monster 碰撞：怪物对玩家造成伤害
+        if (objA->getType() == CollisionType::PLAYER && objB->getType() == CollisionType::MONSTER)
+        {
+            auto *monster = static_cast<Monster *>(objB);
+            player_.takeDamage(monster->getDamage());
+        }
+        else if (objB->getType() == CollisionType::PLAYER && objA->getType() == CollisionType::MONSTER)
+        {
+            auto *monster = static_cast<Monster *>(objA);
+            player_.takeDamage(monster->getDamage());
+        }
+        // Bullet 相关碰撞由 Bullet 类实现后在此处理
+    }
+
     // 删除死亡怪物
     for (auto it = monsters_.begin(); it != monsters_.end();)
     {

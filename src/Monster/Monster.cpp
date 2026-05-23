@@ -111,3 +111,19 @@ sf::FloatRect Monster::getBounds() const
 {
     return shape_.getGlobalBounds();
 }
+
+// ICollidable 接口实现
+sf::FloatRect Monster::getGlobalBounds() const
+{
+    return shape_.getGlobalBounds();
+}
+
+std::vector<sf::Vector2f> Monster::getVertices() const
+{
+    return verticesFromBounds(getGlobalBounds());
+}
+
+CollisionType Monster::getType() const
+{
+    return CollisionType::MONSTER;
+}

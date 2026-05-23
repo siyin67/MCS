@@ -4,8 +4,10 @@
         {
             "label": "Build",
             "type": "shell",
-            "command": "C:/msys64/ucrt64/bin/g++.exe",
+            "command": "cmd.exe",
             "args": [
+                "/c",
+                "build.bat",
                 "src/main.cpp",
                 "src/Application/Application.cpp",
                 "src/Application/Statemanager.cpp",

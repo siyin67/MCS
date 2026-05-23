@@ -1,7 +1,8 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include "collision/Collision.h"
 
-class Player
+class Player : public ICollidable
 {
 private:
     sf::RectangleShape shape_;
@@ -30,4 +31,9 @@ public:
 
     void updateAttackDirection(const sf::RenderWindow &window);
     sf::Vector2f getAttackDirection() const { return attackDirection_; }
+
+    // ICollidable 接口实现
+    sf::FloatRect getGlobalBounds() const override;
+    std::vector<sf::Vector2f> getVertices() const override;
+    CollisionType getType() const override;
 };
