@@ -3,6 +3,7 @@
 #include "Resourcemanager/ResourceManager.h"
 #include "GameState.h"
 #include "../Statemanager.h"
+#include "Sound/SoundManager.h"
 
 MenuState::MenuState() : font_("assets/fonts/minecraft.ttf"), text_start_(font_), text_exit_(font_)
 
@@ -41,6 +42,14 @@ MenuState::MenuState() : font_("assets/fonts/minecraft.ttf"), text_start_(font_)
     text_exit_.setFillColor(sf::Color::White);
     background_.setSize({1280, 720});
     background_.setPosition({0, 0});
+    // 首页bgm播放
+    //  设置 BGM 播放列表并随机播放
+    std::vector<std::string> playlist = {
+        "assets/sounds/menu_theme1.ogg",
+        "assets/sounds/menu_theme2.ogg",
+        "assets/sounds/menu_theme3.ogg"};
+    SoundManager::getInstance().setBGMPlaylist(playlist);
+    SoundManager::getInstance().playRandomBGM();
 }
 
 void MenuState::handleInput(sf::RenderWindow &window)
