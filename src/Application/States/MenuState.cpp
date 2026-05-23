@@ -45,11 +45,12 @@ MenuState::MenuState() : font_("assets/fonts/minecraft.ttf"), text_start_(font_)
     // 首页bgm播放
     //  设置 BGM 播放列表并随机播放
     std::vector<std::string> playlist = {
-        "assets/sounds/menu_theme1.ogg",
-        "assets/sounds/menu_theme2.ogg",
-        "assets/sounds/menu_theme3.ogg"};
+        "assets/bgm/13 Wet Hands.mp3",
+        "assets/bgm/18 Sweden.mp3",
+        "assets/bgm/03 Subwoofer Lullaby.mp3"};
     SoundManager::getInstance().setBGMPlaylist(playlist);
     SoundManager::getInstance().playRandomBGM();
+    SoundManager::getInstance().setBGMVolume(20);
 }
 
 void MenuState::handleInput(sf::RenderWindow &window)
@@ -73,6 +74,7 @@ void MenuState::handleInput(sf::RenderWindow &window)
         if (leftPressed && !wasPressed)
         {
             std::cout << "Start Game" << std::endl;
+
             stateManager_->changeState(std::make_unique<GameState>());
 
             // 添加短暂延迟，防止切换后鼠标弹起触发新界面

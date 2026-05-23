@@ -37,7 +37,6 @@ void SoundManager::playRandomBGM()
 
 void SoundManager::playBGM(const std::string &path, bool loop)
 {
-    // 如果已经在播放，先停止
     if (currentBGM_ && currentBGM_->getStatus() == sf::Music::Status::Playing)
     {
         currentBGM_->stop();
@@ -100,8 +99,8 @@ void SoundManager::playSFX(const std::string &id)
         return;
     }
 
-    auto sound = std::make_unique<sf::Sound>();
-    sound->setBuffer(ResourceManager::GetInstance().GetSoundBuffer(id));
+    // SFML 3 中 sf::Sound 需要传入 SoundBuffer 构造
+    auto sound = std::make_unique<sf::Sound>(ResourceManager::GetInstance().GetSoundBuffer(id));
     sound->setVolume(sfxVolume_);
     sound->play();
     activeSFX_.push_back(std::move(sound));
@@ -114,7 +113,6 @@ void SoundManager::setSFXVolume(float volume)
 
 void SoundManager::update()
 {
-    // 清理已播放完的音效
     activeSFX_.erase(
         std::remove_if(activeSFX_.begin(), activeSFX_.end(),
                        [](const std::unique_ptr<sf::Sound> &sound)

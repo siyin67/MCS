@@ -6,6 +6,7 @@
 #include "GameOverState.h"
 #include "Resourcemanager/ResourceManager.h"
 #include "../Statemanager.h"
+#include "Sound/SoundManager.h"
 #include <iostream>
 #include <cmath>
 #include <algorithm>
@@ -32,6 +33,14 @@ GameState::GameState() : mapWidth_(312), mapHeight_(312), tileSize_(16), mapSpri
     // 相机初始化
     camera_.setCenter(player_.getPosition());
     camera_.setSize({1920, 1080});
+    // bgm初始化
+    std::vector<std::string> playlist = {
+        "assets/bgm/Anthem of the Savannah.mp3",
+        "assets/bgm/Lamentation et triomphe.mp3",
+        "assets/bgm/To Light the Aeon Dark.mp3"};
+    SoundManager::getInstance().setBGMPlaylist(playlist);
+    SoundManager::getInstance().playRandomBGM();
+    SoundManager::getInstance().setBGMVolume(5);
     std::cout << "GameState constructor END" << std::endl;
 }
 
