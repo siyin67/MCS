@@ -6,7 +6,8 @@
 #include "GameOverState.h"
 #include "Resourcemanager/ResourceManager.h"
 #include "../Statemanager.h"
-#include "Sound/SoundManager.h"
+#include "collision/Collision.h"
+#include "collision/CollisionResolver.h"
 #include <iostream>
 #include <cmath>
 #include <algorithm>
@@ -88,21 +89,21 @@ void GameState::update(float deltaTime)
     {
         m->update(deltaTime, player_.getPosition(), monsters_);
     }
-    // 碰撞检测（暂无）
-    // 删除死亡怪物
-    for (auto it = monsters_.begin(); it != monsters_.end();)
+    // 碰撞检测
+    std::vector<ICollidable *> collidables;
+    collidables.push_back(&player_);
+    for (auto &m : monsters_)
     {
-        if (!(*it)->isAlive())
-        {
-            // 掉落经验球等
-            // player_.addExp((*it)->getExpReward());
-            it = monsters_.erase(it);
-        }
-        else
-        {
-            ++it;
-        }
+        if (m->isAlive())
+            collidables.push_back(m.get());
     }
+    auto collisionPairs = detectCollisions(collidables);
+
+    // 处理碰撞结果（玩家受伤、怪物受伤等）
+    resolveCollisions(collisionPairs, player_);
+
+    // 清理死亡怪物
+    removeDeadMonsters(monsters_);
     // 更新相机
     camera_.setCenter(player_.getPosition());
 }

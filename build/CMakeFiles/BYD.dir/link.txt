@@ -1,0 +1,3 @@
+D:\bin\cmake.exe -E rm -f CMakeFiles\BYD.dir/objects.a
+D:\ucrt64\bin\ar.exe qc CMakeFiles\BYD.dir/objects.a @CMakeFiles\BYD.dir\objects1.rsp
+D:\ucrt64\bin\c++.exe -g -static -static-libgcc -static-libstdc++ -Wl,--whole-archive CMakeFiles\BYD.dir/objects.a -Wl,--no-whole-archive -o D:\OneDrive\Desktop\git\byd\bin\BYD.exe -Wl,--out-implib,libBYD.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\BYD.dir\linkLibs.rsp
