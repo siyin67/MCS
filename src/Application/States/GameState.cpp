@@ -6,6 +6,7 @@
 #include "Resourcemanager/ResourceManager.h"
 #include "../Statemanager.h"
 #include "collision/Collision.h"
+#include "collision/CollisionResolver.h"
 #include <iostream>
 #include <cmath>
 #include <algorithm>
@@ -81,37 +82,11 @@ void GameState::update(float deltaTime)
     }
     auto collisionPairs = detectCollisions(collidables);
 
-    // 处理碰撞结果
-    for (auto &[objA, objB] : collisionPairs)
-    {
-        // Player-Monster 碰撞：怪物对玩家造成伤害
-        if (objA->getType() == CollisionType::PLAYER && objB->getType() == CollisionType::MONSTER)
-        {
-            auto *monster = static_cast<Monster *>(objB);
-            player_.takeDamage(monster->getDamage());
-        }
-        else if (objB->getType() == CollisionType::PLAYER && objA->getType() == CollisionType::MONSTER)
-        {
-            auto *monster = static_cast<Monster *>(objA);
-            player_.takeDamage(monster->getDamage());
-        }
-        // Bullet 相关碰撞由 Bullet 类实现后在此处理
-    }
+    // 处理碰撞结果（玩家受伤、怪物受伤等）
+    resolveCollisions(collisionPairs, player_);
 
-    // 删除死亡怪物
-    for (auto it = monsters_.begin(); it != monsters_.end();)
-    {
-        if (!(*it)->isAlive())
-        {
-            // 掉落经验球等
-            // player_.addExp((*it)->getExpReward());
-            it = monsters_.erase(it);
-        }
-        else
-        {
-            ++it;
-        }
-    }
+    // 清理死亡怪物
+    removeDeadMonsters(monsters_);
     // 更新相机
     camera_.setCenter(player_.getPosition());
 }

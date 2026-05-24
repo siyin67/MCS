@@ -1,4 +1,5 @@
 #include "Monster.h"
+#include "Player/player.h"
 #include <cmath>
 #include <random>
 
@@ -94,6 +95,12 @@ void Monster::takeDamage(int damage)
     if (health_ < 0)
         health_ = 0;
     shape_.setFillColor(sf::Color(255, 100, 100));
+}
+
+void Monster::onCollideWithPlayer(Player &player, const sf::Vector2f &knockbackDir)
+{
+    // 默认行为：怪物碰到玩家时不做额外处理
+    // 玩家的受伤逻辑由 Player::onCollideWithMonster 处理
 }
 
 void Monster::setPosition(const sf::Vector2f &pos)

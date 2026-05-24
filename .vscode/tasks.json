@@ -20,6 +20,8 @@
                 "src/Monster/Zombie.cpp",
                 "src/Resourcemanager/ResourceManager.cpp",
                 "src/Player/player.cpp",
+                "src/collision/Collision.cpp",
+                "src/collision/CollisionResolver.cpp",
                 "-I",
                 "src",
                 "-o",

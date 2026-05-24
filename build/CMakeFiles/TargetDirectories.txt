@@ -1,0 +1,3 @@
+D:/OneDrive/Desktop/git/byd/build/CMakeFiles/BYD.dir
+D:/OneDrive/Desktop/git/byd/build/CMakeFiles/edit_cache.dir
+D:/OneDrive/Desktop/git/byd/build/CMakeFiles/rebuild_cache.dir
