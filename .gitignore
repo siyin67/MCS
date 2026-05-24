@@ -3,7 +3,7 @@ game.exe
 *.exe
 *.o
 *.obj
-*.vscode
+*.vscode/
 *.json
 # 临时文件
 *.log
