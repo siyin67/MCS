@@ -2,8 +2,12 @@
 #include <SFML/Graphics.hpp>
 #include <functional>
 #include <memory>
+#include "collision/Collision.h"
 
-class Monster
+// 前向声明
+class Player;
+
+class Monster : public ICollidable
 {
 protected:
     sf::RectangleShape shape_;
@@ -27,6 +31,9 @@ public:
                         const std::vector<std::unique_ptr<Monster>> &allMonsters);
     virtual void render(sf::RenderWindow &window);
     virtual void takeDamage(int damage);
+
+    // 碰撞接口：怪物与玩家碰撞时的行为，子类可重写
+    virtual void onCollideWithPlayer(Player &player, const sf::Vector2f &knockbackDir);
 
     // 技能接口
     virtual void setSkill(std::function<void(Monster &, const sf::Vector2f &)> skill, float cooldown);
@@ -52,4 +59,9 @@ public:
     // 特效标记（供外部使用）
     bool shouldSpawnEffect_ = false;
     sf::Vector2f effectPosition_;
+
+    // ICollidable 接口实现
+    sf::FloatRect getGlobalBounds() const override;
+    std::vector<sf::Vector2f> getVertices() const override;
+    CollisionType getType() const override;
 };
