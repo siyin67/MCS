@@ -2,6 +2,7 @@
 #include "../StateManager.h"
 #include "MenuState.h"
 #include "Resourcemanager/ResourceManager.h"
+#include "Sound/SoundManager.h"
 #include <iostream>
 
 GameOverState::GameOverState()
@@ -30,6 +31,8 @@ GameOverState::GameOverState()
     buttonText_.setString("Main Menu");
     buttonText_.setCharacterSize(28);
     buttonText_.setFillColor(sf::Color::White);
+    SoundManager::getInstance().stopBGM();
+    SoundManager::getInstance().playSFX("gameover");
 }
 
 void GameOverState::handleInput(sf::RenderWindow &window)

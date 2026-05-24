@@ -34,5 +34,6 @@ upgradeitem_background=assets/images/UI/upgradeitem_background.png
 # ========== 字体 ==========
 main_font=assets/fonts/minecraft.ttf
 # ========== 音效 ==========
-
+hit=assets/Sound/hit1.wav
+gameover=assets/Sound/gameover.ogg
 # ========== 背景音乐 ==========

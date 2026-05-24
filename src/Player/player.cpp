@@ -2,6 +2,7 @@
 #include "Monster/Monster.h"
 #include <cmath>
 #include "Resourcemanager/ResourceManager.h"
+#include "Sound/SoundManager.h"
 #include <iostream>
 
 Player::Player()
@@ -144,6 +145,7 @@ void Player::takeDamage(int damage, const sf::Vector2f &knockbackDir)
     // 击退：方向 * 力度
     float knockbackSpeed = 400.0f;
     knockbackVelocity_ = knockbackDir * knockbackSpeed;
+    SoundManager::getInstance().playSFX("hit");
 }
 
 void Player::onCollideWithMonster(Monster &monster, const sf::Vector2f &knockbackDir)
