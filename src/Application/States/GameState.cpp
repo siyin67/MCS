@@ -5,6 +5,7 @@
 #include "UpgradeState.h"
 #include "GameOverState.h"
 #include "Resourcemanager/ResourceManager.h"
+#include "Sound/SoundManager.h"
 #include "../Statemanager.h"
 #include "collision/Collision.h"
 #include "collision/CollisionResolver.h"
