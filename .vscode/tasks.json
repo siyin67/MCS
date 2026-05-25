@@ -13,6 +13,7 @@
                 "src/Application/States/GameState.cpp",
                 "src/Application/States/PauseState.cpp",
                 "src/Application/States/GameOverState.cpp",
+                "src/Application/States/UpgradeState.cpp",
                 "src/Monster/Monster.cpp",
                 "src/Monster/Spawner.cpp",
                 "src/Monster/Zombie.cpp",
@@ -20,8 +21,10 @@
                 "src/Player/player.cpp",
                 "src/UI/UIManager.cpp",
                 "src/Weapon/weapon.cpp",
+                "src/Weapon/WeaponFactory.cpp",
                 "src/Sound/SoundManager.cpp",
                 "src/collision/Collision.cpp",
+                "src/collision/CollisionResolver.cpp",
                 "-I",
                 "src",
                 "-o",
@@ -45,7 +48,12 @@
                 "kind": "build",
                 "isDefault": true
             },
-            "problemMatcher": []
+            "problemMatcher": [],
+            "options": {
+                "env": {
+                    "PATH": "E:/msys2/ucrt64/bin;${env:PATH}"
+                }
+            }
         }
     ]
 }
