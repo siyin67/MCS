@@ -10,3 +10,4 @@ game.exe
 debug.log
 *.json
 *.claude/
+tasks.json
