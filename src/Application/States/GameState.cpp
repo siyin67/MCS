@@ -7,13 +7,13 @@
 #include "Resourcemanager/ResourceManager.h"
 #include "Sound/SoundManager.h"
 #include "../Statemanager.h"
-#include "collision/Collision.h"
-#include "collision/CollisionResolver.h"
+#include "Collision/Collision.h"
+#include "Collision/CollisionResolver.h"
 #include <iostream>
 #include <cmath>
 #include <algorithm>
 #include "Monster/Zombie.h"
-#include "../../Weapon/weapon.h"
+#include "Weapon/weapon.h"
 #include <random>
 
 GameState::GameState() : mapWidth_(312), mapHeight_(312), tileSize_(16), mapSprite_(nullptr)
@@ -100,8 +100,8 @@ void GameState::update(float deltaTime)
             collidables.push_back(m.get());
     }
     // 更新 UI
-    std::vector<Weapon*> weaponPtrs;
-    for (auto& w : weapons_)
+    std::vector<Weapon *> weaponPtrs;
+    for (auto &w : weapons_)
         weaponPtrs.push_back(w.get());
     uiManager_.update(player_, weaponPtrs);
 
