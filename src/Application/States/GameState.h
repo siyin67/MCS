@@ -4,6 +4,8 @@
 #include "Player/player.h"
 #include "Monster/Monster.h"
 #include "Monster/Spawner.h"
+#include "UI/UIManager.h"
+#include "../../Weapon/weapon.h"
 #include <memory>
 
 class GameState : public IState
@@ -14,6 +16,8 @@ private:
     Player player_;
     std::vector<std::unique_ptr<Monster>> monsters_;
     Spawner spawner_;
+    UIManager uiManager_;
+    std::vector<std::unique_ptr<Weapon>> weapons_;
 
     sf::Texture mapTexture_;
     std::unique_ptr<sf::Sprite> mapSprite_; // 改为指针

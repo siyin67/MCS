@@ -47,3 +47,5 @@ int Weapon::getBaseDamage() const { return baseDamage_; }
 int Weapon::getLevel() const { return level_; }
 float Weapon::getAttackCooldown() const { return attackCooldown_; }
 float Weapon::getCurrentCooldown() const { return currentCooldown_; }
+const std::string& Weapon::getName() const { return name_; }
+const std::string& Weapon::getTextureId() const { return textureId_; }

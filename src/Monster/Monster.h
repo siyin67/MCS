@@ -21,7 +21,7 @@ protected:
 public:
     Monster();
     virtual ~Monster() = default;
-
+    
     // 基础更新
     virtual void update(float deltaTime, const sf::Vector2f &playerPos,
                         const std::vector<std::unique_ptr<Monster>> &allMonsters);

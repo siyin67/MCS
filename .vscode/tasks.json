@@ -18,6 +18,8 @@
                 "src/Monster/Zombie.cpp",
                 "src/Resourcemanager/ResourceManager.cpp",
                 "src/Player/player.cpp",
+                "src/UI/UIManager.cpp",
+                "src/Weapon/weapon.cpp",
                 "-I",
                 "src",
                 "-o",

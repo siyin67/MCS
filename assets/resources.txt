@@ -21,12 +21,17 @@ player=assets/images/players/Player_Steve.png
 # ========== 怪物纹理 ==========
 zombie=assets/images/monsters/Zombie.png
 # ========== 武器纹理 ==========
+weapon_iron_sword=assets/images/UI/iron_sword.png
 
 
 # ========== UI 纹理 ==========
 menu_button=assets/images/UI/menu_button.png
 menu_title=assets/images/UI/menu_title.png
 point_arrow=assets/images/UI/point_arrow.png
+heart_full=assets/images/UI/full.png
+heart_half=assets/images/UI/half.png
+heart_empty=assets/images/UI/vehicle_container.png
+hotbar=assets/images/UI/hotbar.png
 # ========== 子弹/特效纹理 ==========
 
 # ========== 字体 ==========

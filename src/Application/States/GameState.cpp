@@ -9,6 +9,7 @@
 #include <cmath>
 #include <algorithm>
 #include "Monster/Zombie.h"
+#include "../../Weapon/weapon.h"
 #include <random>
 
 GameState::GameState() : mapWidth_(312), mapHeight_(312), tileSize_(16), mapSprite_(nullptr)
@@ -31,6 +32,13 @@ GameState::GameState() : mapWidth_(312), mapHeight_(312), tileSize_(16), mapSpri
     // 相机初始化
     camera_.setCenter(player_.getPosition());
     camera_.setSize({1920, 1080});
+
+    // 测试武器
+    auto sword = std::make_unique<Weapon>();
+    sword->setName("Iron Sword");
+    sword->setTextureId("weapon_iron_sword");
+    weapons_.push_back(std::move(sword));
+
     std::cout << "GameState constructor END" << std::endl;
 }
 
@@ -85,6 +93,12 @@ void GameState::update(float deltaTime)
             ++it;
         }
     }
+    // 更新 UI
+    std::vector<Weapon*> weaponPtrs;
+    for (auto& w : weapons_)
+        weaponPtrs.push_back(w.get());
+    uiManager_.update(player_, weaponPtrs);
+
     // 更新相机
     camera_.setCenter(player_.getPosition());
 }
@@ -101,6 +115,10 @@ void GameState::render(sf::RenderWindow &window)
     for (auto &m : monsters_)
         m->render(window);
     player_.render(window);
+
+    // UI（屏幕坐标）
+    window.setView(window.getDefaultView());
+    uiManager_.render(window);
 }
 class PerlinNoise
 {
