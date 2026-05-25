@@ -81,9 +81,6 @@ void GameState::update(float deltaTime)
 {
     // 更新玩家
     player_.update(deltaTime);
-    // 更新攻击方向
-    // player_.updateAttackDirection(*window_);
-    // Spawner 自动管理波次和生成
     spawner_.update(deltaTime, player_.getPosition(), monsters_);
 
     // 更新怪物
@@ -109,7 +106,10 @@ void GameState::update(float deltaTime)
 
     // 处理碰撞结果（玩家受伤、怪物受伤等）
     resolveCollisions(collisionPairs, player_);
-
+    if (!player_.isAlive())
+    {
+        stateManager_->pushState(std::make_unique<GameOverState>());
+    }
     // 清理死亡怪物
     removeDeadMonsters(monsters_);
     // 更新相机
@@ -118,8 +118,8 @@ void GameState::update(float deltaTime)
 
 void GameState::render(sf::RenderWindow &window)
 {
-    player_.updateAttackDirection(window);
     window.setView(camera_);
+    player_.updateAttackDirection(window);
     window.draw(background_);
     if (mapSprite_)
     {
