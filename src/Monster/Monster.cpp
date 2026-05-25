@@ -7,7 +7,9 @@ Monster::Monster()
     : speed_(80.0f), health_(30), maxHealth_(30), damage_(10), expReward_(5), skillCooldown_(0.0f), skillTimer_(0.0f)
 {
     shape_.setSize({64, 64});
-    shape_.setOrigin({0, 0});
+    shape_.setOrigin({32, 32});
+    shape_.setFillColor(sf::Color::White);
+    originalColor_ = shape_.getFillColor(); // 保存原始颜色
     position_ = {0, 0};
     shape_.setPosition(position_);
 }
@@ -82,6 +84,15 @@ void Monster::update(float deltaTime, const sf::Vector2f &playerPos,
     // 4. 移动
     position_ += move * speed_ * deltaTime;
     shape_.setPosition(position_);
+    // 受伤恢复
+    if (hurtTimer_ > 0)
+    {
+        hurtTimer_ -= deltaTime;
+        if (hurtTimer_ <= 0)
+        {
+            shape_.setFillColor(originalColor_);
+        }
+    }
 }
 
 void Monster::render(sf::RenderWindow &window)
@@ -94,7 +105,9 @@ void Monster::takeDamage(int damage)
     health_ -= damage;
     if (health_ < 0)
         health_ = 0;
-    shape_.setFillColor(sf::Color(255, 100, 100));
+    playHitSound();
+    shape_.setFillColor(sf::Color(255, 100, 100)); // 受伤颜色
+    hurtTimer_ = 0.2f;                             // 0.1 秒后恢复
 }
 
 void Monster::onCollideWithPlayer(Player &player, const sf::Vector2f &knockbackDir)

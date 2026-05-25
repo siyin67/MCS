@@ -9,6 +9,7 @@
 #include "../Statemanager.h"
 #include "Collision/Collision.h"
 #include "Collision/CollisionResolver.h"
+#include "Weapon/WeaponFactory.h"
 #include <iostream>
 #include <cmath>
 #include <algorithm>
@@ -19,6 +20,7 @@
 GameState::GameState() : mapWidth_(312), mapHeight_(312), tileSize_(16), mapSprite_(nullptr)
 {
     std::cout << "GameState constructor START" << std::endl;
+    player_.addWeapon(std::move(WeaponFactory::getInstance().create("sword")));
     // 怪物类注册
     spawner_.registerMonster([]()
                              { return std::make_unique<Zombie>(); });
@@ -41,6 +43,7 @@ GameState::GameState() : mapWidth_(312), mapHeight_(312), tileSize_(16), mapSpri
         "assets/bgm/Anthem of the Savannah.mp3",
         "assets/bgm/Lamentation et triomphe.mp3",
         "assets/bgm/To Light the Aeon Dark.mp3"};
+    SoundManager::getInstance().setSFXVolume(5);
     SoundManager::getInstance().setBGMPlaylist(playlist);
     SoundManager::getInstance().playRandomBGM();
     SoundManager::getInstance().setBGMVolume(5);
@@ -81,8 +84,8 @@ void GameState::update(float deltaTime)
 {
     // 更新玩家
     player_.update(deltaTime);
+    player_.updateWeapons(deltaTime, player_.getPosition(), player_.getAttackDirection(), monsters_);
     spawner_.update(deltaTime, player_.getPosition(), monsters_);
-
     // 更新怪物
     for (auto &m : monsters_)
     {

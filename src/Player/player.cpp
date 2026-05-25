@@ -231,3 +231,14 @@ void Player::updateAttackDirection(const sf::RenderWindow &window)
 
     arrow_.setRotation(sf::degrees(angleDegrees));
 }
+void Player::updateWeapons(float deltaTime, const sf::Vector2f &playerPos,
+                           const sf::Vector2f &attackDir,
+                           std::vector<std::unique_ptr<Monster>> &monsters)
+{
+    weaponManager_.update(deltaTime, playerPos, attackDir, monsters);
+}
+
+void Player::addWeapon(std::unique_ptr<Weapon> weapon)
+{
+    weaponManager_.addWeapon(std::move(weapon));
+}

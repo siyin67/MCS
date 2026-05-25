@@ -17,7 +17,8 @@ protected:
     int maxHealth_;
     int damage_;
     int expReward_;
-
+    sf::Color originalColor_; // 原始颜色
+    float hurtTimer_;
     // 技能相关
     float skillCooldown_;
     float skillTimer_;
@@ -25,7 +26,9 @@ protected:
 public:
     Monster();
     virtual ~Monster() = default;
-    
+
+    virtual void playHitSound() = 0;
+    virtual void playDeathSound() = 0;
     // 基础更新
     virtual void update(float deltaTime, const sf::Vector2f &playerPos,
                         const std::vector<std::unique_ptr<Monster>> &allMonsters);

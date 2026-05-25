@@ -1,6 +1,8 @@
 #pragma once
-
 #include <string>
+#include <vector>
+#include <memory>
+#include <SFML/System/Vector2.hpp>
 
 class Monster;
 
@@ -12,6 +14,7 @@ protected:
     int level_;
     float attackCooldown_;
     float currentCooldown_;
+    float range_; // 攻击范围
     std::string name_;
     std::string textureId_;
 
@@ -20,20 +23,27 @@ public:
     virtual ~Weapon() = default;
 
     virtual void update(float deltaTime);
-    virtual void dealDamage(Monster& monster);
+    virtual void attack(const sf::Vector2f &playerPos,
+                        const sf::Vector2f &attackDir,
+                        std::vector<std::unique_ptr<Monster>> &monsters) = 0;
     virtual void levelUp();
 
     bool canAttack() const;
     void resetCooldown();
+    void dealDamage(Monster &monster); // 直接伤害单个怪物
 
-    int getDamage() const;
-    int getBaseDamage() const;
-    int getLevel() const;
-    float getAttackCooldown() const;
-    float getCurrentCooldown() const;
-    const std::string& getName() const;
-    const std::string& getTextureId() const;
+    // Getter
+    int getDamage() const { return damage_; }
+    int getBaseDamage() const { return baseDamage_; }
+    int getLevel() const { return level_; }
+    float getAttackCooldown() const { return attackCooldown_; }
+    float getCurrentCooldown() const { return currentCooldown_; }
+    float getRange() const { return range_; }
+    const std::string &getName() const { return name_; }
+    const std::string &getTextureId() const { return textureId_; }
 
-    void setName(const std::string& name) { name_ = name; }
-    void setTextureId(const std::string& id) { textureId_ = id; }
+    // Setter
+    void setName(const std::string &name) { name_ = name; }
+    void setTextureId(const std::string &id) { textureId_ = id; }
+    void setRange(float range) { range_ = range; }
 };

@@ -1,5 +1,6 @@
 #include "WeaponFactory.h"
-#include "weapon.h"
+#include "SwordWeapon.h"
+#include "Weapon.h"
 
 WeaponFactory::WeaponFactory()
 {
@@ -9,13 +10,15 @@ WeaponFactory::WeaponFactory()
 void WeaponFactory::registerDefaults()
 {
     registerWeapon("sword", []()
-                   { return std::make_unique<Weapon>(); });
+                   { return std::make_unique<SwordWeapon>(); });
 }
+
 void WeaponFactory::registerWeapon(const std::string &id,
                                    std::function<std::unique_ptr<Weapon>()> creator)
 {
     creators_[id] = creator;
 }
+
 WeaponFactory &WeaponFactory::getInstance()
 {
     static WeaponFactory instance;

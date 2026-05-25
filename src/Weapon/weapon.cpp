@@ -1,12 +1,8 @@
-#include "weapon.h"
+#include "Weapon.h"
 #include "../Monster/Monster.h"
 
 Weapon::Weapon()
-    : baseDamage_(10)
-    , damage_(10)
-    , level_(1)
-    , attackCooldown_(0.5f)
-    , currentCooldown_(0.0f)
+    : baseDamage_(10), damage_(10), level_(1), attackCooldown_(0.5f), currentCooldown_(0.0f), range_(50.0f)
 {
 }
 
@@ -20,16 +16,17 @@ void Weapon::update(float deltaTime)
     }
 }
 
-void Weapon::dealDamage(Monster& monster)
+void Weapon::dealDamage(Monster &monster)
 {
     monster.takeDamage(damage_);
-    resetCooldown();
 }
 
 void Weapon::levelUp()
 {
     ++level_;
     damage_ = baseDamage_ * level_;
+    attackCooldown_ = std::max(0.3f, attackCooldown_ - 0.05f);
+    range_ += 10.0f;
 }
 
 bool Weapon::canAttack() const
@@ -41,11 +38,3 @@ void Weapon::resetCooldown()
 {
     currentCooldown_ = attackCooldown_;
 }
-
-int Weapon::getDamage() const { return damage_; }
-int Weapon::getBaseDamage() const { return baseDamage_; }
-int Weapon::getLevel() const { return level_; }
-float Weapon::getAttackCooldown() const { return attackCooldown_; }
-float Weapon::getCurrentCooldown() const { return currentCooldown_; }
-const std::string& Weapon::getName() const { return name_; }
-const std::string& Weapon::getTextureId() const { return textureId_; }

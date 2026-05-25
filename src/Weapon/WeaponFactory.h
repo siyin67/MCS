@@ -4,6 +4,7 @@
 #include <string>
 #include <unordered_map>
 #include <functional>
+#include <vector>
 
 #include "Weapon.h"
 
@@ -20,8 +21,6 @@ public:
     static WeaponFactory &getInstance();
 
     std::unique_ptr<Weapon> create(const std::string &id);
-
     bool hasWeapon(const std::string &id) const;
-
     std::vector<std::string> getAllWeaponIds() const;
 };

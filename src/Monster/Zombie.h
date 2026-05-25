@@ -7,4 +7,6 @@ class Zombie : public Monster
 
 public:
     Zombie();
+    void playHitSound() override;
+    virtual void playDeathSound() override;
 };
