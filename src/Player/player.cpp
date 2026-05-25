@@ -1,10 +1,16 @@
 #include "Player.h"
+#include "Monster/Monster.h"
 #include <cmath>
 #include "Resourcemanager/ResourceManager.h"
+#include "Sound/SoundManager.h"
 #include <iostream>
 
 Player::Player()
-    : speed_(500.0f), health_(20), maxHealth_(20)
+    : speed_(500.0f), health_(20), maxHealth_(20),
+      invincibleTimer_(0.0f), invincibleDuration_(0.2f), isInvincible_(false),
+      knockbackVelocity_(0.0f, 0.0f), knockbackDecay_(10.0f),
+      hurtFlashTimer_(0.0f), hurtFlashInterval_(0.08f), showHurtColor_(false),
+      originalColor_(sf::Color::White)
 {
     std::cout << "Player created" << std::endl;
     shape_.setSize({64, 64});
@@ -67,14 +73,85 @@ void Player::update(float deltaTime)
 
     // 5. 应用位置
     shape_.setPosition(newPos);
+
+    // ---------- 无敌帧倒计时 ----------
+    if (isInvincible_)
+    {
+        invincibleTimer_ -= deltaTime;
+        if (invincibleTimer_ <= 0.0f)
+        {
+            isInvincible_ = false;
+            invincibleTimer_ = 0.0f;
+            showHurtColor_ = false;
+            // 恢复原始颜色
+            if (shape_.getTexture())
+                shape_.setFillColor(sf::Color::White);
+            else
+                shape_.setFillColor(originalColor_);
+        }
+        else
+        {
+            // 受伤闪烁：在红色和原色之间交替
+            hurtFlashTimer_ -= deltaTime;
+            if (hurtFlashTimer_ <= 0.0f)
+            {
+                hurtFlashTimer_ = hurtFlashInterval_;
+                showHurtColor_ = !showHurtColor_;
+                shape_.setFillColor(showHurtColor_ ? sf::Color::Red : sf::Color(255, 200, 200));
+            }
+        }
+    }
+
+    // ---------- 击退衰减 ----------
+    if (knockbackVelocity_.x != 0.0f || knockbackVelocity_.y != 0.0f)
+    {
+        sf::Vector2f currentPos = shape_.getPosition();
+        currentPos += knockbackVelocity_ * deltaTime;
+
+        // 边界限制
+        float actualSize = 64.0f * 0.8f;
+        float halfSize = actualSize / 2.0f;
+        currentPos.x = std::max(halfSize, std::min(currentPos.x, 5000.0f - halfSize));
+        currentPos.y = std::max(halfSize, std::min(currentPos.y, 5000.0f - halfSize));
+
+        shape_.setPosition(currentPos);
+
+        // 指数衰减
+        knockbackVelocity_ *= (1.0f - knockbackDecay_ * deltaTime);
+        if (std::abs(knockbackVelocity_.x) < 1.0f && std::abs(knockbackVelocity_.y) < 1.0f)
+        {
+            knockbackVelocity_ = {0.0f, 0.0f};
+        }
+    }
 }
 
-void Player::takeDamage(int damage)
+void Player::takeDamage(int damage, const sf::Vector2f &knockbackDir)
 {
+    // 无敌帧期间不受伤
+    if (isInvincible_)
+        return;
+
     health_ -= damage;
     if (health_ < 0)
         health_ = 0;
+
+    // 进入无敌状态
+    isInvincible_ = true;
+    invincibleTimer_ = invincibleDuration_;
+    hurtFlashTimer_ = 0.0f; // 立即触发闪烁
+    showHurtColor_ = true;
     shape_.setFillColor(sf::Color::Red);
+
+    // 击退：方向 * 力度
+    float knockbackSpeed = 400.0f;
+    knockbackVelocity_ = knockbackDir * knockbackSpeed;
+    SoundManager::getInstance().playSFX("hit");
+}
+
+void Player::onCollideWithMonster(Monster &monster, const sf::Vector2f &knockbackDir)
+{
+    // 玩家与怪物碰撞：受到怪物伤害 + 击退
+    takeDamage(monster.getDamage(), knockbackDir);
 }
 
 void Player::heal(int amount)
@@ -93,6 +170,22 @@ sf::Vector2f Player::getPosition() const
 sf::FloatRect Player::getBounds() const
 {
     return shape_.getGlobalBounds();
+}
+
+// ICollidable 接口实现
+sf::FloatRect Player::getGlobalBounds() const
+{
+    return shape_.getGlobalBounds();
+}
+
+std::vector<sf::Vector2f> Player::getVertices() const
+{
+    return verticesFromBounds(getGlobalBounds());
+}
+
+CollisionType Player::getType() const
+{
+    return CollisionType::PLAYER;
 }
 
 void Player::render(sf::RenderWindow &window)

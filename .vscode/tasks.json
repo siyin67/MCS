@@ -20,6 +20,8 @@
                 "src/Player/player.cpp",
                 "src/UI/UIManager.cpp",
                 "src/Weapon/weapon.cpp",
+                "src/Sound/SoundManager.cpp",
+                "src/collision/Collision.cpp",
                 "-I",
                 "src",
                 "-o",

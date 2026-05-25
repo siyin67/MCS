@@ -14,6 +14,7 @@ path=assets/images/maps/sand.png
 water=assets/images/maps/water_still.png
 lava=assets/images/maps/lava_still.png
 menu_bg=assets/images/backgrounds/menubackground.png
+upgrade_background=assets/images/backgrounds/upgrade_background.png
 
 # ========== 玩家纹理 ==========
 player=assets/images/players/Player_Steve.png
@@ -21,8 +22,7 @@ player=assets/images/players/Player_Steve.png
 # ========== 怪物纹理 ==========
 zombie=assets/images/monsters/Zombie.png
 # ========== 武器纹理 ==========
-weapon_iron_sword=assets/images/UI/iron_sword.png
-
+iron_sword=assets/images/item/iron_sword.png
 
 # ========== UI 纹理 ==========
 menu_button=assets/images/UI/menu_button.png
@@ -32,10 +32,12 @@ heart_full=assets/images/UI/full.png
 heart_half=assets/images/UI/half.png
 heart_empty=assets/images/UI/vehicle_container.png
 hotbar=assets/images/UI/hotbar.png
+upgradeitem_background=assets/images/UI/upgradeitem_background.png
 # ========== 子弹/特效纹理 ==========
 
 # ========== 字体 ==========
 main_font=assets/fonts/minecraft.ttf
 # ========== 音效 ==========
-
+hit=assets/Sound/hit1.wav
+gameover=assets/Sound/gameover.ogg
 # ========== 背景音乐 ==========

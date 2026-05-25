@@ -2,9 +2,13 @@
 #include "GameState.h"
 #include "MenuState.h"
 #include "PauseState.h"
+#include "UpgradeState.h"
 #include "GameOverState.h"
 #include "Resourcemanager/ResourceManager.h"
+#include "Sound/SoundManager.h"
 #include "../Statemanager.h"
+#include "collision/Collision.h"
+#include "collision/CollisionResolver.h"
 #include <iostream>
 #include <cmath>
 #include <algorithm>
@@ -32,13 +36,14 @@ GameState::GameState() : mapWidth_(312), mapHeight_(312), tileSize_(16), mapSpri
     // 相机初始化
     camera_.setCenter(player_.getPosition());
     camera_.setSize({1920, 1080});
-
-    // 测试武器
-    auto sword = std::make_unique<Weapon>();
-    sword->setName("Iron Sword");
-    sword->setTextureId("weapon_iron_sword");
-    weapons_.push_back(std::move(sword));
-
+    // bgm初始化
+    std::vector<std::string> playlist = {
+        "assets/bgm/Anthem of the Savannah.mp3",
+        "assets/bgm/Lamentation et triomphe.mp3",
+        "assets/bgm/To Light the Aeon Dark.mp3"};
+    SoundManager::getInstance().setBGMPlaylist(playlist);
+    SoundManager::getInstance().playRandomBGM();
+    SoundManager::getInstance().setBGMVolume(5);
     std::cout << "GameState constructor END" << std::endl;
 }
 
@@ -61,7 +66,15 @@ void GameState::handleInput(sf::RenderWindow &window)
         stateManager_->pushState(std::make_unique<GameOverState>());
     }
 
-    wasPressed = escPressed || zeroPressed;
+    // 按数字 9 触发升级界面
+    bool ninePressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num9);
+    if (ninePressed && !wasPressed)
+    {
+        std::cout << "Upgrade triggered by 9 key" << std::endl;
+        stateManager_->pushState(std::make_unique<UpgradeState>(&player_));
+    }
+
+    wasPressed = escPressed || zeroPressed || ninePressed;
 }
 
 void GameState::update(float deltaTime)
@@ -78,20 +91,13 @@ void GameState::update(float deltaTime)
     {
         m->update(deltaTime, player_.getPosition(), monsters_);
     }
-    // 碰撞检测（暂无）
-    // 删除死亡怪物
-    for (auto it = monsters_.begin(); it != monsters_.end();)
+    // 碰撞检测
+    std::vector<ICollidable *> collidables;
+    collidables.push_back(&player_);
+    for (auto &m : monsters_)
     {
-        if (!(*it)->isAlive())
-        {
-            // 掉落经验球等
-            // player_.addExp((*it)->getExpReward());
-            it = monsters_.erase(it);
-        }
-        else
-        {
-            ++it;
-        }
+        if (m->isAlive())
+            collidables.push_back(m.get());
     }
     // 更新 UI
     std::vector<Weapon*> weaponPtrs;
@@ -99,6 +105,13 @@ void GameState::update(float deltaTime)
         weaponPtrs.push_back(w.get());
     uiManager_.update(player_, weaponPtrs);
 
+    auto collisionPairs = detectCollisions(collidables);
+
+    // 处理碰撞结果（玩家受伤、怪物受伤等）
+    resolveCollisions(collisionPairs, player_);
+
+    // 清理死亡怪物
+    removeDeadMonsters(monsters_);
     // 更新相机
     camera_.setCenter(player_.getPosition());
 }
