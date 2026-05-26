@@ -13,7 +13,6 @@
 #include <iostream>
 #include <cmath>
 #include <algorithm>
-#include "Monster/Zombie.h"
 #include "Weapon/weapon.h"
 #include <random>
 
@@ -23,9 +22,6 @@ GameState::GameState() : mapWidth_(312), mapHeight_(312), tileSize_(16), mapSpri
     player_.addWeapon(std::move(WeaponFactory::getInstance().create("sword")));
     player_.addWeapon(std::move(WeaponFactory::getInstance().create("bow")));
 
-    // 怪物类注册
-    spawner_.registerMonster([]()
-                             { return std::make_unique<Zombie>(); });
     // 纹理初始化
     if (ResourceManager::GetInstance().HasTexture("map1"))
     {
