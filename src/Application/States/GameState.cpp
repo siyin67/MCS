@@ -21,6 +21,7 @@ GameState::GameState() : mapWidth_(312), mapHeight_(312), tileSize_(16), mapSpri
 {
     std::cout << "GameState constructor START" << std::endl;
     player_.addWeapon(std::move(WeaponFactory::getInstance().create("sword")));
+
     // 怪物类注册
     spawner_.registerMonster([]()
                              { return std::make_unique<Zombie>(); });
@@ -100,10 +101,7 @@ void GameState::update(float deltaTime)
             collidables.push_back(m.get());
     }
     // 更新 UI
-    std::vector<Weapon *> weaponPtrs;
-    for (auto &w : weapons_)
-        weaponPtrs.push_back(w.get());
-    uiManager_.update(player_, weaponPtrs);
+    uiManager_.update(player_);
 
     auto collisionPairs = detectCollisions(collidables);
 
@@ -131,7 +129,7 @@ void GameState::render(sf::RenderWindow &window)
     for (auto &m : monsters_)
         m->render(window);
     player_.render(window);
-
+    player_.getWeaponManager().render(window, player_.getPosition());
     // UI（屏幕坐标）
     window.setView(window.getDefaultView());
     uiManager_.render(window);

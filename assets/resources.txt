@@ -38,8 +38,9 @@ upgradeitem_background=assets/images/UI/upgradeitem_background.png
 # ========== 字体 ==========
 main_font=assets/fonts/minecraft.ttf
 # ========== 音效 ==========
-hit=assets/Sound/hit1.wav
-zombie_hurt=assets/Sound/zombie_hurt.wav
-zombie_death=assets/Sound/zombie_death.wav
+hit=assets/Sound/mob/player/hit1.wav
+zombie_hurt=assets/Sound/mob/zombie/zombie_hurt.wav
+zombie_death=assets/Sound/mob/zombie/zombie_death.wav
 gameover=assets/Sound/gameover.ogg
+sword_swing=assets/Sound/weapon/sword/sword_hit.wav
 # ========== 背景音乐 ==========

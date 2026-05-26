@@ -1,4 +1,5 @@
 #include "WeaponManager.h"
+#include "SwordWeapon.h"
 
 void WeaponManager::addWeapon(std::unique_ptr<Weapon> weapon)
 {
@@ -24,6 +25,17 @@ void WeaponManager::update(float deltaTime, const sf::Vector2f &playerPos,
     {
         weapon->update(deltaTime);
         weapon->attack(playerPos, attackDir, monsters);
+    }
+}
+void WeaponManager::render(sf::RenderWindow &window, const sf::Vector2f &playerPos) const
+{
+    for (const auto &weapon : weapons_)
+    {
+        // 尝试转换为 SwordWeapon
+        if (auto *sword = dynamic_cast<SwordWeapon *>(weapon.get()))
+        {
+            sword->render(window, playerPos);
+        }
     }
 }
 

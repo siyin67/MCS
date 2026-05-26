@@ -26,7 +26,7 @@ private:
     sf::Text weaponInfoText_;
 
     // 当前持有的武器列表
-    std::vector<Weapon*> weapons_;
+    std::vector<Weapon *> weapons_;
 
     static constexpr int MAX_HEARTS = 10;
     static constexpr float HEART_SPACING = 28.0f;
@@ -35,6 +35,6 @@ private:
 public:
     UIManager();
 
-    void update(const Player& player, const std::vector<Weapon*>& weapons);
-    void render(sf::RenderWindow& window);
+    void update(const Player &player);
+    void render(sf::RenderWindow &window);
 };

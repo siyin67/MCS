@@ -61,6 +61,7 @@ public:
     CollisionType getType() const override;
 
     WeaponManager &getWeaponManager() { return weaponManager_; }
+    const WeaponManager& getWeaponManager() const { return weaponManager_; }
     void addWeapon(std::unique_ptr<Weapon> weapon);
     void updateWeapons(float deltaTime, const sf::Vector2f &playerPos,
                        const sf::Vector2f &attackDir,
