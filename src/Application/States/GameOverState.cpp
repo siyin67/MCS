@@ -32,6 +32,7 @@ GameOverState::GameOverState()
     buttonText_.setCharacterSize(28);
     buttonText_.setFillColor(sf::Color::White);
     SoundManager::getInstance().stopBGM();
+    SoundManager::getInstance().setSFXVolume(20);
     SoundManager::getInstance().playSFX("gameover");
 }
 
