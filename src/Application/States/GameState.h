@@ -6,6 +6,7 @@
 #include "Monster/Spawner.h"
 #include "UI/UIManager.h"
 #include "../../Weapon/weapon.h"
+#include "Projectile/ProjectileManager.h"
 #include <memory>
 
 class GameState : public IState
@@ -17,7 +18,7 @@ private:
     std::vector<std::unique_ptr<Monster>> monsters_;
     Spawner spawner_;
     UIManager uiManager_;
-    std::vector<std::unique_ptr<Weapon>> weapons_;
+    ProjectileManager projectileManager_;
 
     sf::Texture mapTexture_;
     std::unique_ptr<sf::Sprite> mapSprite_; // 改为指针
@@ -36,4 +37,5 @@ public:
     void handleInput(sf::RenderWindow &window) override;
     void update(float deltaTime) override;
     void render(sf::RenderWindow &window) override;
+    void setupWeaponCallbacks();
 };

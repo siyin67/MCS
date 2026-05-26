@@ -3,9 +3,11 @@
 #include <vector>
 #include <memory>
 #include <SFML/System/Vector2.hpp>
+#include <functional>
+#include <Projectile/projectile.h>
 
 class Monster;
-
+class Projectile;
 class Weapon
 {
 protected:
@@ -17,6 +19,7 @@ protected:
     float range_; // 攻击范围
     std::string name_;
     std::string textureId_;
+    std::function<void(std::unique_ptr<Projectile>)> addProjectileCallback_;
 
 public:
     Weapon();
@@ -46,4 +49,20 @@ public:
     void setName(const std::string &name) { name_ = name; }
     void setTextureId(const std::string &id) { textureId_ = id; }
     void setRange(float range) { range_ = range; }
+
+    void setAddProjectileCallback(std::function<void(std::unique_ptr<Projectile>)> callback)
+    {
+        addProjectileCallback_ = callback;
+    }
+    bool hasCallback() const { return addProjectileCallback_ != nullptr; }
+
+protected:
+    // 新增：发射投射物的辅助方法
+    void addProjectile(std::unique_ptr<Projectile> projectile)
+    {
+        if (addProjectileCallback_)
+        {
+            addProjectileCallback_(std::move(projectile));
+        }
+    }
 };

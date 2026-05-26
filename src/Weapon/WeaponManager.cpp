@@ -1,5 +1,6 @@
 #include "WeaponManager.h"
 #include "SwordWeapon.h"
+#include "BowWeapon.h"
 
 void WeaponManager::addWeapon(std::unique_ptr<Weapon> weapon)
 {

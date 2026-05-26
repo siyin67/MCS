@@ -23,6 +23,7 @@ player=assets/images/players/Player_Steve.png
 zombie=assets/images/monsters/Zombie.png
 # ========== 武器纹理 ==========
 iron_sword=assets/images/item/iron_sword.png
+bow=assets/images/item/bow.png
 
 # ========== UI 纹理 ==========
 menu_button=assets/images/UI/menu_button.png
@@ -34,7 +35,7 @@ heart_empty=assets/images/UI/vehicle_container.png
 hotbar=assets/images/UI/hotbar.png
 upgradeitem_background=assets/images/UI/upgradeitem_background.png
 # ========== 子弹/特效纹理 ==========
-
+arrow=assets/images/item/arrow.png
 # ========== 字体 ==========
 main_font=assets/fonts/minecraft.ttf
 # ========== 音效 ==========
@@ -43,4 +44,5 @@ zombie_hurt=assets/Sound/mob/zombie/zombie_hurt.wav
 zombie_death=assets/Sound/mob/zombie/zombie_death.wav
 gameover=assets/Sound/gameover.ogg
 sword_swing=assets/Sound/weapon/sword/sword_hit.wav
+bow_shoot=assets/Sound/weapon/bow/bow.wav
 # ========== 背景音乐 ==========

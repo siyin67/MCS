@@ -1,0 +1,40 @@
+#pragma once
+#include <SFML/Graphics.hpp>
+#include <vector>
+#include <memory>
+#include "Projectile.h"
+
+class ProjectileManager
+{
+private:
+    std::vector<std::unique_ptr<Projectile>> projectiles_;
+
+public:
+    ProjectileManager() = default;
+    ~ProjectileManager() = default;
+    
+    // 禁止拷贝
+    ProjectileManager(const ProjectileManager&) = delete;
+    ProjectileManager& operator=(const ProjectileManager&) = delete;
+    
+    // 添加投射物
+    void add(std::unique_ptr<Projectile> projectile);
+    
+    // 更新所有投射物
+    void update(float deltaTime);
+    
+    // 渲染所有投射物
+    void render(sf::RenderWindow& window);
+    
+    // 碰撞检测（对怪物列表）
+    void checkCollisions(std::vector<std::unique_ptr<Monster>>& monsters);
+    
+    // 清理死亡的投射物
+    void removeDead();
+    
+    // 获取投射物列表（用于其他碰撞）
+    std::vector<std::unique_ptr<Projectile>>& getAll();
+    
+    // 清空
+    void clear();
+};

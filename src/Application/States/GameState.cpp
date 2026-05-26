@@ -21,6 +21,7 @@ GameState::GameState() : mapWidth_(312), mapHeight_(312), tileSize_(16), mapSpri
 {
     std::cout << "GameState constructor START" << std::endl;
     player_.addWeapon(std::move(WeaponFactory::getInstance().create("sword")));
+    player_.addWeapon(std::move(WeaponFactory::getInstance().create("bow")));
 
     // 怪物类注册
     spawner_.registerMonster([]()
@@ -50,7 +51,19 @@ GameState::GameState() : mapWidth_(312), mapHeight_(312), tileSize_(16), mapSpri
     SoundManager::getInstance().setBGMVolume(5);
     std::cout << "GameState constructor END" << std::endl;
 }
+void GameState::setupWeaponCallbacks()
+{
+    auto callback = [this](std::unique_ptr<Projectile> projectile)
+    {
+        projectileManager_.add(std::move(projectile));
+    };
 
+    // 为所有武器设置回调（不需要判断类型）
+    for (auto &weapon : player_.getWeaponManager().getWeapons())
+    {
+        weapon->setAddProjectileCallback(callback);
+    }
+}
 void GameState::handleInput(sf::RenderWindow &window)
 {
     static bool wasPressed = false;
@@ -83,6 +96,14 @@ void GameState::handleInput(sf::RenderWindow &window)
 
 void GameState::update(float deltaTime)
 {
+    for (auto &weapon : player_.getWeaponManager().getWeapons())
+    {
+        if (!weapon->hasCallback())
+        {
+            weapon->setAddProjectileCallback([this](auto p)
+                                             { projectileManager_.add(std::move(p)); });
+        }
+    }
     // 更新玩家
     player_.update(deltaTime);
     player_.updateWeapons(deltaTime, player_.getPosition(), player_.getAttackDirection(), monsters_);
@@ -92,6 +113,8 @@ void GameState::update(float deltaTime)
     {
         m->update(deltaTime, player_.getPosition(), monsters_);
     }
+    // 更新投掷物
+    projectileManager_.update(deltaTime);
     // 碰撞检测
     std::vector<ICollidable *> collidables;
     collidables.push_back(&player_);
@@ -100,6 +123,8 @@ void GameState::update(float deltaTime)
         if (m->isAlive())
             collidables.push_back(m.get());
     }
+    projectileManager_.checkCollisions(monsters_);
+    projectileManager_.removeDead();
     // 更新 UI
     uiManager_.update(player_);
 
@@ -128,12 +153,14 @@ void GameState::render(sf::RenderWindow &window)
     }
     for (auto &m : monsters_)
         m->render(window);
+    projectileManager_.render(window);
     player_.render(window);
     player_.getWeaponManager().render(window, player_.getPosition());
     // UI（屏幕坐标）
     window.setView(window.getDefaultView());
     uiManager_.render(window);
 }
+
 class PerlinNoise
 {
 private:
