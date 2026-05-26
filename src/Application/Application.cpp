@@ -3,14 +3,11 @@
 #include "States/MenuState.h"
 #include "States/GameState.h"
 
-
-
- 
 Application::Application()
-    : isRunning_(true)  
+    : isRunning_(true)
 {
     ResourceManager::GetInstance().LoadFromFile("assets/resources.txt");
-    window_.create(sf::VideoMode({1280, 720}), "SFML works!"); 
+    window_.create(sf::VideoMode({1280, 720}), "MinecraftSurvivor");
     window_.setMaximumSize(sf::Vector2u(2560, 1440));
     window_.setMinimumSize(sf::Vector2u(1280, 720));
     window_.setFramerateLimit(60);
