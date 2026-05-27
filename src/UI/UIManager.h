@@ -9,32 +9,30 @@ class Weapon;
 class UIManager
 {
 private:
-    // 红心
-    int fullHearts_ = 10;
-    int halfHearts_ = 0;
-    int emptyHearts_ = 0;
+	int fullHearts_ = 10;
+	int halfHearts_ = 0;
+	int emptyHearts_ = 0;
 
-    // 物品栏
-    std::unique_ptr<sf::Sprite> hotbarSprite_;
-    float slotWidth_ = 0.0f;
-    float slotHeight_ = 0.0f;
+	std::unique_ptr<sf::Sprite> hotbarSprite_;
+	float slotWidth_ = 0.0f;
+	float slotHeight_ = 0.0f;
 
-    // 字体
-    sf::Font font_;
+	sf::Font font_;
 
-    // 武器信息文字
-    sf::Text weaponInfoText_;
+	// 游戏时间
+	float gameTime_;
+	sf::Text gameTimeText_;
 
-    // 当前持有的武器列表
-    std::vector<Weapon *> weapons_;
+	// 当前持有的武器列表
+	std::vector<Weapon *> weapons_;
 
-    static constexpr int MAX_HEARTS = 10;
-    static constexpr float HEART_SPACING = 28.0f;
-    static constexpr int HOTBAR_SLOTS = 9;
+	static constexpr int MAX_HEARTS = 10;
+	static constexpr float HEART_SPACING = 28.0f;
+	static constexpr int HOTBAR_SLOTS = 9;
 
 public:
-    UIManager();
+	UIManager();
 
-    void update(const Player &player);
-    void render(sf::RenderWindow &window);
+	void update(const Player &player, float deltaTime);
+	void render(sf::RenderWindow &window);
 };

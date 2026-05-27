@@ -124,7 +124,7 @@ void GameState::update(float deltaTime)
     projectileManager_.checkCollisions(monsters_);
     projectileManager_.removeDead();
     // 更新 UI
-    uiManager_.update(player_);
+    uiManager_.update(player_, deltaTime);
 
     auto collisionPairs = detectCollisions(collidables);
 
