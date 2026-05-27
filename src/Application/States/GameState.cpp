@@ -22,7 +22,6 @@ GameState::GameState() : mapWidth_(312), mapHeight_(312), tileSize_(16), mapSpri
 {
     std::cout << "GameState constructor START" << std::endl;
     player_.addWeapon(std::move(WeaponFactory::getInstance().create("sword")));
-    player_.addWeapon(std::move(WeaponFactory::getInstance().create("tnt")));
 
     // ClockWeapon needs WeaponManager pointer
     for (auto &w : player_.getWeaponManager().getWeapons())

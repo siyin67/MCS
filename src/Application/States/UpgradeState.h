@@ -47,4 +47,5 @@ private:
 	void generateOptions();
 	void applyOption(int index);
 	void skip();
+	void updateLayout(sf::Vector2u winSize);
 };

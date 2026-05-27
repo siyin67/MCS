@@ -124,7 +124,6 @@ void UpgradeState::generateOptions()
 	int weaponCount = (int)weapons.size();
 	if (weaponCount < 3)
 	{
-		// 优先新武器，不够再用升级补
 		std::vector<UpgradeOption> newOpts, upgOpts;
 		for (auto &opt : pool)
 		{
@@ -146,7 +145,6 @@ void UpgradeState::generateOptions()
 			if (options_.size() >= 3) break;
 			options_.push_back(opt);
 		}
-		// 仍然不足3个（极端情况），补空选项
 		while (options_.size() < 3 && !newOpts.empty())
 		{
 			options_.push_back(newOpts[options_.size() % newOpts.size()]);
@@ -154,7 +152,6 @@ void UpgradeState::generateOptions()
 	}
 	else
 	{
-		// 武器>=3，混合池随机选3个
 		std::shuffle(pool.begin(), pool.end(), rng);
 		for (int i = 0; i < 3 && i < (int)pool.size(); i++)
 			options_.push_back(pool[i]);
@@ -163,28 +160,45 @@ void UpgradeState::generateOptions()
 	std::cout << "Generated " << options_.size() << " upgrade options" << std::endl;
 }
 
+void UpgradeState::updateLayout(sf::Vector2u winSize)
+{
+	float cx = winSize.x / 2.0f;
+	float cy = winSize.y / 2.0f;
+
+	bg_.setSize({static_cast<float>(winSize.x), static_cast<float>(winSize.y)});
+
+	float panelW = 1000;
+	float panelH = 700;
+	panelBg_.setSize({panelW, panelH});
+	panelBg_.setPosition({cx - panelW / 2, cy - panelH / 2});
+
+	titleText_.setPosition({cx - titleText_.getLocalBounds().size.x / 2, cy - 300});
+}
+
 void UpgradeState::handleInput(sf::RenderWindow &window)
 {
+	sf::Vector2u winSize = window.getSize();
+	window.setView(sf::View(sf::Vector2f(winSize.x / 2.f, winSize.y / 2.f), sf::Vector2f(winSize)));
+	updateLayout(winSize);
+
 	static bool wasPressed = false;
 
 	sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-	float mouseX = static_cast<float>(mousePos.x);
-	float mouseY = static_cast<float>(mousePos.y);
+	sf::Vector2f mouseCoords = window.mapPixelToCoords(mousePos);
 
-	sf::Vector2u windowSize = window.getSize();
-	float centerX = windowSize.x / 2.0f;
+	float centerX = winSize.x / 2.0f;
 	float buttonWidth = 280;
 	float buttonHeight = 320;
 	float spacing = 30;
 	float startX = centerX - (buttonWidth * 3 + spacing * 2) / 2;
-	float buttonY = windowSize.y / 2.0f - buttonHeight / 2 + 30;
+	float buttonY = winSize.y / 2.0f - buttonHeight / 2 + 30;
 
 	for (int i = 0; i < (int)options_.size(); i++)
 	{
 		float buttonX = startX + i * (buttonWidth + spacing);
 		sf::FloatRect buttonRect({buttonX, buttonY}, {buttonWidth, buttonHeight});
 
-		if (buttonRect.contains({mouseX, mouseY}))
+		if (buttonRect.contains(mouseCoords))
 		{
 			selectedIndex_ = i;
 			if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && !wasPressed)
@@ -258,31 +272,17 @@ void UpgradeState::update(float deltaTime)
 
 void UpgradeState::render(sf::RenderWindow &window)
 {
-	window.setView(window.getDefaultView());
+	sf::Vector2u winSize = window.getSize();
+	window.setView(sf::View(sf::Vector2f(winSize.x / 2.f, winSize.y / 2.f), sf::Vector2f(winSize)));
+	updateLayout(winSize);
 
-	sf::Vector2u windowSize = window.getSize();
-	float centerX = windowSize.x / 2.0f;
-	float centerY = windowSize.y / 2.0f;
+	float centerX = winSize.x / 2.0f;
+	float centerY = winSize.y / 2.0f;
 
-	// 半透明遮罩
-	bg_.setSize({static_cast<float>(windowSize.x), static_cast<float>(windowSize.y)});
 	window.draw(bg_);
-
-	// 升级界面背景面板
-	float panelW = 1000;
-	float panelH = 700;
-	float panelX = centerX - panelW / 2;
-	float panelY = centerY - panelH / 2;
-	panelBg_.setSize({panelW, panelH});
-	panelBg_.setPosition({panelX, panelY});
 	window.draw(panelBg_);
-
-	// 标题
-	sf::FloatRect titleBounds = titleText_.getLocalBounds();
-	titleText_.setPosition({centerX - titleBounds.size.x / 2, centerY - 300});
 	window.draw(titleText_);
 
-	// 三个按钮区域
 	float buttonWidth = 280;
 	float buttonHeight = 320;
 	float spacing = 30;
@@ -294,7 +294,6 @@ void UpgradeState::render(sf::RenderWindow &window)
 		auto &opt = options_[i];
 		float buttonX = startX + i * (buttonWidth + spacing);
 
-		// 图标框（96x96）
 		float frameSize = 96;
 		float frameX = buttonX + (buttonWidth - frameSize) / 2;
 		float frameY = buttonY + 25;
@@ -302,7 +301,6 @@ void UpgradeState::render(sf::RenderWindow &window)
 		iconFrame_.setPosition({frameX, frameY});
 		window.draw(iconFrame_);
 
-		// 武器图标（80x80）
 		float iconSize = 80;
 		float iconX = frameX + (frameSize - iconSize) / 2;
 		float iconY = frameY + (frameSize - iconSize) / 2;
@@ -314,7 +312,6 @@ void UpgradeState::render(sf::RenderWindow &window)
 		}
 		window.draw(icon_);
 
-		// 类型标签（NEW 或 UPGRADE）
 		sf::Text typeText(font_);
 		typeText.setString(opt.type == UpgradeOption::NEW_WEAPON ? "NEW" : "UPGRADE");
 		typeText.setCharacterSize(14);
@@ -325,7 +322,6 @@ void UpgradeState::render(sf::RenderWindow &window)
 		typeText.setPosition({buttonX + buttonWidth / 2 - typeBounds.size.x / 2, buttonY + 5});
 		window.draw(typeText);
 
-		// 武器名称
 		sf::Text nameText(font_);
 		nameText.setString(opt.displayName);
 		nameText.setCharacterSize(22);
@@ -334,7 +330,6 @@ void UpgradeState::render(sf::RenderWindow &window)
 		nameText.setPosition({buttonX + buttonWidth / 2 - nameBounds.size.x / 2, buttonY + 145});
 		window.draw(nameText);
 
-		// 武器描述
 		sf::Text descText(font_);
 		descText.setString(opt.description);
 		descText.setCharacterSize(16);
@@ -343,7 +338,6 @@ void UpgradeState::render(sf::RenderWindow &window)
 		descText.setPosition({buttonX + buttonWidth / 2 - descBounds.size.x / 2, buttonY + 185});
 		window.draw(descText);
 
-		// 等级属性文字
 		sf::Text attrText(font_);
 		if (opt.type == UpgradeOption::UPGRADE_EXISTING)
 		{
@@ -363,7 +357,6 @@ void UpgradeState::render(sf::RenderWindow &window)
 		attrText.setPosition({buttonX + buttonWidth / 2 - attrBounds.size.x / 2, buttonY + 215});
 		window.draw(attrText);
 
-		// 边框高亮
 		sf::RectangleShape outline;
 		outline.setSize({buttonWidth, buttonHeight});
 		outline.setPosition({buttonX, buttonY});

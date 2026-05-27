@@ -8,126 +8,131 @@
 MenuState::MenuState() : font_("assets/fonts/minecraft.ttf"), text_start_(font_), text_exit_(font_)
 
 {
-    if (ResourceManager::GetInstance().HasTexture("menu_button"))
-    {
-        sf::Texture &bgTex = ResourceManager::GetInstance().GetTexture("menu_button");
-        start_button_.setTexture(&bgTex);
-        exit_button_.setTexture(&bgTex);
-    }
-    if (ResourceManager::GetInstance().HasTexture("menu_title"))
-    {
-        sf::Texture &bgTex = ResourceManager::GetInstance().GetTexture("menu_title");
-        title_.setTexture(&bgTex);
-    }
-    if (ResourceManager::GetInstance().HasTexture("menu_bg"))
-    {
-        sf::Texture &bgTex = ResourceManager::GetInstance().GetTexture("menu_bg");
-        background_.setTexture(&bgTex);
-    }
-    else
-    {
-        std::cout << "Warning: menu_bg texture not found in resource manager" << std::endl;
-        // 可选：设置一个默认颜色
-        background_.setFillColor(sf::Color(50, 50, 100));
-    }
-    text_start_.setString("Start Game");
-    text_exit_.setString("Exit Game");
-    start_button_.setSize({400, 50});
-    exit_button_.setSize({400, 50});
-    title_.setSize({700, 250});
+	if (ResourceManager::GetInstance().HasTexture("menu_button"))
+	{
+		sf::Texture &bgTex = ResourceManager::GetInstance().GetTexture("menu_button");
+		start_button_.setTexture(&bgTex);
+		exit_button_.setTexture(&bgTex);
+	}
+	if (ResourceManager::GetInstance().HasTexture("menu_title"))
+	{
+		sf::Texture &bgTex = ResourceManager::GetInstance().GetTexture("menu_title");
+		title_.setTexture(&bgTex);
+	}
+	if (ResourceManager::GetInstance().HasTexture("menu_bg"))
+	{
+		sf::Texture &bgTex = ResourceManager::GetInstance().GetTexture("menu_bg");
+		background_.setTexture(&bgTex);
+	}
+	else
+	{
+		std::cout << "Warning: menu_bg texture not found in resource manager" << std::endl;
+		background_.setFillColor(sf::Color(50, 50, 100));
+	}
+	text_start_.setString("Start Game");
+	text_exit_.setString("Exit Game");
+	start_button_.setSize({400, 50});
+	exit_button_.setSize({400, 50});
+	title_.setSize({700, 250});
 
-    text_start_.setCharacterSize(20);
-    text_exit_.setCharacterSize(20);
-    text_start_.setFillColor(sf::Color::White);
-    text_exit_.setFillColor(sf::Color::White);
-    background_.setSize({1280, 720});
-    background_.setPosition({0, 0});
-    // 首页bgm播放
-    //  设置 BGM 播放列表并随机播放
-    std::vector<std::string> playlist = {
-        "assets/bgm/13 Wet Hands.mp3",
-        "assets/bgm/18 Sweden.mp3",
-        "assets/bgm/03 Subwoofer Lullaby.mp3"};
-    SoundManager::getInstance().setBGMPlaylist(playlist);
-    SoundManager::getInstance().playRandomBGM();
-    SoundManager::getInstance().setBGMVolume(20);
+	text_start_.setCharacterSize(20);
+	text_exit_.setCharacterSize(20);
+	text_start_.setFillColor(sf::Color::White);
+	text_exit_.setFillColor(sf::Color::White);
+
+	// 首页bgm播放
+	std::vector<std::string> playlist = {
+		"assets/bgm/13 Wet Hands.mp3",
+		"assets/bgm/18 Sweden.mp3",
+		"assets/bgm/03 Subwoofer Lullaby.mp3"};
+	SoundManager::getInstance().setBGMPlaylist(playlist);
+	SoundManager::getInstance().playRandomBGM();
+	SoundManager::getInstance().setBGMVolume(20);
+}
+
+void MenuState::updateLayout(sf::Vector2u winSize)
+{
+	float cx = winSize.x / 2.0f;
+	float cy = winSize.y / 2.0f;
+
+	background_.setSize(sf::Vector2f(winSize.x, winSize.y));
+	background_.setPosition({0, 0});
+
+	start_button_.setPosition({cx - 200, cy + 50});
+	exit_button_.setPosition({cx - 200, cy + 120});
+	title_.setPosition({cx - 350, winSize.y * 0.20f - 70});
+
+	text_start_.setPosition({cx - text_start_.getLocalBounds().size.x / 2,
+							 cy + 50 + 25 - text_start_.getLocalBounds().size.y / 2});
+	text_exit_.setPosition({cx - text_exit_.getLocalBounds().size.x / 2,
+							cy + 120 + 25 - text_exit_.getLocalBounds().size.y / 2});
 }
 
 void MenuState::handleInput(sf::RenderWindow &window)
 {
-    static bool wasPressed = false;
+	sf::Vector2u winSize = window.getSize();
+	window.setView(sf::View(sf::Vector2f(winSize.x / 2.f, winSize.y / 2.f), sf::Vector2f(winSize)));
+	updateLayout(winSize);
 
-    // 获取鼠标位置
-    sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-    float mouseX = static_cast<float>(mousePos.x);
-    float mouseY = static_cast<float>(mousePos.y);
+	static bool wasPressed = false;
 
-    bool leftPressed = sf::Mouse::isButtonPressed(sf::Mouse::Button::Left);
+	sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+	sf::Vector2f mouseCoords = window.mapPixelToCoords(mousePos);
 
-    // 检查鼠标是否在开始按钮上
-    if (start_button_.getGlobalBounds().contains({mouseX, mouseY}))
-    {
-        start_button_.setOutlineThickness(3);
-        start_button_.setOutlineColor(sf::Color::White);
+	bool leftPressed = sf::Mouse::isButtonPressed(sf::Mouse::Button::Left);
 
-        // 按下时触发
-        if (leftPressed && !wasPressed)
-        {
-            std::cout << "Start Game" << std::endl;
+	if (start_button_.getGlobalBounds().contains(mouseCoords))
+	{
+		start_button_.setOutlineThickness(3);
+		start_button_.setOutlineColor(sf::Color::White);
 
-            stateManager_->changeState(std::make_unique<GameState>());
+		if (leftPressed && !wasPressed)
+		{
+			std::cout << "Start Game" << std::endl;
+			stateManager_->changeState(std::make_unique<GameState>());
+			sf::sleep(sf::milliseconds(100));
+			return;
+		}
+	}
+	else
+	{
+		start_button_.setOutlineThickness(0);
+	}
 
-            // 添加短暂延迟，防止切换后鼠标弹起触发新界面
-            sf::sleep(sf::milliseconds(100));
-            return;
-        }
-    }
-    else
-    {
-        start_button_.setOutlineThickness(0);
-    }
+	if (exit_button_.getGlobalBounds().contains(mouseCoords))
+	{
+		exit_button_.setOutlineThickness(3);
+		exit_button_.setOutlineColor(sf::Color::White);
 
-    // 检查鼠标是否在退出按钮上
-    if (exit_button_.getGlobalBounds().contains({mouseX, mouseY}))
-    {
-        exit_button_.setOutlineThickness(3);
-        exit_button_.setOutlineColor(sf::Color::White);
+		if (leftPressed && !wasPressed)
+		{
+			std::cout << "Exit Game" << std::endl;
+			exit(0);
+		}
+	}
+	else
+	{
+		exit_button_.setOutlineThickness(0);
+	}
 
-        if (leftPressed && !wasPressed)
-        {
-            std::cout << "Exit Game" << std::endl;
-            exit(0);
-        }
-    }
-    else
-    {
-        exit_button_.setOutlineThickness(0);
-    }
-
-    wasPressed = leftPressed;
+	wasPressed = leftPressed;
 }
+
 void MenuState::update(float deltaTime)
 {
-    (void)deltaTime;
+	(void)deltaTime;
 }
 
 void MenuState::render(sf::RenderWindow &window)
 {
-    window.setView(window.getDefaultView());
-    sf::Vector2u windowSize = window.getSize();
-    background_.setSize(sf::Vector2f(windowSize.x, windowSize.y));
-    // 设置文字和按钮位置文字分别是开始游戏和退出游戏位于两个按钮正中央两个按钮中间适当间隔排列在整个窗口中部偏离中线一点
-    text_start_.setPosition({windowSize.x / 2 - text_start_.getGlobalBounds().size.x / 2, windowSize.y / 2 - text_start_.getGlobalBounds().size.y / 2 + 50});
-    text_exit_.setPosition({windowSize.x / 2 - text_exit_.getGlobalBounds().size.x / 2, windowSize.y / 2 - text_exit_.getGlobalBounds().size.y / 2 + 120});
-    start_button_.setPosition({windowSize.x / 2 - start_button_.getGlobalBounds().size.x / 2, windowSize.y / 2 - start_button_.getGlobalBounds().size.y / 2 + 50});
-    exit_button_.setPosition({windowSize.x / 2 - exit_button_.getGlobalBounds().size.x / 2, windowSize.y / 2 - exit_button_.getGlobalBounds().size.y / 2 + 120});
-    title_.setPosition({windowSize.x / 2 - title_.getGlobalBounds().size.x / 2, windowSize.y / 2 - title_.getGlobalBounds().size.y / 2 - 150});
-    window.draw(background_);
-    window.draw(start_button_);
-    window.draw(exit_button_);
-    window.draw(title_);
-    window.draw(text_start_);
-    window.draw(text_exit_);
+	sf::Vector2u winSize = window.getSize();
+	window.setView(sf::View(sf::Vector2f(winSize.x / 2.f, winSize.y / 2.f), sf::Vector2f(winSize)));
+	updateLayout(winSize);
 
-    // window.draw(button_);
+	window.draw(background_);
+	window.draw(start_button_);
+	window.draw(exit_button_);
+	window.draw(title_);
+	window.draw(text_start_);
+	window.draw(text_exit_);
 }
