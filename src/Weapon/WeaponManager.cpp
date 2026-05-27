@@ -1,6 +1,7 @@
 #include "WeaponManager.h"
 #include "SwordWeapon.h"
 #include "BowWeapon.h"
+#include "ShieldWeapon.h"
 
 void WeaponManager::addWeapon(std::unique_ptr<Weapon> weapon)
 {
@@ -32,14 +33,27 @@ void WeaponManager::render(sf::RenderWindow &window, const sf::Vector2f &playerP
 {
     for (const auto &weapon : weapons_)
     {
-        // 尝试转换为 SwordWeapon
         if (auto *sword = dynamic_cast<SwordWeapon *>(weapon.get()))
         {
             sword->render(window, playerPos);
         }
+        if (auto *shield = dynamic_cast<ShieldWeapon *>(weapon.get()))
+        {
+            shield->render(window, playerPos);
+        }
     }
 }
-
+void WeaponManager::updateShields(float deltaTime, const sf::Vector2f &playerPos,
+                                  std::vector<std::unique_ptr<Monster>> &monsters)
+{
+    for (auto &weapon : weapons_)
+    {
+        if (auto *shield = dynamic_cast<ShieldWeapon *>(weapon.get()))
+        {
+            shield->updateShields(deltaTime, playerPos, monsters);
+        }
+    }
+}
 void WeaponManager::clear()
 {
     weapons_.clear();

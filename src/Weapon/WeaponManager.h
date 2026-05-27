@@ -17,7 +17,8 @@ public:
                 const sf::Vector2f &attackDir,
                 std::vector<std::unique_ptr<Monster>> &monsters);
     void render(sf::RenderWindow &window, const sf::Vector2f &playerPos) const; // 新增
-
+    void updateShields(float deltaTime, const sf::Vector2f &playerPos,
+                       std::vector<std::unique_ptr<Monster>> &monsters);
     std::vector<std::unique_ptr<Weapon>> &getWeapons() { return weapons_; }
     const std::vector<std::unique_ptr<Weapon>> &getWeapons() const { return weapons_; }
     int getWeaponCount() const { return weapons_.size(); }

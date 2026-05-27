@@ -21,6 +21,7 @@ GameState::GameState() : mapWidth_(312), mapHeight_(312), tileSize_(16), mapSpri
     std::cout << "GameState constructor START" << std::endl;
     player_.addWeapon(std::move(WeaponFactory::getInstance().create("sword")));
     player_.addWeapon(std::move(WeaponFactory::getInstance().create("bow")));
+    player_.addWeapon(std::move(WeaponFactory::getInstance().create("shield")));
 
     // 纹理初始化
     if (ResourceManager::GetInstance().HasTexture("map1"))
@@ -103,6 +104,7 @@ void GameState::update(float deltaTime)
     // 更新玩家
     player_.update(deltaTime);
     player_.updateWeapons(deltaTime, player_.getPosition(), player_.getAttackDirection(), monsters_);
+    player_.getWeaponManager().updateShields(deltaTime, player_.getPosition(), monsters_);
     spawner_.update(deltaTime, player_.getPosition(), monsters_);
     // 更新怪物
     for (auto &m : monsters_)

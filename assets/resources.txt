@@ -24,7 +24,7 @@ zombie=assets/images/monsters/Zombie.png
 # ========== 武器纹理 ==========
 iron_sword=assets/images/item/iron_sword.png
 bow=assets/images/item/bow.png
-shield=assets/images/Sound/weapon/shield.png
+shield=assets/images/item/shield.png
 
 # ========== UI 纹理 ==========
 menu_button=assets/images/UI/menu_button.png
