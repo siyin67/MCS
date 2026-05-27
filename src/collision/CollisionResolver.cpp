@@ -78,7 +78,6 @@ int removeDeadMonsters(std::vector<std::unique_ptr<Monster>> &monsters)
         {
             (*it)->playDeathSound();
             // 预留：掉落经验球等
-            // player.addExp((*it)->getExpReward());
             it = monsters.erase(it);
             ++removed;
         }
