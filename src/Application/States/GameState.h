@@ -7,6 +7,7 @@
 #include "UI/UIManager.h"
 #include "../../Weapon/weapon.h"
 #include "Projectile/ProjectileManager.h"
+#include "Item/DropItemManager.h"
 #include <memory>
 
 class GameState : public IState
@@ -19,6 +20,7 @@ private:
     Spawner spawner_;
     UIManager uiManager_;
     ProjectileManager projectileManager_;
+    DropItemManager dropItemManager_;
 
     sf::Texture mapTexture_;
     std::unique_ptr<sf::Sprite> mapSprite_; // 改为指针

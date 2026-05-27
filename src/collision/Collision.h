@@ -12,7 +12,8 @@ enum class CollisionType
 {
     PLAYER,
     MONSTER,
-    BULLET
+    BULLET,
+    DROPITEM
 };
 
 // ============================================================================

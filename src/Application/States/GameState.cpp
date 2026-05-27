@@ -14,6 +14,7 @@
 #include <cmath>
 #include <algorithm>
 #include "Weapon/weapon.h"
+#include "Item/XpOrb.h"
 #include <random>
 
 GameState::GameState() : mapWidth_(312), mapHeight_(312), tileSize_(16), mapSprite_(nullptr)
@@ -22,6 +23,7 @@ GameState::GameState() : mapWidth_(312), mapHeight_(312), tileSize_(16), mapSpri
     player_.addWeapon(std::move(WeaponFactory::getInstance().create("sword")));
     player_.addWeapon(std::move(WeaponFactory::getInstance().create("bow")));
     player_.addWeapon(std::move(WeaponFactory::getInstance().create("shield")));
+    player_.addWeapon(std::move(WeaponFactory::getInstance().create("tnt")));
 
     // 纹理初始化
     if (ResourceManager::GetInstance().HasTexture("map1"))
@@ -113,6 +115,8 @@ void GameState::update(float deltaTime)
     }
     // 更新投掷物
     projectileManager_.update(deltaTime);
+    projectileManager_.updateTracking(player_.getPosition());
+    projectileManager_.checkAreaDamage(monsters_);
     // 碰撞检测
     std::vector<ICollidable *> collidables;
     collidables.push_back(&player_);
@@ -123,6 +127,11 @@ void GameState::update(float deltaTime)
     }
     projectileManager_.checkCollisions(monsters_);
     projectileManager_.removeDead();
+    // 更新掉落物
+    dropItemManager_.update(deltaTime, player_.getPosition());
+    dropItemManager_.checkPlayerCollision(player_);
+    dropItemManager_.removeDead();
+
     // 更新 UI
     uiManager_.update(player_, deltaTime);
 
@@ -134,8 +143,9 @@ void GameState::update(float deltaTime)
     {
         stateManager_->pushState(std::make_unique<GameOverState>());
     }
-    // 清理死亡怪物
-    removeDeadMonsters(monsters_);
+    // 清理死亡怪物（回调生成经验球）
+    removeDeadMonsters(monsters_, [this](sf::Vector2f pos, int xp)
+                       { dropItemManager_.add(std::make_unique<XpOrb>(pos, xp)); });
     // 更新相机
     camera_.setCenter(player_.getPosition());
 }
@@ -154,6 +164,7 @@ void GameState::render(sf::RenderWindow &window)
     projectileManager_.render(window);
     player_.render(window);
     player_.getWeaponManager().render(window, player_.getPosition());
+    dropItemManager_.render(window);
     // UI（屏幕坐标）
     window.setView(window.getDefaultView());
     uiManager_.render(window);

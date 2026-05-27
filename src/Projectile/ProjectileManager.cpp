@@ -48,6 +48,26 @@ void ProjectileManager::checkCollisions(std::vector<std::unique_ptr<Monster>> &m
     }
 }
 
+void ProjectileManager::checkAreaDamage(std::vector<std::unique_ptr<Monster>> &monsters)
+{
+	for (auto &p : projectiles_)
+	{
+		if (!p->isActive())
+			continue;
+		p->checkAreaDamage(monsters);
+	}
+}
+
+void ProjectileManager::updateTracking(const sf::Vector2f &playerPos)
+{
+	for (auto &p : projectiles_)
+	{
+		if (!p->isActive())
+			continue;
+		p->setTrackingTarget(playerPos);
+	}
+}
+
 void ProjectileManager::removeDead()
 {
     projectiles_.erase(

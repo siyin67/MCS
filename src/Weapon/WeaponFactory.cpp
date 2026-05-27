@@ -2,6 +2,8 @@
 #include "SwordWeapon.h"
 #include "BowWeapon.h"
 #include "ShieldWeapon.h"
+#include "TNTWeapon.h"
+#include "TridentWeapon.h"
 
 #include "Weapon.h"
 
@@ -18,6 +20,10 @@ void WeaponFactory::registerDefaults()
                    { return std::make_unique<BowWeapon>(); });
     registerWeapon("shield", []()
                    { return std::make_unique<ShieldWeapon>(); });
+    registerWeapon("tnt", []()
+                   { return std::make_unique<TNTWeapon>(); });
+    registerWeapon("trident", []()
+                   { return std::make_unique<TridentWeapon>(); });
 }
 
 void WeaponFactory::registerWeapon(const std::string &id,

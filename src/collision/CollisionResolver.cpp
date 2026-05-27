@@ -69,22 +69,24 @@ CollisionResolveResult resolveCollisions(
 // ============================================================================
 // 清理死亡怪物，返回被移除的数量
 // ============================================================================
-int removeDeadMonsters(std::vector<std::unique_ptr<Monster>> &monsters)
+int removeDeadMonsters(std::vector<std::unique_ptr<Monster>> &monsters,
+					   std::function<void(sf::Vector2f, int)> onDrop)
 {
-    int removed = 0;
-    for (auto it = monsters.begin(); it != monsters.end();)
-    {
-        if (!(*it)->isAlive())
-        {
-            (*it)->playDeathSound();
-            // 预留：掉落经验球等
-            it = monsters.erase(it);
-            ++removed;
-        }
-        else
-        {
-            ++it;
-        }
-    }
-    return removed;
+	int removed = 0;
+	for (auto it = monsters.begin(); it != monsters.end();)
+	{
+		if (!(*it)->isAlive())
+		{
+			(*it)->playDeathSound();
+			if (onDrop)
+				onDrop((*it)->getPosition(), (*it)->getExpReward());
+			it = monsters.erase(it);
+			++removed;
+		}
+		else
+		{
+			++it;
+		}
+	}
+	return removed;
 }

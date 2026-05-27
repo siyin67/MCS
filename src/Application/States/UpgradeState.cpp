@@ -41,6 +41,8 @@ static std::string getWeaponDesc(const std::string &name)
 	if (name == "Iron Sword") return "Swing in a wide arc";
 	if (name == "Bow") return "Shoot arrows from distance";
 	if (name == "Shield") return "Orbiting shields block enemies";
+	if (name == "TNT") return "Throw explosive TNT";
+	if (name == "Trident") return "Piercing auto-aim trident";
 	return "";
 }
 

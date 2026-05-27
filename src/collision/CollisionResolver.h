@@ -4,6 +4,7 @@
 #include <vector>
 #include <memory>
 #include <utility>
+#include <functional>
 
 // 前向声明
 class Player;
@@ -29,4 +30,6 @@ CollisionResolveResult resolveCollisions(
     Player &player);
 
 // 清理死亡怪物，返回被移除的数量
-int removeDeadMonsters(std::vector<std::unique_ptr<Monster>> &monsters);
+// onDrop: 怪物死亡时的掉落回调（位置, 经验值）
+int removeDeadMonsters(std::vector<std::unique_ptr<Monster>> &monsters,
+					   std::function<void(sf::Vector2f, int)> onDrop = nullptr);

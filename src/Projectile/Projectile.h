@@ -23,7 +23,9 @@ public:
 
     virtual void update(float deltaTime);
     virtual void render(sf::RenderWindow &window);
-    virtual void onHit(Monster &monster) = 0; // 纯虚函数，子类实现特殊效果
+    virtual void onHit(Monster &monster) = 0;
+    virtual void checkAreaDamage(std::vector<std::unique_ptr<Monster>> &monsters) { (void)monsters; }
+    virtual void setTrackingTarget(const sf::Vector2f &target) { (void)target; }
 
     // 位置和移动
     void setPosition(const sf::Vector2f &pos);
@@ -34,7 +36,7 @@ public:
     // 属性
     void setDamage(int damage);
     int getDamage() const;
-    void setActive(bool active);
+    virtual void setActive(bool active);
     bool isActive() const;
     void setLifetime(float lifetime);
     float getLifetime() const;

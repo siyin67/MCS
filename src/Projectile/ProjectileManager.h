@@ -28,6 +28,12 @@ public:
     
     // 碰撞检测（对怪物列表）
     void checkCollisions(std::vector<std::unique_ptr<Monster>>& monsters);
+
+    // 范围伤害检测（TNT等爆炸类投射物）
+    void checkAreaDamage(std::vector<std::unique_ptr<Monster>>& monsters);
+
+    // 追踪目标更新（三叉戟等追踪类投射物）
+    void updateTracking(const sf::Vector2f &playerPos);
     
     // 清理死亡的投射物
     void removeDead();
