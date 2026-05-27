@@ -22,5 +22,6 @@ public:
     std::vector<std::unique_ptr<Weapon>> &getWeapons() { return weapons_; }
     const std::vector<std::unique_ptr<Weapon>> &getWeapons() const { return weapons_; }
     int getWeaponCount() const { return weapons_.size(); }
+    int getMaxWeapons() const { return maxWeapons_; }
     void clear();
 };

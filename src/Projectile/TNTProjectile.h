@@ -41,4 +41,5 @@ public:
 	void onHit(Monster &monster) override;
 	void checkAreaDamage(std::vector<std::unique_ptr<Monster>> &monsters) override;
 	sf::FloatRect getGlobalBounds() const override;
+	sf::FloatRect getBounds() const override;
 };

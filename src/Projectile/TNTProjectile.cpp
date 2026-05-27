@@ -18,7 +18,7 @@ TNTProjectile::TNTProjectile(sf::Vector2f startPos, sf::Vector2f targetPos,
 
 	// 飞行态使用 tnt_button 贴图
 	setTextureId("tnt_button");
-	setSize({24, 24});
+	setSize({48, 48});
 	shape_.setFillColor(sf::Color::White);
 
 	// 计算飞行方向
@@ -99,19 +99,18 @@ void TNTProjectile::update(float deltaTime)
 			explosionFrameTimer_ = 0.0f;
 			damageDealt_ = false;
 
-			// 切换到爆炸贴图
+			// 爆炸形状从 TNT 中心开始，缩放到与爆炸范围等大
+			float dia = explosionRadius_ * 2;
+			shape_.setSize({dia, dia});
+			shape_.setOrigin({dia / 2, dia / 2});
+			shape_.setPosition(position_);
 			if (explosionTex_[0].getSize().x > 0)
 			{
-				auto sz = explosionTex_[0].getSize();
-				shape_.setSize({(float)sz.x, (float)sz.y});
-				shape_.setOrigin({(float)sz.x / 2, (float)sz.y / 2});
+				shape_.setTexture(&explosionTex_[0]);
+				shape_.setFillColor(sf::Color::White);
 			}
 			else
 			{
-				// 无贴图时用红色圆形示意
-				float dia = explosionRadius_ * 2;
-				shape_.setSize({dia, dia});
-				shape_.setOrigin({dia / 2, dia / 2});
 				shape_.setFillColor(sf::Color(255, 100, 0, 200));
 			}
 			SoundManager::getInstance().playSFX("tnt_explode");
@@ -136,9 +135,6 @@ void TNTProjectile::update(float deltaTime)
 			if (explosionTex_[frame].getSize().x > 0)
 			{
 				shape_.setTexture(&explosionTex_[frame]);
-				auto sz = explosionTex_[frame].getSize();
-				shape_.setSize({(float)sz.x, (float)sz.y});
-				shape_.setOrigin({(float)sz.x / 2, (float)sz.y / 2});
 			}
 		}
 		shape_.setPosition(position_);
@@ -161,7 +157,6 @@ void TNTProjectile::render(sf::RenderWindow &window)
 void TNTProjectile::onHit(Monster &monster)
 {
 	(void)monster;
-	// TNT 不通过直接碰撞造成伤害，由 checkAreaDamage 处理爆炸
 }
 
 void TNTProjectile::checkAreaDamage(std::vector<std::unique_ptr<Monster>> &monsters)
@@ -181,7 +176,6 @@ void TNTProjectile::checkAreaDamage(std::vector<std::unique_ptr<Monster>> &monst
 		float dist = std::sqrt(delta.x * delta.x + delta.y * delta.y);
 		if (dist <= explosionRadius_)
 		{
-			// 距离越远伤害越低（边缘50%）
 			float dmgFactor = 1.0f - (dist / explosionRadius_) * 0.5f;
 			int actualDmg = static_cast<int>(damage_ * dmgFactor);
 			m->takeDamage(actualDmg);
@@ -191,7 +185,10 @@ void TNTProjectile::checkAreaDamage(std::vector<std::unique_ptr<Monster>> &monst
 
 sf::FloatRect TNTProjectile::getGlobalBounds() const
 {
-	// 飞行/落地时不参与标准碰撞
-	// 爆炸时由 checkAreaDamage 处理圆形判定
+	return sf::FloatRect({0, 0}, {0, 0});
+}
+
+sf::FloatRect TNTProjectile::getBounds() const
+{
 	return sf::FloatRect({0, 0}, {0, 0});
 }

@@ -42,7 +42,7 @@ public:
     float getLifetime() const;
 
     // 碰撞箱
-    sf::FloatRect getBounds() const;
+    virtual sf::FloatRect getBounds() const;
 
     // 纹理
     void setTexture(const sf::Texture &texture);

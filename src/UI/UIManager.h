@@ -23,6 +23,11 @@ private:
 	float gameTime_;
 	sf::Text gameTimeText_;
 
+	// 经验条
+	float xpPercent_ = 0.0f;
+	int playerLevel_ = 1;
+	sf::Text xpLevelText_;
+
 	// 当前持有的武器列表
 	std::vector<Weapon *> weapons_;
 

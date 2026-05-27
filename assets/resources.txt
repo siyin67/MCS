@@ -28,6 +28,9 @@ shield=assets/images/item/shield.png
 tnt=assets/images/item/tnt.png
 trident=assets/images/item/trident.png
 clock=assets/images/item/clock.png
+axe=assets/images/item/axe.png
+dragon=assets/images/item/dragon_breath.png
+
 # ========== UI 纹理 ==========
 menu_button=assets/images/UI/menu_button.png
 menu_title=assets/images/UI/menu_title.png
@@ -37,6 +40,9 @@ heart_half=assets/images/UI/half.png
 heart_empty=assets/images/UI/vehicle_container.png
 hotbar=assets/images/UI/hotbar.png
 upgradeitem_background=assets/images/UI/upgradeitem_background.png
+xpbar_full=assets/images/UI/xpbar_full.png
+xpbar_empty=assets/images/UI/xpbar_empty.png
+
 # ========== 子弹/特效纹理 ==========
 arrow=assets/images/item/arrow.png
 experience_orb=assets/images/item/experience_orb.png
@@ -52,6 +58,7 @@ sword_swing=assets/Sound/weapon/sword/sword_hit.wav
 bow_shoot=assets/Sound/weapon/bow/bow.wav
 tnt_explode=assets/Sound/weapon/tnt/explode.wav
 trident_throw=assets/Sound/weapon/trident/throw.wav
-madeinheaven=assets/Sound/clock/madeinheaven.wav
+madeinheaven=assets/Sound/weapon/clock/madeinheaven.wav
+levelup=assets/Sound/levelup.wav
 
 # ========== 背景音乐 ==========

@@ -242,3 +242,21 @@ void Player::addWeapon(std::unique_ptr<Weapon> weapon)
 {
     weaponManager_.addWeapon(std::move(weapon));
 }
+
+int Player::addXP(int amount)
+{
+    currentXP_ += amount;
+    int levelUps = 0;
+    while (currentXP_ >= getXPToNext())
+    {
+        currentXP_ -= getXPToNext();
+        level_++;
+        levelUps++;
+    }
+    return levelUps;
+}
+
+float Player::getXPPercent() const
+{
+    return static_cast<float>(currentXP_) / static_cast<float>(getXPToNext());
+}

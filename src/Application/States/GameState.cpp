@@ -14,6 +14,7 @@
 #include <cmath>
 #include <algorithm>
 #include "Weapon/weapon.h"
+#include "Weapon/ClockWeapon.h"
 #include "Item/XpOrb.h"
 #include <random>
 
@@ -21,9 +22,14 @@ GameState::GameState() : mapWidth_(312), mapHeight_(312), tileSize_(16), mapSpri
 {
     std::cout << "GameState constructor START" << std::endl;
     player_.addWeapon(std::move(WeaponFactory::getInstance().create("sword")));
-    player_.addWeapon(std::move(WeaponFactory::getInstance().create("bow")));
-    player_.addWeapon(std::move(WeaponFactory::getInstance().create("shield")));
     player_.addWeapon(std::move(WeaponFactory::getInstance().create("tnt")));
+
+    // ClockWeapon needs WeaponManager pointer
+    for (auto &w : player_.getWeaponManager().getWeapons())
+    {
+        if (auto *cw = dynamic_cast<ClockWeapon *>(w.get()))
+            cw->setWeaponManager(&player_.getWeaponManager());
+    }
 
     // 纹理初始化
     if (ResourceManager::GetInstance().HasTexture("map1"))
@@ -129,7 +135,16 @@ void GameState::update(float deltaTime)
     projectileManager_.removeDead();
     // 更新掉落物
     dropItemManager_.update(deltaTime, player_.getPosition());
-    dropItemManager_.checkPlayerCollision(player_);
+    int collected = dropItemManager_.checkPlayerCollision(player_);
+    if (collected > 0)
+    {
+        int levelUps = player_.addXP(collected);
+        if (levelUps > 0)
+        {
+            SoundManager::getInstance().playSFX("levelup");
+            stateManager_->pushState(std::make_unique<UpgradeState>(&player_));
+        }
+    }
     dropItemManager_.removeDead();
 
     // 更新 UI
@@ -145,7 +160,7 @@ void GameState::update(float deltaTime)
     }
     // 清理死亡怪物（回调生成经验球）
     removeDeadMonsters(monsters_, [this](sf::Vector2f pos, int xp)
-                       { dropItemManager_.add(std::make_unique<XpOrb>(pos, xp)); });
+                       { dropItemManager_.add(std::make_unique<XpOrb>(pos, xp * 4)); });
     // 更新相机
     camera_.setCenter(player_.getPosition());
 }

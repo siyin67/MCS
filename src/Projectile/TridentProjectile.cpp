@@ -15,7 +15,7 @@ TridentProjectile::TridentProjectile(sf::Vector2f startPos, sf::Vector2f dir,
 	isActive_ = true;
 
 	setTextureId("trident");
-	setSize({32, 32});
+	setSize({48, 48});
 	shape_.setFillColor(sf::Color(150, 200, 255));
 
 	position_ = startPos;

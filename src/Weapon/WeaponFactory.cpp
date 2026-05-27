@@ -4,6 +4,9 @@
 #include "ShieldWeapon.h"
 #include "TNTWeapon.h"
 #include "TridentWeapon.h"
+#include "ClockWeapon.h"
+#include "AxeWeapon.h"
+#include "DragonBreathWeapon.h"
 
 #include "Weapon.h"
 
@@ -24,6 +27,12 @@ void WeaponFactory::registerDefaults()
                    { return std::make_unique<TNTWeapon>(); });
     registerWeapon("trident", []()
                    { return std::make_unique<TridentWeapon>(); });
+    registerWeapon("clock", []()
+                   { return std::make_unique<ClockWeapon>(); });
+    registerWeapon("axe", []()
+                   { return std::make_unique<AxeWeapon>(); });
+    registerWeapon("dragon", []()
+                   { return std::make_unique<DragonBreathWeapon>(); });
 }
 
 void WeaponFactory::registerWeapon(const std::string &id,

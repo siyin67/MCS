@@ -43,6 +43,9 @@ static std::string getWeaponDesc(const std::string &name)
 	if (name == "Shield") return "Orbiting shields block enemies";
 	if (name == "TNT") return "Throw explosive TNT";
 	if (name == "Trident") return "Piercing auto-aim trident";
+	if (name == "Clock") return "Reset cooldowns, freeze at Lv10";
+	if (name == "Axe") return "Throw spinning axe, area damage";
+	if (name == "Dragon Breath") return "Create damaging breath circle";
 	return "";
 }
 
@@ -53,24 +56,27 @@ void UpgradeState::generateOptions()
 	auto &weapons = player_->getWeaponManager().getWeapons();
 	auto allIds = WeaponFactory::getInstance().getAllWeaponIds();
 
-	// 找出玩家未拥有的武器
+	// 找出玩家未拥有的武器（槽满了就不再提供新武器）
 	std::vector<std::string> newWeaponIds;
-	for (auto &id : allIds)
+	if ((int)weapons.size() < player_->getWeaponManager().getMaxWeapons())
 	{
-		auto temp = WeaponFactory::getInstance().create(id);
-		if (!temp) continue;
-		std::string name = temp->getName();
-		bool owned = false;
-		for (auto &w : weapons)
+		for (auto &id : allIds)
 		{
-			if (w && w->getName() == name)
+			auto temp = WeaponFactory::getInstance().create(id);
+			if (!temp) continue;
+			std::string name = temp->getName();
+			bool owned = false;
+			for (auto &w : weapons)
 			{
-				owned = true;
-				break;
+				if (w && w->getName() == name)
+				{
+					owned = true;
+					break;
+				}
 			}
+			if (!owned)
+				newWeaponIds.push_back(id);
 		}
-		if (!owned)
-			newWeaponIds.push_back(id);
 	}
 
 	// 构建可选池
@@ -131,7 +137,10 @@ void UpgradeState::generateOptions()
 		std::shuffle(upgOpts.begin(), upgOpts.end(), rng);
 
 		for (auto &opt : newOpts)
+		{
+			if (options_.size() >= 3) break;
 			options_.push_back(opt);
+		}
 		for (auto &opt : upgOpts)
 		{
 			if (options_.size() >= 3) break;

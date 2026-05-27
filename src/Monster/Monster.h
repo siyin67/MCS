@@ -19,6 +19,9 @@ protected:
     int expReward_;
     sf::Color originalColor_; // 原始颜色
     float hurtTimer_;
+    // 冻结
+    bool frozen_ = false;
+    float frozenTimer_ = 0.0f;
     // 技能相关
     float skillCooldown_;
     float skillTimer_;
@@ -47,6 +50,10 @@ public:
     void setPosition(const sf::Vector2f &pos);
     sf::Vector2f getPosition() const;
     sf::FloatRect getBounds() const;
+
+    // 冻结
+    void freeze(float duration) { frozen_ = true; frozenTimer_ = duration; }
+    bool isFrozen() const { return frozen_; }
 
     // 属性获取
     int getHealth() const { return health_; }

@@ -32,6 +32,9 @@ private:
     sf::Color originalColor_; // 原始填充色（用于恢复）
     WeaponManager weaponManager_;
 
+    int currentXP_ = 0;
+    int level_ = 1;
+
 public:
     Player();
 
@@ -51,6 +54,12 @@ public:
     bool isAlive() const;
     float getHealthPercent() const;
     bool getIsInvincible() const { return isInvincible_; }
+
+    int addXP(int amount);
+    int getXP() const { return currentXP_; }
+    int getLevel() const { return level_; }
+    int getXPToNext() const { return level_ * 100; }
+    float getXPPercent() const;
 
     void updateAttackDirection(const sf::RenderWindow &window);
     sf::Vector2f getAttackDirection() const { return attackDirection_; }

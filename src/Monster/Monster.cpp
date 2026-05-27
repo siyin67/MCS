@@ -36,6 +36,22 @@ void Monster::useSkill(const sf::Vector2f &playerPos)
 void Monster::update(float deltaTime, const sf::Vector2f &playerPos,
                      const std::vector<std::unique_ptr<Monster>> &allMonsters)
 {
+    // 冻结处理
+    if (frozen_)
+    {
+        frozenTimer_ -= deltaTime;
+        if (frozenTimer_ <= 0.0f)
+            frozen_ = false;
+        // 受伤恢复照常处理
+        if (hurtTimer_ > 0)
+        {
+            hurtTimer_ -= deltaTime;
+            if (hurtTimer_ <= 0)
+                shape_.setFillColor(originalColor_);
+        }
+        return;
+    }
+
     // 1. 朝向玩家
     sf::Vector2f toPlayer = playerPos - position_;
     float len = std::sqrt(toPlayer.x * toPlayer.x + toPlayer.y * toPlayer.y);

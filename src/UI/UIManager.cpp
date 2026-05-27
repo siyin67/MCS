@@ -6,10 +6,15 @@
 #include <sstream>
 
 UIManager::UIManager()
-    : font_("assets/fonts/minecraft.ttf"), gameTime_(0.0f), gameTimeText_(font_)
+    : font_("assets/fonts/minecraft.ttf"), gameTime_(0.0f), gameTimeText_(font_), xpLevelText_(font_)
 {
     gameTimeText_.setCharacterSize(28);
     gameTimeText_.setFillColor(sf::Color::White);
+
+    xpLevelText_.setCharacterSize(14);
+    xpLevelText_.setFillColor(sf::Color::White);
+    xpLevelText_.setOutlineColor(sf::Color::Black);
+    xpLevelText_.setOutlineThickness(1.5f);
 
     if (ResourceManager::GetInstance().HasTexture("hotbar"))
     {
@@ -28,6 +33,9 @@ void UIManager::update(const Player &player, float deltaTime)
     fullHearts_ = health / 2;
     halfHearts_ = (health % 2) == 1 ? 1 : 0;
     emptyHearts_ = MAX_HEARTS - fullHearts_ - halfHearts_;
+
+    xpPercent_ = player.getXPPercent();
+    playerLevel_ = player.getLevel();
 
     weapons_.clear();
     for (const auto &w : player.getWeaponManager().getWeapons())
@@ -54,6 +62,7 @@ void UIManager::render(sf::RenderWindow &window)
     static constexpr float HOTBAR_SCALE = 2.2f;
     static constexpr float HEART_GAP = 2.0f;
     static constexpr float HOTBAR_BOTTOM_MARGIN = 10.0f;
+    static constexpr float XP_BAR_HEIGHT = 12.0f;
 
     if (!hotbarSprite_)
         return;
@@ -81,8 +90,9 @@ void UIManager::render(sf::RenderWindow &window)
     float heartSpacing = heartSize.x + HEART_GAP;
 
     // ========== 4. 红心血条 ==========
+    float xpBarY = hotbarY - XP_BAR_HEIGHT - 6.0f;
+    float heartY = xpBarY - heartSize.y - 4.0f;
     float heartX = hotbarX;
-    float heartY = hotbarY - heartSize.y - 4.0f;
 
     auto drawHeart = [&](const std::string &texId, float x, float y)
     {
@@ -111,11 +121,43 @@ void UIManager::render(sf::RenderWindow &window)
         heartX += heartSpacing;
     }
 
-    // ========== 5. 绘制物品栏背景 ==========
+    // ========== 5. 经验条（红心下方，物品栏上方）==========
+    if (ResourceManager::GetInstance().HasTexture("xpbar_empty") &&
+        ResourceManager::GetInstance().HasTexture("xpbar_full"))
+    {
+        sf::Texture &xpEmptyTex = ResourceManager::GetInstance().GetTexture("xpbar_empty");
+        sf::Texture &xpFullTex = ResourceManager::GetInstance().GetTexture("xpbar_full");
+
+        float xpBarWidth = hotbarW;
+        sf::Sprite xpEmpty(xpEmptyTex);
+        float xpScaleX = xpBarWidth / xpEmptyTex.getSize().x;
+        float xpScaleY = XP_BAR_HEIGHT / xpEmptyTex.getSize().y;
+        xpEmpty.setScale({xpScaleX, xpScaleY});
+        xpEmpty.setPosition({hotbarX, xpBarY});
+        window.draw(xpEmpty);
+
+        sf::Sprite xpFull(xpFullTex);
+        xpFull.setScale({xpScaleX, xpScaleY});
+        xpFull.setTextureRect(sf::IntRect(
+            {0, 0},
+            {static_cast<int>(xpFullTex.getSize().x * xpPercent_),
+             static_cast<int>(xpFullTex.getSize().y)}));
+        xpFull.setPosition({hotbarX, xpBarY});
+        window.draw(xpFull);
+
+        // 等级文字（经验条右侧）
+        xpLevelText_.setString("Lv." + std::to_string(playerLevel_));
+        sf::FloatRect xpLvBounds = xpLevelText_.getLocalBounds();
+        xpLevelText_.setPosition({hotbarX + xpBarWidth + 6.0f,
+                                  xpBarY + (XP_BAR_HEIGHT - xpLvBounds.size.y) / 2.0f});
+        window.draw(xpLevelText_);
+    }
+
+    // ========== 6. 绘制物品栏背景 ==========
     hotbarSprite_->setPosition({hotbarX, hotbarY});
     window.draw(*hotbarSprite_);
 
-    // ========== 6. 绘制武器图标 + 右下角等级 ==========
+    // ========== 7. 绘制武器图标 + 右下角等级 ==========
     float slotWidth = hotbarW / 6.0f;
     float slotHeight = hotbarH;
     float targetIconSize = slotHeight * 0.6f;

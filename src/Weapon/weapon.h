@@ -33,6 +33,7 @@ public:
 
     bool canAttack() const;
     void resetCooldown();
+    void clearCooldown() { currentCooldown_ = 0.0f; }
     void dealDamage(Monster &monster); // 直接伤害单个怪物
 
     // Getter

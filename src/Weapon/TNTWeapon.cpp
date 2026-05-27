@@ -13,7 +13,7 @@ TNTWeapon::TNTWeapon()
 	range_ = 350.0f;
 	level_ = 1;
 
-	explosionRadius_ = 80.0f;
+	explosionRadius_ = 120.0f;
 	projectileSpeed_ = 500.0f;
 	throwCount_ = 1;
 }
