@@ -11,3 +11,5 @@ debug.log
 *.json
 *.claude/
 tasks.json
+*.sh
+dist/

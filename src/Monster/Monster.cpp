@@ -4,7 +4,7 @@
 #include <random>
 
 Monster::Monster()
-    : speed_(80.0f), health_(30), maxHealth_(30), damage_(10), expReward_(5), skillCooldown_(0.0f), skillTimer_(0.0f)
+    : speed_(80.0f), health_(20), maxHealth_(30), damage_(1), expReward_(5), skillCooldown_(0.0f), skillTimer_(0.0f)
 {
     shape_.setSize({64, 64});
     shape_.setOrigin({32, 32});

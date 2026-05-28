@@ -160,6 +160,10 @@ void GameState::update(float deltaTime)
     // 清理死亡怪物（回调生成经验球）
     removeDeadMonsters(monsters_, [this](sf::Vector2f pos, int xp)
                        { dropItemManager_.add(std::make_unique<XpOrb>(pos, xp * 4)); });
+    // 处理怪物技能产生的延迟生成
+    for (auto &m : Monster::pendingSpawns)
+        monsters_.push_back(std::move(m));
+    Monster::pendingSpawns.clear();
     // 更新相机
     camera_.setCenter(player_.getPosition());
 }

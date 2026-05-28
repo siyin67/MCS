@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <functional>
 #include <memory>
+#include <vector>
 #include "collision/Collision.h"
 
 // 前向声明
@@ -9,6 +10,9 @@ class Player;
 
 class Monster : public ICollidable
 {
+public:
+    static inline std::vector<std::unique_ptr<Monster>> pendingSpawns;
+
 protected:
     sf::RectangleShape shape_;
     sf::Vector2f position_;

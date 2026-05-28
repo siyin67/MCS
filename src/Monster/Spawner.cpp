@@ -3,6 +3,7 @@
 #include <cmath>
 #include <iostream>
 #include "Zombie.h"
+#include "Slimes.h"
 
 Spawner::Spawner()
 	: currentWave_(1), maxAlive_(20),
@@ -10,8 +11,15 @@ Spawner::Spawner()
 	  waveTimer_(0.0f), waveDuration_(30.0f),
 	  mapSize_{5000.0f, 5000.0f}, spawnDistance_(800.0f)
 {
-	registerMonster([]()
-					{ return std::make_unique<Zombie>(); });
+	// 僵尸（权重最高）
+	registerMonster([]() { return std::make_unique<Zombie>(); });
+	registerMonster([]() { return std::make_unique<Zombie>(); });
+	registerMonster([]() { return std::make_unique<Zombie>(); });
+	// 小史莱姆
+	registerMonster([]() { return std::make_unique<SmallSlime>(); });
+	registerMonster([]() { return std::make_unique<SmallSlime>(); });
+	// 大史莱姆（稀有）
+	registerMonster([]() { return std::make_unique<BigSlime>(); });
 }
 
 void Spawner::registerMonster(std::function<std::unique_ptr<Monster>()> factory)

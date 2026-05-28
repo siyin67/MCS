@@ -21,6 +21,19 @@ player=assets/images/players/Player_Steve.png
 
 # ========== 怪物纹理 ==========
 zombie=assets/images/monsters/Zombie.png
+blaze=assets/images/monsters/Blaze.png
+breeze=assets/images/monsters/Breeze.png
+creeper=assets/images/monsters/Creeper.png
+drowned=assets/images/monsters/Drowned.png
+enderdragon=assets/images/monsters/Enderdragon.png
+enderman=assets/images/monsters/Enderman.png
+ghast=assets/images/monsters/Ghast.png
+skeleton=assets/images/monsters/Skeleton.png
+slime=assets/images/monsters/Slime.png
+spider=assets/images/monsters/Spider.png
+witch=assets/images/monsters/Witch.png
+wither=assets/images/monsters/Wither.png
+wither_skeleton=assets/images/monsters/WitherSkeleton.png
 # ========== 武器纹理 ==========
 iron_sword=assets/images/item/iron_sword.png
 bow=assets/images/item/bow.png
