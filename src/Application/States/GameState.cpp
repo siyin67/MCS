@@ -184,7 +184,8 @@ void GameState::render(sf::RenderWindow &window)
     player_.getWeaponManager().render(window, player_.getPosition());
     dropItemManager_.render(window);
     // UI（屏幕坐标）
-    window.setView(window.getDefaultView());
+    sf::Vector2u winSize = window.getSize();
+    window.setView(sf::View(sf::Vector2f(winSize.x / 2.f, winSize.y / 2.f), sf::Vector2f(winSize)));
     uiManager_.render(window);
 }
 
