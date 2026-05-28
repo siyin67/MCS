@@ -46,11 +46,11 @@ void Enderdragon::fireFromAngle(const sf::Vector2f &dir)
 	dball->setLifetime(3.0f);
 	dball->setTextureId("dragon_fireball");
 	dball->setSize({28, 28});
-	dball->setAreaParams(MonsterProjectile::AreaType::DragonBreath, 100.0f, 5.0f, 4);
-	dball->setOnSpawnArea([](sf::Vector2f pos, float r, float dur, int dmg, MonsterProjectile::AreaType type)
+	dball->setAreaParams(BuffType::Poison, 100.0f, 5.0f, 4);
+	dball->setOnSpawnArea([](sf::Vector2f pos, float r, float dur, BuffType t, int v)
 	{
 		if (Monster::spawnAreaCallback)
-			Monster::spawnAreaCallback(pos, r, dur, dmg, (int)type);
+			Monster::spawnAreaCallback(pos, r, dur, t, v);
 	});
 	Monster::pendingProjectiles.push_back(std::move(dball));
 }
@@ -90,9 +90,8 @@ void Enderdragon::update(float deltaTime, const sf::Vector2f &playerPos,
 	switch (pattern_)
 	{
 	case AttackPattern::BurstFan:
-	{
 		fireInterval_ += deltaTime;
-		if (fireInterval_ >= 0.5f)
+		if (fireInterval_ >= 1.0f)
 		{
 			fireInterval_ = 0.0f;
 			for (int i = -2; i <= 2; ++i)
@@ -104,11 +103,9 @@ void Enderdragon::update(float deltaTime, const sf::Vector2f &playerPos,
 			}
 		}
 		break;
-	}
 	case AttackPattern::Circle:
-	{
 		fireInterval_ += deltaTime;
-		if (fireInterval_ >= 0.3f)
+		if (fireInterval_ >= 0.6f)
 		{
 			fireInterval_ = 0.0f;
 			for (int i = 0; i < 16; ++i)
@@ -118,11 +115,9 @@ void Enderdragon::update(float deltaTime, const sf::Vector2f &playerPos,
 			}
 		}
 		break;
-	}
 	case AttackPattern::RapidSpray:
-	{
 		fireInterval_ += deltaTime;
-		if (fireInterval_ >= 0.06f)
+		if (fireInterval_ >= 0.12f)
 		{
 			fireInterval_ = 0.0f;
 			static std::random_device rd;
@@ -136,9 +131,8 @@ void Enderdragon::update(float deltaTime, const sf::Vector2f &playerPos,
 		}
 		break;
 	}
-	}
 
-	// ===== 激光（独立30s CD） =====
+	// ===== 激光（独立30s CD�?=====
 	laserTimer_ += deltaTime;
 
 	if (laserCharging_)
@@ -148,7 +142,8 @@ void Enderdragon::update(float deltaTime, const sf::Vector2f &playerPos,
 		{
 			laserCharging_ = false;
 			laserFiring_ = true;
-			laserChargeTimer_ = 0.5f;
+			laserChargeTimer_ = 1.0f;
+			SoundManager::getInstance().playSFX("enderdragon_laser");
 		}
 	}
 	else if (laserFiring_)
@@ -161,7 +156,7 @@ void Enderdragon::update(float deltaTime, const sf::Vector2f &playerPos,
 		if (std::abs(projDist) < laserLineLength_ && perpDist < beamHalfWidth)
 		{
 			if (Monster::spawnAreaCallback)
-				Monster::spawnAreaCallback(playerPos, 20.0f, 0.2f, damage_ * 3, (int)MonsterProjectile::AreaType::DragonBreath);
+				Monster::spawnAreaCallback(playerPos, 20.0f, 0.2f, BuffType::Burn, damage_ * 3);
 		}
 		if (laserChargeTimer_ <= 0.0f)
 		{

@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <memory>
+#include "Buff/Buff.h"
 
 class Player;
 class Weapon;
@@ -31,9 +32,14 @@ private:
 	// 当前持有的武器列表
 	std::vector<Weapon *> weapons_;
 
+	// Buff 显示
+	std::vector<std::pair<BuffType, float>> activeBuffs_;
+
 	static constexpr int MAX_HEARTS = 10;
 	static constexpr float HEART_SPACING = 28.0f;
 	static constexpr int HOTBAR_SLOTS = 9;
+
+	static const char *getBuffTextureId(BuffType type);
 
 public:
 	UIManager();

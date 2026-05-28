@@ -16,6 +16,7 @@
 #include "Weapon/weapon.h"
 #include "Weapon/ClockWeapon.h"
 #include "Item/XpOrb.h"
+#include "Item/PotionItem.h"
 #include "Monster/Zombie.h"
 #include "Monster/Skeleton.h"
 #include "Monster/Spider.h"
@@ -36,6 +37,8 @@ GameState::GameState() : mapWidth_(312), mapHeight_(312), tileSize_(16), mapSpri
 {
     std::cout << "GameState constructor START" << std::endl;
     player_.addWeapon(std::move(WeaponFactory::getInstance().create("sword")));
+    player_.addWeapon(std::move(WeaponFactory::getInstance().create("seaheart")));
+    player_.addWeapon(std::move(WeaponFactory::getInstance().create("lava")));
 
     // ClockWeapon needs WeaponManager pointer
     for (auto &w : player_.getWeaponManager().getWeapons())
@@ -77,19 +80,30 @@ void GameState::setupWeaponCallbacks()
         projectileManager_.add(std::move(projectile));
     };
 
-    Monster::spawnAreaCallback = [this](sf::Vector2f pos, float radius, float duration, int dps, int type)
+    Monster::spawnAreaCallback = [this](sf::Vector2f pos, float radius, float duration, BuffType type, int value)
     {
         AreaEffect area;
         area.position = pos;
         area.radius = radius;
         area.duration = duration;
         area.timer = duration;
-        area.dps = dps;
-        area.damageAccum = 0.0f;
-        area.color = (type == (int)MonsterProjectile::AreaType::Wither)
-                         ? sf::Color(80, 80, 80, 180)
-                         : sf::Color(160, 50, 200, 180);
-        area.type = (MonsterProjectile::AreaType)type;
+        area.buffType = type;
+        area.buffValue = value;
+        switch (type)
+        {
+        case BuffType::Wither:
+            area.color = sf::Color(80, 80, 80, 180);
+            break;
+        case BuffType::Burn:
+            area.color = sf::Color(255, 100, 20, 180);
+            break;
+        case BuffType::Poison:
+            area.color = sf::Color(160, 50, 200, 180);
+            break;
+        default:
+            area.color = sf::Color(100, 100, 100, 180);
+            break;
+        }
         areaEffects_.push_back(area);
     };
 
@@ -142,9 +156,11 @@ void GameState::handleInput(sf::RenderWindow &window)
         float r = 150.0f;
         auto spawn = [&](auto m)
         { m->setPosition(pos + sf::Vector2f(r, 0)); r += 80.0f; monsters_.push_back(std::move(m)); };
+        spawn(std::make_unique<Enderdragon>());
+        spawn(std::make_unique<Wither>());
+        spawn(std::make_unique<Spider>());
         spawn(std::make_unique<Wither>());
         spawn(std::make_unique<Enderdragon>());
-        /*
         spawn(std::make_unique<Creeper>());
         spawn(std::make_unique<Enderman>());
         spawn(std::make_unique<Witch>());
@@ -152,8 +168,6 @@ void GameState::handleInput(sf::RenderWindow &window)
         spawn(std::make_unique<WitherSkeleton>());
         spawn(std::make_unique<BigSlime>());
         spawn(std::make_unique<Ghast>());
-
-        */
     }
 
     wasPressed = escPressed || zeroPressed || ninePressed || spacePressed || mPressed;
@@ -173,7 +187,7 @@ void GameState::update(float deltaTime)
     player_.update(deltaTime);
     player_.updateWeapons(deltaTime, player_.getPosition(), player_.getAttackDirection(), monsters_);
     player_.getWeaponManager().updateShields(deltaTime, player_.getPosition(), monsters_);
-    // spawner_.update(deltaTime, player_.getPosition(), monsters_);
+    spawner_.update(deltaTime, player_.getPosition(), monsters_);
     //  更新怪物
     for (auto &m : monsters_)
     {
@@ -182,6 +196,7 @@ void GameState::update(float deltaTime)
     // 更新投掷物
     projectileManager_.update(deltaTime);
     projectileManager_.updateTracking(player_.getPosition());
+    projectileManager_.updateTargeting(monsters_);
     projectileManager_.checkAreaDamage(monsters_);
     // 碰撞检测
     std::vector<ICollidable *> collidables;
@@ -209,6 +224,8 @@ void GameState::update(float deltaTime)
 
     // 更新 UI
     uiManager_.update(player_, deltaTime);
+    // 检查 BGM 循环
+    SoundManager::getInstance().updateBGM();
 
     auto collisionPairs = detectCollisions(collidables);
 
@@ -218,9 +235,25 @@ void GameState::update(float deltaTime)
     {
         stateManager_->pushState(std::make_unique<GameOverState>());
     }
-    // 清理死亡怪物（回调生成经验球）
+    // 清理死亡怪物（回调生成经验球 + 5%药水掉落）
     removeDeadMonsters(monsters_, [this](sf::Vector2f pos, int xp)
-                       { dropItemManager_.add(std::make_unique<XpOrb>(pos, xp * 4)); });
+                       {
+        dropItemManager_.add(std::make_unique<XpOrb>(pos, xp * 4));
+        // 5% 概率掉药水
+        static std::random_device rd;
+        static std::mt19937 gen(rd());
+        static std::uniform_real_distribution<> dis(0.0, 1.0);
+        if (dis(gen) < 0.02f)
+        {
+            static const BuffType potionTypes[] = {
+                BuffType::Heal, BuffType::SpeedUp, BuffType::AttackUp, BuffType::Invincible
+            };
+            static const float potionValues[] = {4.0f, 1.2f, 1.3f, 1.0f};
+            static const float potionDurations[] = {0.0f, 8.0f, 8.0f, 6.0f};
+            int idx = static_cast<int>(dis(gen) * 4) % 4;
+            dropItemManager_.add(std::make_unique<PotionItem>(
+                pos, potionTypes[idx], potionValues[idx], potionDurations[idx]));
+        } });
     // 处理怪物技能产生的延迟生成
     for (auto &m : Monster::pendingSpawns)
         monsters_.push_back(std::move(m));
@@ -235,6 +268,12 @@ void GameState::update(float deltaTime)
     // 怪物投掷物碰撞玩家 + 区域效果对玩家伤害
     checkProjectilePlayerCollisions();
     updateAreaEffects(deltaTime);
+
+    // 岩浆地板
+    for (auto &l : LavaProjectile::pendingFloors)
+        lavaFloors_.push_back(l);
+    LavaProjectile::pendingFloors.clear();
+    updateLavaFloors(deltaTime);
     // 更新相机
     camera_.setCenter(player_.getPosition());
 }
@@ -252,6 +291,7 @@ void GameState::render(sf::RenderWindow &window)
         m->render(window);
     projectileManager_.render(window);
     renderAreaEffects(window);
+    renderLavaFloors(window);
     player_.render(window);
     player_.getWeaponManager().render(window, player_.getPosition());
     dropItemManager_.render(window);
@@ -465,6 +505,10 @@ void GameState::checkProjectilePlayerCollisions()
         if (p->getGlobalBounds().findIntersection(player_.getBounds()).has_value())
         {
             player_.takeDamage(p->getDamage());
+            // 应用投掷物携带的 Buff
+            const auto &hb = p->getHitBuff();
+            if (hb.duration > 0.0f)
+                player_.getBuffManager().add(hb.type, hb.value, hb.duration);
             p->setActive(false);
         }
     }
@@ -483,13 +527,8 @@ void GameState::updateAreaEffects(float deltaTime)
         float dist = std::sqrt(delta.x * delta.x + delta.y * delta.y);
         if (dist <= area.radius)
         {
-            area.damageAccum += area.dps * deltaTime;
-            int dmg = static_cast<int>(area.damageAccum);
-            if (dmg > 0)
-            {
-                player_.takeEnvironmentalDamage(dmg);
-                area.damageAccum -= dmg;
-            }
+            // 刷新 Buff：玩家在区域内时保持 Buff 激活
+            player_.getBuffManager().add(area.buffType, static_cast<float>(area.buffValue), 0.6f);
         }
     }
 
@@ -518,5 +557,45 @@ void GameState::renderAreaEffects(sf::RenderWindow &window)
         outlineColor.a = static_cast<uint8_t>(255 * alpha);
         circle.setOutlineColor(outlineColor);
         window.draw(circle);
+    }
+}
+
+void GameState::updateLavaFloors(float deltaTime)
+{
+    for (auto &l : lavaFloors_)
+    {
+        l.timer -= deltaTime;
+        if (l.timer <= 0.0f)
+            continue;
+        sf::FloatRect lavaRect(l.position - sf::Vector2f(24.0f, 24.0f), {48.0f, 48.0f});
+        for (auto &m : monsters_)
+        {
+            if (!m->isAlive()) continue;
+            if (lavaRect.findIntersection(m->getBounds()).has_value())
+                m->getBuffManager().add(BuffType::Burn, static_cast<float>(l.dps), 0.6f);
+        }
+    }
+    lavaFloors_.erase(
+        std::remove_if(lavaFloors_.begin(), lavaFloors_.end(),
+                       [](const LavaFloor &l) { return l.timer <= 0.0f; }),
+        lavaFloors_.end());
+}
+
+void GameState::renderLavaFloors(sf::RenderWindow &window)
+{
+    for (const auto &l : lavaFloors_)
+    {
+        sf::RectangleShape tile({48.0f, 48.0f});
+        tile.setPosition(l.position - sf::Vector2f(24.0f, 24.0f));
+        if (ResourceManager::GetInstance().HasTexture("lava"))
+        {
+            tile.setTexture(&ResourceManager::GetInstance().GetTexture("lava"));
+            tile.setFillColor(sf::Color(255, 200, 100, 200));
+        }
+        else
+        {
+            tile.setFillColor(sf::Color(255, 100, 30, 200));
+        }
+        window.draw(tile);
     }
 }

@@ -29,7 +29,8 @@ Skeleton::Skeleton()
 		arrow->setDamage(self.getDamage());
 		arrow->setLifetime(3.0f);
 		Monster::pendingProjectiles.push_back(std::move(arrow));
-	}, 5.0f);
+		SoundManager::getInstance().playSFX("skeleton_shoot");
+	}, 10.0f);
 }
 void Skeleton::playHitSound()
 {

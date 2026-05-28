@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include "collision/Collision.h"
 #include "Weapon/WeaponManager.h"
+#include "Buff/Buff.h"
 
 // 前向声明
 class Monster;
@@ -13,23 +14,24 @@ private:
     float speed_;
     int health_;
     int maxHealth_;
+    BuffManager buffManager_;
 
     sf::ConvexShape arrow_;
     sf::Vector2f attackDirection_;
 
     // ---------- 碰撞相关 ----------
-    float invincibleTimer_;    // 无敌时间倒计时（秒）
-    float invincibleDuration_; // 无敌持续总时长（秒）
-    bool isInvincible_;        // 当前是否处于无敌状态
+    float invincibleTimer_;
+    float invincibleDuration_;
+    bool isInvincible_;
 
-    sf::Vector2f knockbackVelocity_; // 击退速度
-    float knockbackDecay_;           // 击退衰减系数
+    sf::Vector2f knockbackVelocity_;
+    float knockbackDecay_;
 
-    float hurtFlashTimer_;    // 受伤闪烁计时器
-    float hurtFlashInterval_; // 闪烁间隔
-    bool showHurtColor_;      // 当前是否显示受伤颜色
+    float hurtFlashTimer_;
+    float hurtFlashInterval_;
+    bool showHurtColor_;
 
-    sf::Color originalColor_; // 原始填充色（用于恢复）
+    sf::Color originalColor_;
     sf::Vector2f externalForce_;
     WeaponManager weaponManager_;
 
@@ -59,10 +61,10 @@ public:
 
     int addXP(int amount);
     int getXP() const { return currentXP_; }
-    void applyExternalForce(const sf::Vector2f &force) { externalForce_ += force; }
     int getLevel() const { return level_; }
     int getXPToNext() const { return level_ * 100; }
     float getXPPercent() const;
+    void applyExternalForce(const sf::Vector2f &force) { externalForce_ += force; }
 
     void updateAttackDirection(const sf::RenderWindow &window);
     sf::Vector2f getAttackDirection() const { return attackDirection_; }
@@ -78,4 +80,10 @@ public:
     void updateWeapons(float deltaTime, const sf::Vector2f &playerPos,
                        const sf::Vector2f &attackDir,
                        std::vector<std::unique_ptr<Monster>> &monsters);
+
+    // Buff
+    BuffManager &getBuffManager() { return buffManager_; }
+    const BuffManager &getBuffManager() const { return buffManager_; }
+    float getEffectiveSpeed() const { return speed_ * buffManager_.getSpeedMultiplier(); }
+    float getEffectiveDamage(float baseDamage) const { return baseDamage * buffManager_.getDamageMultiplier(); }
 };

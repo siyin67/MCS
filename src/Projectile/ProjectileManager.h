@@ -34,7 +34,10 @@ public:
 
     // 追踪目标更新（三叉戟等追踪类投射物）
     void updateTracking(const sf::Vector2f &playerPos);
-    
+
+    // 弹射目标更新（海洋之心等弹射类投射物）
+    void updateTargeting(const std::vector<std::unique_ptr<Monster>> &monsters);
+
     // 清理死亡的投射物
     void removeDead();
     

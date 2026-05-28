@@ -47,7 +47,7 @@ void ClockWeapon::attack(const sf::Vector2f &playerPos,
 		for (auto &m : monsters)
 		{
 			if (m->isAlive())
-				m->freeze(1.0f);
+				m->freeze(2.0f);
 		}
 	}
 

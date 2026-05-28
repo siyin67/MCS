@@ -33,15 +33,15 @@ Ghast::Ghast()
 		fireball->setLifetime(4.0f);
 		fireball->setTextureId("fireball");
 		fireball->setSize({32, 32});
-		// 到达终点或命中后爆炸（短时区域伤害）
-		fireball->setAreaParams(MonsterProjectile::AreaType::Wither, 80.0f, 0.3f, self.getDamage() * 2);
-		fireball->setOnSpawnArea([](sf::Vector2f pos, float r, float dur, int dmg, MonsterProjectile::AreaType type)
+		fireball->setAreaParams(BuffType::Burn, 80.0f, 0.3f, 6);
+		fireball->setOnSpawnArea([](sf::Vector2f pos, float r, float dur, BuffType t, int v)
 		{
 			if (Monster::spawnAreaCallback)
-				Monster::spawnAreaCallback(pos, r, dur, dmg, (int)type);
+				Monster::spawnAreaCallback(pos, r, dur, t, v);
 		});
 		Monster::pendingProjectiles.push_back(std::move(fireball));
-	}, 10.0f);
+		SoundManager::getInstance().playSFX("ghast_shoot");
+	}, 20.0f);
 }
 void Ghast::playHitSound()
 {

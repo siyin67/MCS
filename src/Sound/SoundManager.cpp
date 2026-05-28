@@ -10,7 +10,7 @@ SoundManager &SoundManager::getInstance()
 }
 
 SoundManager::SoundManager()
-    : rng_(std::random_device{}()), bgmVolume_(100.0f), sfxVolume_(100.0f)
+    : rng_(std::random_device{}()), bgmVolume_(100.0f), sfxVolume_(100.0f), randomMode_(false)
 {
     std::cout << "SoundManager initialized" << std::endl;
 }
@@ -32,7 +32,8 @@ void SoundManager::playRandomBGM()
 
     std::uniform_int_distribution<> dis(0, bgmPlaylist_.size() - 1);
     int index = dis(rng_);
-    playBGM(bgmPlaylist_[index]);
+    randomMode_ = true;
+    playBGM(bgmPlaylist_[index], false);
 }
 
 void SoundManager::playBGM(const std::string &path, bool loop)
@@ -120,4 +121,14 @@ void SoundManager::update()
                            return sound->getStatus() == sf::Sound::Status::Stopped;
                        }),
         activeSFX_.end());
+}
+
+void SoundManager::updateBGM()
+{
+    if (!randomMode_ || !currentBGM_)
+        return;
+    if (currentBGM_->getStatus() == sf::Music::Status::Stopped)
+    {
+        playRandomBGM();
+    }
 }

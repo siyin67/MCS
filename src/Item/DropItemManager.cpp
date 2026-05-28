@@ -47,6 +47,7 @@ int DropItemManager::checkPlayerCollision(Player &player)
 		if (playerBounds.findIntersection(item->getGlobalBounds()).has_value())
 		{
 			collected += item->getValue();
+			item->onCollect(player);
 			item->collect();
 		}
 	}

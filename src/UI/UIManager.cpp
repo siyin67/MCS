@@ -43,6 +43,8 @@ void UIManager::update(const Player &player, float deltaTime)
         weapons_.push_back(w.get());
     }
 
+    activeBuffs_ = player.getBuffManager().getActiveBuffs();
+
     // 格式化游戏时间 MM:SS
     int totalSec = static_cast<int>(gameTime_);
     int minutes = totalSec / 60;
@@ -201,5 +203,61 @@ void UIManager::render(sf::RenderWindow &window)
         float lvY = slotCenterY + iconH / 2.0f - ltBounds.size.y - 2.0f + 4.0f;
         levelText.setPosition({lvX, lvY});
         window.draw(levelText);
+    }
+
+    // ========== 8. Buff 显示（屏幕右侧） ==========
+    if (!activeBuffs_.empty())
+    {
+        static constexpr float BUFF_SIZE = 64.0f;
+        static constexpr float BUFF_GAP = 4.0f;
+        static constexpr float BUFF_RIGHT_MARGIN = 16.0f;
+
+        float startX = screenSize.x - BUFF_RIGHT_MARGIN - BUFF_SIZE;
+        float startY = screenSize.y * 0.25f;
+
+        for (size_t i = 0; i < activeBuffs_.size(); ++i)
+        {
+            float y = startY + i * (BUFF_SIZE + BUFF_GAP);
+
+            // 背景
+            if (ResourceManager::GetInstance().HasTexture("buff_background"))
+            {
+                sf::Sprite bg(ResourceManager::GetInstance().GetTexture("buff_background"));
+                bg.setScale({BUFF_SIZE / bg.getTexture().getSize().x,
+                             BUFF_SIZE / bg.getTexture().getSize().y});
+                bg.setPosition({startX, y});
+                window.draw(bg);
+            }
+
+            // 图标
+            const char *texId = getBuffTextureId(activeBuffs_[i].first);
+            if (texId && ResourceManager::GetInstance().HasTexture(texId))
+            {
+                sf::Sprite icon(ResourceManager::GetInstance().GetTexture(texId));
+                float iconSize = BUFF_SIZE * 0.75f;
+                icon.setScale({iconSize / icon.getTexture().getSize().x,
+                               iconSize / icon.getTexture().getSize().y});
+                icon.setPosition({startX + (BUFF_SIZE - iconSize) / 2.0f,
+                                  y + (BUFF_SIZE - iconSize) / 2.0f});
+                window.draw(icon);
+            }
+        }
+    }
+}
+
+const char *UIManager::getBuffTextureId(BuffType type)
+{
+    switch (type)
+    {
+    case BuffType::SpeedUp:    return "buff_speed_up";
+    case BuffType::SpeedDown:  return "buff_speed_down";
+    case BuffType::AttackUp:   return "buff_attack_up";
+    case BuffType::AttackDown: return "buff_attack_down";
+    case BuffType::Invincible: return "buff_invincible";
+    case BuffType::Heal:       return "buff_heal";
+    case BuffType::Burn:       return "buff_burn";
+    case BuffType::Poison:     return "buff_poison";
+    case BuffType::Wither:     return "buff_wither";
+    default:                   return nullptr;
     }
 }

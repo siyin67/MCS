@@ -41,11 +41,11 @@ void Wither::fireFromAngle(const sf::Vector2f &dir)
 	skull->setLifetime(3.0f);
 	skull->setTextureId("wither_skull");
 	skull->setSize({24, 24});
-	skull->setAreaParams(MonsterProjectile::AreaType::Wither, 100.0f, 4.0f, 3);
-	skull->setOnSpawnArea([](sf::Vector2f pos, float r, float dur, int dmg, MonsterProjectile::AreaType type)
+	skull->setAreaParams(BuffType::Wither, 100.0f, 4.0f, 3);
+	skull->setOnSpawnArea([](sf::Vector2f pos, float r, float dur, BuffType t, int v)
 	{
 		if (Monster::spawnAreaCallback)
-			Monster::spawnAreaCallback(pos, r, dur, dmg, (int)type);
+			Monster::spawnAreaCallback(pos, r, dur, t, v);
 	});
 	Monster::pendingProjectiles.push_back(std::move(skull));
 }
@@ -85,9 +85,8 @@ void Wither::update(float deltaTime, const sf::Vector2f &playerPos,
 	switch (pattern_)
 	{
 	case AttackPattern::BurstFan:
-	{
 		fireInterval_ += deltaTime;
-		if (fireInterval_ >= 0.5f)
+		if (fireInterval_ >= 1.0f)
 		{
 			fireInterval_ = 0.0f;
 			for (int i = -1; i <= 1; ++i)
@@ -97,13 +96,13 @@ void Wither::update(float deltaTime, const sf::Vector2f &playerPos,
 				fireFromAngle({baseDir.x * cosA - baseDir.y * sinA,
 							   baseDir.x * sinA + baseDir.y * cosA});
 			}
+
+
 		}
 		break;
-	}
 	case AttackPattern::Circle:
-	{
 		fireInterval_ += deltaTime;
-		if (fireInterval_ >= 0.3f)
+		if (fireInterval_ >= 0.6f)
 		{
 			fireInterval_ = 0.0f;
 			for (int i = 0; i < 12; ++i)
@@ -111,13 +110,13 @@ void Wither::update(float deltaTime, const sf::Vector2f &playerPos,
 				float angle = i * 3.14159265358979323846f * 2.0f / 12.0f;
 				fireFromAngle({std::cos(angle), std::sin(angle)});
 			}
+
+
 		}
 		break;
-	}
 	case AttackPattern::RapidSpray:
-	{
 		fireInterval_ += deltaTime;
-		if (fireInterval_ >= 0.08f)
+		if (fireInterval_ >= 0.16f)
 		{
 			fireInterval_ = 0.0f;
 			static std::random_device rd;
@@ -128,8 +127,10 @@ void Wither::update(float deltaTime, const sf::Vector2f &playerPos,
 				float angle = angleDis(gen);
 				fireFromAngle({std::cos(angle), std::sin(angle)});
 			}
+
+
 		}
 		break;
 	}
-	}
+
 }

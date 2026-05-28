@@ -31,7 +31,7 @@ void Creeper::playDeathSound()
 }
 
 void Creeper::update(float deltaTime, const sf::Vector2f &playerPos,
-					 const std::vector<std::unique_ptr<Monster>> &allMonsters)
+					  const std::vector<std::unique_ptr<Monster>> &allMonsters)
 {
 	Monster::update(deltaTime, playerPos, allMonsters);
 
@@ -45,6 +45,7 @@ void Creeper::update(float deltaTime, const sf::Vector2f &playerPos,
 	{
 		flashing_ = true;
 		flashTimer_ = 0.0f;
+		SoundManager::getInstance().playSFX("creeper_fuse");
 	}
 	else if (flashing_)
 	{
@@ -59,7 +60,7 @@ void Creeper::update(float deltaTime, const sf::Vector2f &playerPos,
 		{
 			SoundManager::getInstance().playSFX("tnt_explode");
 			if (Monster::spawnAreaCallback)
-				Monster::spawnAreaCallback(position_, 150.0f, 0.5f, 20, (int)MonsterProjectile::AreaType::Wither);
+				Monster::spawnAreaCallback(position_, 150.0f, 0.5f, BuffType::Burn, 20);
 			health_ = 0;
 			flashing_ = false;
 		}
@@ -70,12 +71,10 @@ void Creeper::render(sf::RenderWindow &window)
 {
 	if (flashing_ && flashTimer_ < fuseTime_)
 	{
-		// 纯白闪烁
 		float cycle = flashTimer_ / fuseTime_;
 		int phase = static_cast<int>(cycle * 10) % 2;
 		shape_.setFillColor(phase == 0 ? sf::Color::White : sf::Color(230, 230, 230));
 
-		// 绘制爆炸范围预警圈
 		sf::CircleShape warning(150.0f);
 		warning.setPosition(position_ - sf::Vector2f(150.0f, 150.0f));
 		warning.setFillColor(sf::Color::Transparent);

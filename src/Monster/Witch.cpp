@@ -17,12 +17,12 @@ Witch::Witch()
 	}
 	shape_.setSize({64, 64});
 
-	// 治疗技能：每5秒治疗周围怪物
 	setSkill([](Monster &self, const sf::Vector2f &playerPos)
 	{
 		(void)playerPos;
 		self.shouldSpawnEffect_ = true;
 		self.effectPosition_ = self.getPosition();
+		SoundManager::getInstance().playSFX("witch_heal");
 	}, 5.0f);
 }
 void Witch::playHitSound()

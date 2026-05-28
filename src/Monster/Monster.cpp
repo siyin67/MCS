@@ -105,10 +105,12 @@ void Monster::update(float deltaTime, const sf::Vector2f &playerPos,
     }
 
     // 4. 移动
-    position_ += move * speed_ * deltaTime;
+    position_ += move * getEffectiveSpeed() * deltaTime;
     shape_.setPosition(position_);
     // 5. 更新技能
     updateSkill(deltaTime, playerPos);
+    // 6. 更新 Buff
+    buffManager_.update(deltaTime, health_);
     // 受伤恢复
     if (hurtTimer_ > 0)
     {

@@ -4,8 +4,8 @@
 
 XpOrb::XpOrb(sf::Vector2f pos, int xpValue)
 	: DropItem(pos, xpValue, 120.0f),
-	  idleTimer_(1.0f), attractRange_(150.0f),
-	  minSpeed_(100.0f), maxSpeed_(400.0f),
+	  idleTimer_(1.0f), attractRange_(350.0f),
+	  minSpeed_(200.0f), maxSpeed_(600.0f),
 	  isMoving_(false),
 	  frameCol_(0), frameRow_(0), animTimer_(0.0f)
 {

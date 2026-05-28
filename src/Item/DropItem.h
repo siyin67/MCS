@@ -2,6 +2,8 @@
 #include <SFML/Graphics.hpp>
 #include "../Collision/Collision.h"
 
+class Player;
+
 class DropItem : public ICollidable
 {
 protected:
@@ -18,6 +20,7 @@ public:
 
 	virtual void update(float deltaTime, const sf::Vector2f &playerPos) = 0;
 	virtual void render(sf::RenderWindow &window);
+	virtual void onCollect(Player &player) { (void)player; }
 
 	bool isAlive() const { return alive_; }
 	int getValue() const { return value_; }

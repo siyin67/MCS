@@ -31,8 +31,10 @@ Spider::Spider()
 		web->setLifetime(2.0f);
 		web->setTextureId("web");
 		web->setSize({24, 24});
+		web->setHitBuff(BuffType::SpeedDown, 0.7f, 3.0f);
 		Monster::pendingProjectiles.push_back(std::move(web));
-	}, 5.0f);
+		SoundManager::getInstance().playSFX("spider_shoot");
+	}, 10.0f);
 }
 void Spider::playHitSound()
 {

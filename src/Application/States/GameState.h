@@ -8,6 +8,7 @@
 #include "../../Weapon/weapon.h"
 #include "Projectile/ProjectileManager.h"
 #include "Projectile/MonsterProjectile.h"
+#include "Projectile/LavaProjectile.h"
 #include "Item/DropItemManager.h"
 #include <memory>
 
@@ -17,10 +18,9 @@ struct AreaEffect
     float radius;
     float duration;
     float timer;
-    int dps;
-    float damageAccum;
+    BuffType buffType;
+    int buffValue;
     sf::Color color;
-    MonsterProjectile::AreaType type;
 };
 
 class GameState : public IState
@@ -35,6 +35,7 @@ private:
     ProjectileManager projectileManager_;
     DropItemManager dropItemManager_;
     std::vector<AreaEffect> areaEffects_;
+    std::vector<struct LavaFloor> lavaFloors_;
 
     sf::Texture mapTexture_;
     std::unique_ptr<sf::Sprite> mapSprite_;
@@ -49,6 +50,8 @@ private:
     int getTileType(int x, int y);
     void updateAreaEffects(float deltaTime);
     void renderAreaEffects(sf::RenderWindow &window);
+    void updateLavaFloors(float deltaTime);
+    void renderLavaFloors(sf::RenderWindow &window);
     void checkProjectilePlayerCollisions();
 
 public:

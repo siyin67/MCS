@@ -7,6 +7,8 @@
 #include "ClockWeapon.h"
 #include "AxeWeapon.h"
 #include "DragonBreathWeapon.h"
+#include "SeaHeartWeapon.h"
+#include "LavaWeapon.h"
 
 #include "Weapon.h"
 
@@ -33,6 +35,10 @@ void WeaponFactory::registerDefaults()
                    { return std::make_unique<AxeWeapon>(); });
     registerWeapon("dragon", []()
                    { return std::make_unique<DragonBreathWeapon>(); });
+    registerWeapon("seaheart", []()
+                   { return std::make_unique<SeaHeartWeapon>(); });
+    registerWeapon("lava", []()
+                   { return std::make_unique<LavaWeapon>(); });
 }
 
 void WeaponFactory::registerWeapon(const std::string &id,

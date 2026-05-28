@@ -43,6 +43,9 @@ trident=assets/images/item/trident.png
 clock=assets/images/item/clock.png
 axe=assets/images/item/axe.png
 dragon=assets/images/item/dragon_breath.png
+seaheart=assets/images/item/seaheart.png
+bubble_button=assets/images/item/bubble_button.png
+lava_bucket=assets/images/item/lava_bucket.png
 
 # ========== UI 纹理 ==========
 menu_button=assets/images/UI/menu_button.png
@@ -64,6 +67,21 @@ fireball=assets/images/item/fireball.png
 dragon_fireball=assets/images/item/dragon_fireball.png
 wither_skull=assets/images/item/wither_skull.png
 web=assets/images/item/web.png
+# ========== Buff 贴图 ==========
+buff_background=assets/images/buff/buff_background.png
+buff_speed_up=assets/images/buff/buff_speed_up.png
+buff_speed_down=assets/images/buff/buff_speed_down.png
+buff_attack_up=assets/images/buff/buff_attack_up.png
+buff_attack_down=assets/images/buff/buff_attack_down.png
+buff_invincible=assets/images/buff/buff_invincible.png
+buff_heal=assets/images/buff/buff_heal.png
+buff_poison=assets/images/buff/buff_poison.png
+buff_burn=assets/images/buff/buff_burn.png
+buff_wither=assets/images/buff/buff_wither.png
+buff_instant_health=assets/images/buff/buff_instant_health.png
+# ========== 药水纹理 ==========
+potion=assets/images/item/potion.png
+potion_overlay=assets/images/item/potion_overlay.png
 # ========== 字体 ==========
 main_font=assets/fonts/minecraft.ttf
 # ========== 音效 ==========
@@ -93,6 +111,21 @@ enderdragon_hurt=assets/Sound/mob/enderdragon/enderdragon_hurt.wav
 enderdragon_death=assets/Sound/mob/enderdragon/enderdragon_death.wav
 slime_hurt=assets/Sound/mob/slime/slime_hurt.wav
 slime_death=assets/Sound/mob/slime/slime_death.wav
+breeze_hurt=assets/Sound/mob/breeze/breeze_hurt.wav
+breeze_death=assets/Sound/mob/breeze/breeze_death.wav
+# ========== 怪物技能音效 ==========
+skeleton_shoot=assets/Sound/mob/skeleton/skeleton_shoot.wav
+spider_shoot=assets/Sound/mob/spider/spider_shoot.wav
+drowned_throw=assets/Sound/mob/drowned/drowned_throw.wav
+blaze_shoot=assets/Sound/mob/blaze/blaze_shoot.wav
+ghast_shoot=assets/Sound/mob/ghast/ghast_shoot.wav
+wither_shoot=assets/Sound/mob/wither/wither_shoot.wav
+enderdragon_shoot=assets/Sound/mob/enderdragon/enderdragon_shoot.wav
+enderdragon_laser=assets/Sound/mob/enderdragon/enderdragon_laser.wav
+creeper_fuse=assets/Sound/mob/creeper/creeper_fuse.wav
+enderman_teleport=assets/Sound/mob/enderman/enderman_teleport.wav
+breeze_vortex=assets/Sound/mob/breeze/breeze_vortex.wav
+witch_heal=assets/Sound/mob/witch/witch_heal.wav
 gameover=assets/Sound/gameover.ogg
 sword_swing=assets/Sound/weapon/sword/sword_hit.wav
 bow_shoot=assets/Sound/weapon/bow/bow.wav

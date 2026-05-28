@@ -38,11 +38,10 @@ void Enderman::update(float deltaTime, const sf::Vector2f &playerPos,
 
 	sf::Vector2f toPlayer = playerPos - position_;
 	float dist = std::sqrt(toPlayer.x * toPlayer.x + toPlayer.y * toPlayer.y);
-	float teleportDist = 20.0f * 64.0f; // 20个格子
+	float teleportDist = 20.0f * 64.0f;
 
 	if (dist > teleportDist)
 	{
-		// 瞬移到玩家附近
 		static std::random_device rd;
 		static std::mt19937 gen(rd());
 		std::uniform_real_distribution<> angleDis(0.0f, 2.0f * 3.14159265358979323846f);

@@ -59,7 +59,7 @@ void Player::update(float deltaTime)
     }
 
     // 3. 计算新位置（含外力）
-    sf::Vector2f newPos = shape_.getPosition() + movement * speed_ * deltaTime + externalForce_ * deltaTime;
+    sf::Vector2f newPos = shape_.getPosition() + movement * getEffectiveSpeed() * deltaTime + externalForce_ * deltaTime;
     externalForce_ = {0.0f, 0.0f};
 
     // 4. 边界限制（地图 5000x5000，玩家实际大小 64*0.8=51.2，半宽约 25.6）
@@ -124,12 +124,14 @@ void Player::update(float deltaTime)
             knockbackVelocity_ = {0.0f, 0.0f};
         }
     }
+
+    buffManager_.update(deltaTime, health_);
 }
 
 void Player::takeDamage(int damage, const sf::Vector2f &knockbackDir)
 {
     // 无敌帧期间不受伤
-    if (isInvincible_)
+    if (isInvincible_ || buffManager_.hasInvincible())
         return;
 
     health_ -= damage;
@@ -168,7 +170,6 @@ void Player::heal(int amount)
     health_ += amount;
     if (health_ > maxHealth_)
         health_ = maxHealth_;
-    shape_.setFillColor(sf::Color::Green);
 }
 
 sf::Vector2f Player::getPosition() const

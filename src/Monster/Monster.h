@@ -8,13 +8,14 @@
 // 前向声明
 class Player;
 #include "Projectile/Projectile.h"
+#include "Buff/Buff.h"
 
 class Monster : public ICollidable
 {
 public:
     static inline std::vector<std::unique_ptr<Monster>> pendingSpawns;
     static inline std::vector<std::unique_ptr<Projectile>> pendingProjectiles;
-    static inline std::function<void(sf::Vector2f, float, float, int, int)> spawnAreaCallback; // pos, radius, duration, dps, areaType
+    static inline std::function<void(sf::Vector2f, float, float, BuffType, int)> spawnAreaCallback; // pos, radius, duration, buffType, value
     static inline sf::Vector2f pendingPlayerForce; // 怪物对玩家的外力累积
 
 protected:
@@ -27,6 +28,7 @@ protected:
     int expReward_;
     sf::Color originalColor_;
     float hurtTimer_;
+    BuffManager buffManager_;
     // 冻结
     bool frozen_ = false;
     float frozenTimer_ = 0.0f;
@@ -46,6 +48,11 @@ public:
                         const std::vector<std::unique_ptr<Monster>> &allMonsters);
     virtual void render(sf::RenderWindow &window);
     virtual void takeDamage(int damage);
+    void takeDamageSilent(int damage)
+    {
+        health_ -= damage;
+        if (health_ < 0) health_ = 0;
+    }
 
     // 碰撞接口：怪物与玩家碰撞时的行为，子类可重写
     virtual void onCollideWithPlayer(Player &player, const sf::Vector2f &knockbackDir);
@@ -67,8 +74,11 @@ public:
 
     // 属性获取
     int getHealth() const { return health_; }
-    int getDamage() const { return damage_; }
+    int getDamage() const { return static_cast<int>(damage_ * buffManager_.getDamageMultiplier()); }
+    int getBaseDamage() const { return damage_; }
     int getExpReward() const { return expReward_; }
+    float getEffectiveSpeed() const { return speed_ * buffManager_.getSpeedMultiplier(); }
+    BuffManager &getBuffManager() { return buffManager_; }
     bool isAlive() const { return health_ > 0; }
     void setAlive(bool alive)
     {

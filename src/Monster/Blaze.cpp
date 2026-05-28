@@ -25,7 +25,6 @@ Blaze::Blaze()
 		if (len < 0.01f) return;
 		dir /= len;
 
-		// 机枪式连射：同一方向发射一串火球
 		sf::Vector2f spawnPos = self.getPosition();
 		for (int i = 0; i < 6; ++i)
 		{
@@ -38,10 +37,10 @@ Blaze::Blaze()
 			fireball->setTextureId("fireball");
 			fireball->setSize({22, 22});
 			Monster::pendingProjectiles.push_back(std::move(fireball));
-
-			spawnPos += dir * 24.0f; // 沿发射方向错开位置，形成一溜
+			spawnPos += dir * 24.0f;
 		}
-	}, 6.0f);
+		SoundManager::getInstance().playSFX("blaze_shoot");
+	}, 12.0f);
 }
 void Blaze::playHitSound()
 {

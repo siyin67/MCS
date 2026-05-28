@@ -26,7 +26,8 @@ Drowned::Drowned()
 		auto trident = std::make_unique<TridentProjectile>(
 			self.getPosition(), dir, self.getDamage(), 600.0f, 350.0f);
 		Monster::pendingProjectiles.push_back(std::move(trident));
-	}, 5.0f);
+		SoundManager::getInstance().playSFX("drowned_throw");
+	}, 10.0f);
 }
 void Drowned::playHitSound()
 {

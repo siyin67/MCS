@@ -13,6 +13,7 @@ private:
     std::vector<std::string> bgmPlaylist_;
     std::mt19937 rng_;
     float bgmVolume_;
+    bool randomMode_;
 
     // 音效
     std::vector<std::unique_ptr<sf::Sound>> activeSFX_;
@@ -37,6 +38,7 @@ public:
     void playSFX(const std::string &id);
     void setSFXVolume(float volume);
 
-    // 更新（清理已结束的音效）
+    // 更新
     void update();
+    void updateBGM();
 };

@@ -2,8 +2,16 @@
 #include <SFML/Graphics.hpp>
 #include <memory>
 #include "Collision/Collision.h"
+#include "Buff/Buff.h"
 
 class Monster;
+
+struct PlayerHitBuff
+{
+    BuffType type = BuffType::SpeedDown;
+    float value = 1.0f;
+    float duration = 0.0f;
+};
 
 class Projectile : public ICollidable
 {
@@ -17,6 +25,7 @@ protected:
     bool isActive_;
     bool isFriendly_;
     std::string textureId_;
+    PlayerHitBuff hitBuff_;
 
 public:
     Projectile();
@@ -27,6 +36,8 @@ public:
     virtual void onHit(Monster &monster) = 0;
     virtual void checkAreaDamage(std::vector<std::unique_ptr<Monster>> &monsters) { (void)monsters; }
     virtual void setTrackingTarget(const sf::Vector2f &target) { (void)target; }
+    virtual void updateTargeting(const std::vector<std::unique_ptr<Monster>> &monsters) { (void)monsters; }
+    virtual bool usesCustomTargeting() const { return false; }
 
     // 位置和移动
     void setPosition(const sf::Vector2f &pos);
@@ -41,6 +52,8 @@ public:
     bool isActive() const;
     void setFriendly(bool friendly) { isFriendly_ = friendly; }
     bool isFriendly() const { return isFriendly_; }
+    void setHitBuff(BuffType type, float value, float duration) { hitBuff_ = {type, value, duration}; }
+    const PlayerHitBuff &getHitBuff() const { return hitBuff_; }
     void setLifetime(float lifetime);
     float getLifetime() const;
 
