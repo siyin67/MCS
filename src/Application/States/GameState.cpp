@@ -16,6 +16,20 @@
 #include "Weapon/weapon.h"
 #include "Weapon/ClockWeapon.h"
 #include "Item/XpOrb.h"
+#include "Monster/Zombie.h"
+#include "Monster/Skeleton.h"
+#include "Monster/Spider.h"
+#include "Monster/Drowned.h"
+#include "Monster/Breeze.h"
+#include "Monster/Creeper.h"
+#include "Monster/Enderman.h"
+#include "Monster/Witch.h"
+#include "Monster/Blaze.h"
+#include "Monster/WitherSkeleton.h"
+#include "Monster/Ghast.h"
+#include "Monster/Wither.h"
+#include "Monster/Enderdragon.h"
+#include "Monster/Slimes.h"
 #include <random>
 
 GameState::GameState() : mapWidth_(312), mapHeight_(312), tileSize_(16), mapSprite_(nullptr)
@@ -53,6 +67,7 @@ GameState::GameState() : mapWidth_(312), mapHeight_(312), tileSize_(16), mapSpri
     SoundManager::getInstance().setBGMPlaylist(playlist);
     SoundManager::getInstance().playRandomBGM();
     SoundManager::getInstance().setBGMVolume(5);
+    setupWeaponCallbacks();
     std::cout << "GameState constructor END" << std::endl;
 }
 void GameState::setupWeaponCallbacks()
@@ -60,6 +75,22 @@ void GameState::setupWeaponCallbacks()
     auto callback = [this](std::unique_ptr<Projectile> projectile)
     {
         projectileManager_.add(std::move(projectile));
+    };
+
+    Monster::spawnAreaCallback = [this](sf::Vector2f pos, float radius, float duration, int dps, int type)
+    {
+        AreaEffect area;
+        area.position = pos;
+        area.radius = radius;
+        area.duration = duration;
+        area.timer = duration;
+        area.dps = dps;
+        area.damageAccum = 0.0f;
+        area.color = (type == (int)MonsterProjectile::AreaType::Wither)
+                         ? sf::Color(80, 80, 80, 180)
+                         : sf::Color(160, 50, 200, 180);
+        area.type = (MonsterProjectile::AreaType)type;
+        areaEffects_.push_back(area);
     };
 
     // 为所有武器设置回调（不需要判断类型）
@@ -95,7 +126,37 @@ void GameState::handleInput(sf::RenderWindow &window)
         stateManager_->pushState(std::make_unique<UpgradeState>(&player_));
     }
 
-    wasPressed = escPressed || zeroPressed || ninePressed;
+    // 按空格回复血量
+    bool spacePressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space);
+    if (spacePressed && !wasPressed)
+    {
+        player_.heal(100);
+    }
+
+    // 按 M 一次性生成所有种类怪物（调试用）
+    bool mPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::M);
+    if (mPressed && !wasPressed)
+    {
+        std::cout << "[DEBUG] Spawning all monster types" << std::endl;
+        sf::Vector2f pos = player_.getPosition();
+        float r = 150.0f;
+        auto spawn = [&](auto m)
+        { m->setPosition(pos + sf::Vector2f(r, 0)); r += 80.0f; monsters_.push_back(std::move(m)); };
+        spawn(std::make_unique<Wither>());
+        spawn(std::make_unique<Enderdragon>());
+        /*
+        spawn(std::make_unique<Creeper>());
+        spawn(std::make_unique<Enderman>());
+        spawn(std::make_unique<Witch>());
+        spawn(std::make_unique<Blaze>());
+        spawn(std::make_unique<WitherSkeleton>());
+        spawn(std::make_unique<BigSlime>());
+        spawn(std::make_unique<Ghast>());
+
+        */
+    }
+
+    wasPressed = escPressed || zeroPressed || ninePressed || spacePressed || mPressed;
 }
 
 void GameState::update(float deltaTime)
@@ -112,8 +173,8 @@ void GameState::update(float deltaTime)
     player_.update(deltaTime);
     player_.updateWeapons(deltaTime, player_.getPosition(), player_.getAttackDirection(), monsters_);
     player_.getWeaponManager().updateShields(deltaTime, player_.getPosition(), monsters_);
-    spawner_.update(deltaTime, player_.getPosition(), monsters_);
-    // 更新怪物
+    // spawner_.update(deltaTime, player_.getPosition(), monsters_);
+    //  更新怪物
     for (auto &m : monsters_)
     {
         m->update(deltaTime, player_.getPosition(), monsters_);
@@ -164,6 +225,16 @@ void GameState::update(float deltaTime)
     for (auto &m : Monster::pendingSpawns)
         monsters_.push_back(std::move(m));
     Monster::pendingSpawns.clear();
+    // 处理怪物对玩家的外力
+    player_.applyExternalForce(Monster::pendingPlayerForce);
+    Monster::pendingPlayerForce = {0.0f, 0.0f};
+    // 处理怪物投掷物
+    for (auto &p : Monster::pendingProjectiles)
+        projectileManager_.add(std::move(p));
+    Monster::pendingProjectiles.clear();
+    // 怪物投掷物碰撞玩家 + 区域效果对玩家伤害
+    checkProjectilePlayerCollisions();
+    updateAreaEffects(deltaTime);
     // 更新相机
     camera_.setCenter(player_.getPosition());
 }
@@ -180,6 +251,7 @@ void GameState::render(sf::RenderWindow &window)
     for (auto &m : monsters_)
         m->render(window);
     projectileManager_.render(window);
+    renderAreaEffects(window);
     player_.render(window);
     player_.getWeaponManager().render(window, player_.getPosition());
     dropItemManager_.render(window);
@@ -382,4 +454,69 @@ float GameState::getMoisture(int x, int y)
     moisture = std::max(0.0f, std::min(1.0f, moisture));
 
     return moisture;
+}
+
+void GameState::checkProjectilePlayerCollisions()
+{
+    for (auto &p : projectileManager_.getAll())
+    {
+        if (!p->isActive() || p->isFriendly())
+            continue;
+        if (p->getGlobalBounds().findIntersection(player_.getBounds()).has_value())
+        {
+            player_.takeDamage(p->getDamage());
+            p->setActive(false);
+        }
+    }
+}
+
+void GameState::updateAreaEffects(float deltaTime)
+{
+    for (auto &area : areaEffects_)
+    {
+        area.timer -= deltaTime;
+        if (area.timer <= 0.0f)
+            continue;
+
+        // 检查玩家是否在区域内
+        sf::Vector2f delta = player_.getPosition() - area.position;
+        float dist = std::sqrt(delta.x * delta.x + delta.y * delta.y);
+        if (dist <= area.radius)
+        {
+            area.damageAccum += area.dps * deltaTime;
+            int dmg = static_cast<int>(area.damageAccum);
+            if (dmg > 0)
+            {
+                player_.takeEnvironmentalDamage(dmg);
+                area.damageAccum -= dmg;
+            }
+        }
+    }
+
+    // 清理过期区域效果
+    areaEffects_.erase(
+        std::remove_if(areaEffects_.begin(), areaEffects_.end(),
+                       [](const AreaEffect &a)
+                       { return a.timer <= 0.0f; }),
+        areaEffects_.end());
+}
+
+void GameState::renderAreaEffects(sf::RenderWindow &window)
+{
+    for (const auto &area : areaEffects_)
+    {
+        if (area.timer <= 0.0f)
+            continue;
+        sf::CircleShape circle(area.radius);
+        circle.setPosition(area.position - sf::Vector2f(area.radius, area.radius));
+        circle.setFillColor(sf::Color::Transparent);
+        circle.setOutlineColor(area.color);
+        circle.setOutlineThickness(3.0f);
+        // 透明度随剩余时间衰减
+        float alpha = std::min(1.0f, area.timer / 0.5f);
+        sf::Color outlineColor = area.color;
+        outlineColor.a = static_cast<uint8_t>(255 * alpha);
+        circle.setOutlineColor(outlineColor);
+        window.draw(circle);
+    }
 }

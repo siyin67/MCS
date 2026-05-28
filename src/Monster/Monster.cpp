@@ -16,22 +16,29 @@ Monster::Monster()
 
 void Monster::setSkill(std::function<void(Monster &, const sf::Vector2f &)> skill, float cooldown)
 {
-    // 暂未实现
-    (void)skill;
-    (void)cooldown;
+    skillFunc_ = std::move(skill);
+    skillCooldown_ = cooldown;
+    skillTimer_ = 0.0f;
 }
 
 void Monster::updateSkill(float deltaTime, const sf::Vector2f &playerPos)
 {
-    // 暂未实现
-    (void)deltaTime;
-    (void)playerPos;
+    if (!skillFunc_)
+        return;
+    skillTimer_ += deltaTime;
+    if (skillTimer_ >= skillCooldown_)
+    {
+        useSkill(playerPos);
+    }
 }
 
 void Monster::useSkill(const sf::Vector2f &playerPos)
 {
-    // 暂未实现
-    (void)playerPos;
+    if (skillFunc_)
+    {
+        skillFunc_(*this, playerPos);
+        skillTimer_ = 0.0f;
+    }
 }
 void Monster::update(float deltaTime, const sf::Vector2f &playerPos,
                      const std::vector<std::unique_ptr<Monster>> &allMonsters)
@@ -100,6 +107,8 @@ void Monster::update(float deltaTime, const sf::Vector2f &playerPos,
     // 4. 移动
     position_ += move * speed_ * deltaTime;
     shape_.setPosition(position_);
+    // 5. 更新技能
+    updateSkill(deltaTime, playerPos);
     // 受伤恢复
     if (hurtTimer_ > 0)
     {

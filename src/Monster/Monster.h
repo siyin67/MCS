@@ -7,11 +7,15 @@
 
 // 前向声明
 class Player;
+#include "Projectile/Projectile.h"
 
 class Monster : public ICollidable
 {
 public:
     static inline std::vector<std::unique_ptr<Monster>> pendingSpawns;
+    static inline std::vector<std::unique_ptr<Projectile>> pendingProjectiles;
+    static inline std::function<void(sf::Vector2f, float, float, int, int)> spawnAreaCallback; // pos, radius, duration, dps, areaType
+    static inline sf::Vector2f pendingPlayerForce; // 怪物对玩家的外力累积
 
 protected:
     sf::RectangleShape shape_;
@@ -21,7 +25,7 @@ protected:
     int maxHealth_;
     int damage_;
     int expReward_;
-    sf::Color originalColor_; // 原始颜色
+    sf::Color originalColor_;
     float hurtTimer_;
     // 冻结
     bool frozen_ = false;
@@ -29,6 +33,7 @@ protected:
     // 技能相关
     float skillCooldown_;
     float skillTimer_;
+    std::function<void(Monster &, const sf::Vector2f &)> skillFunc_;
 
 public:
     Monster();
@@ -58,6 +63,7 @@ public:
     // 冻结
     void freeze(float duration) { frozen_ = true; frozenTimer_ = duration; }
     bool isFrozen() const { return frozen_; }
+    virtual bool isProjectileImmune() const { return false; }
 
     // 属性获取
     int getHealth() const { return health_; }
@@ -68,6 +74,15 @@ public:
     {
         if (!alive)
             health_ = 0;
+    }
+    void addHealth(int amount)
+    {
+        health_ += amount;
+        maxHealth_ += amount;
+    }
+    void heal(int amount)
+    {
+        health_ = std::min(maxHealth_, health_ + amount);
     }
 
     // 特效标记（供外部使用）

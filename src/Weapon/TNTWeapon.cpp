@@ -42,6 +42,7 @@ void TNTWeapon::attack(const sf::Vector2f &playerPos,
 
 		auto tnt = std::make_unique<TNTProjectile>(
 			playerPos, target, damage_, explosionRadius_);
+		tnt->setFriendly(true);
 		addProjectile(std::move(tnt));
 	}
 

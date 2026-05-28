@@ -2,7 +2,7 @@
 #include "Resourcemanager/ResourceManager.h"
 
 Projectile::Projectile()
-    : damage_(10), lifetime_(2.0f), maxLifetime_(2.0f), isActive_(true)
+    : damage_(10), lifetime_(2.0f), maxLifetime_(2.0f), isActive_(true), isFriendly_(false)
 {
     shape_.setSize({16, 16});
     shape_.setOrigin({8, 8});

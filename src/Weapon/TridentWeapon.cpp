@@ -71,6 +71,7 @@ void TridentWeapon::attack(const sf::Vector2f &playerPos,
 
 	auto trident = std::make_unique<TridentProjectile>(
 		playerPos, dir, damage_, range_, projectileSpeed_);
+	trident->setFriendly(true);
 	trident->setOnDestroy([this]() { onTridentDestroyed(); });
 	activeCount_++;
 

@@ -18,9 +18,9 @@ WitherSkeleton::WitherSkeleton()
 }
 void WitherSkeleton::playHitSound()
 {
-	SoundManager::getInstance().playSFX("zombie_hurt");
+	SoundManager::getInstance().playSFX("skeleton_hurt");
 }
 void WitherSkeleton::playDeathSound()
 {
-	SoundManager::getInstance().playSFX("zombie_death");
+	SoundManager::getInstance().playSFX("skeleton_death");
 }

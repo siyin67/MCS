@@ -30,6 +30,7 @@ private:
     bool showHurtColor_;      // 当前是否显示受伤颜色
 
     sf::Color originalColor_; // 原始填充色（用于恢复）
+    sf::Vector2f externalForce_;
     WeaponManager weaponManager_;
 
     int currentXP_ = 0;
@@ -40,6 +41,7 @@ public:
 
     void update(float deltaTime);
     void takeDamage(int damage, const sf::Vector2f &knockbackDir = {0, 0});
+    void takeEnvironmentalDamage(int damage);
     void heal(int amount);
 
     // 碰撞接口：玩家与怪物碰撞时的行为
@@ -57,6 +59,7 @@ public:
 
     int addXP(int amount);
     int getXP() const { return currentXP_; }
+    void applyExternalForce(const sf::Vector2f &force) { externalForce_ += force; }
     int getLevel() const { return level_; }
     int getXPToNext() const { return level_ * 100; }
     float getXPPercent() const;

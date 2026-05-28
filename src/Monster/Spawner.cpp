@@ -19,7 +19,7 @@
 
 Spawner::Spawner()
 	: currentWave_(1), maxAlive_(80),
-	  spawnTimer_(0.0f), spawnInterval_(0.4f),
+	  spawnTimer_(0.0f), spawnInterval_(0.8f),
 	  waveTimer_(0.0f), waveDuration_(30.0f),
 	  mapSize_{5000.0f, 5000.0f}, spawnDistance_(800.0f)
 {
@@ -249,6 +249,18 @@ void Spawner::update(float deltaTime, const sf::Vector2f &playerPos,
 
 			auto monster = available[dis(gen)]();
 			monster->setPosition(getSpawnPosition(playerPos));
+
+			// 按层级和波次增加血量
+			int hpBonus = 0;
+			switch (tier)
+			{
+			case Tier::Common:   hpBonus = 2 * currentWave_; break;
+			case Tier::Uncommon: hpBonus = 3 * currentWave_; break;
+			case Tier::Rare:     hpBonus = 5 * currentWave_; break;
+			case Tier::Boss:     hpBonus = 10 * currentWave_; break;
+			}
+			monster->addHealth(hpBonus);
+
 			monsters.push_back(std::move(monster));
 		}
 	}

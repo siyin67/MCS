@@ -38,8 +38,15 @@ void TridentProjectile::update(float deltaTime)
 		traveledDist_ += speed_ * deltaTime;
 		if (traveledDist_ >= maxDistance_)
 		{
-			state_ = TridentState::RETURNING;
-			hitSet_.clear();
+			if (!isFriendly_)
+			{
+				isActive_ = false;
+			}
+			else
+			{
+				state_ = TridentState::RETURNING;
+				hitSet_.clear();
+			}
 		}
 		break;
 	}
@@ -99,5 +106,6 @@ void TridentProjectile::setActive(bool active)
 
 void TridentProjectile::setTrackingTarget(const sf::Vector2f &target)
 {
-	playerPos_ = target;
+	if (isFriendly_)
+		playerPos_ = target;
 }

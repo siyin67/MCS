@@ -30,6 +30,9 @@ void ProjectileManager::checkCollisions(std::vector<std::unique_ptr<Monster>> &m
     {
         if (!p->isActive())
             continue;
+        // 怪物投掷物不应命中怪物
+        if (!p->isFriendly())
+            continue;
 
         sf::FloatRect projBounds = p->getBounds();
 
@@ -38,6 +41,8 @@ void ProjectileManager::checkCollisions(std::vector<std::unique_ptr<Monster>> &m
             if (!m->isAlive())
                 continue;
 
+            if (m->isProjectileImmune())
+                continue;
             if (projBounds.findIntersection(m->getBounds()).has_value())
             {
                 p->onHit(*m);

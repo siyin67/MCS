@@ -60,8 +60,10 @@ void AxeWeapon::attack(const sf::Vector2f &playerPos,
 		dir = attackDir;
 	}
 
-	addProjectile(std::make_unique<AxeProjectile>(
-		playerPos, dir, damage_, range_, projectileSpeed_, spinRadius_));
+	auto axe = std::make_unique<AxeProjectile>(
+		playerPos, dir, damage_, range_, projectileSpeed_, spinRadius_);
+	axe->setFriendly(true);
+	addProjectile(std::move(axe));
 	resetCooldown();
 }
 

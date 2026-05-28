@@ -53,11 +53,11 @@ public:
 
     void playHitSound() override
     {
-        SoundManager::getInstance().playSFX("zombie_hurt");
+        SoundManager::getInstance().playSFX("slime_hurt");
     }
     void playDeathSound() override
     {
-        SoundManager::getInstance().playSFX("zombie_death");
+        SoundManager::getInstance().playSFX("slime_death");
     }
 
     void update(float deltaTime, const sf::Vector2f &playerPos,
@@ -192,11 +192,11 @@ public:
 
     void playHitSound() override
     {
-        SoundManager::getInstance().playSFX("zombie_hurt");
+        SoundManager::getInstance().playSFX("slime_hurt");
     }
     void playDeathSound() override
     {
-        SoundManager::getInstance().playSFX("zombie_death");
+        SoundManager::getInstance().playSFX("slime_death");
     }
 
     // ---- 技能：召唤小史莱姆 ----
@@ -380,11 +380,11 @@ public:
 
     void playHitSound() override
     {
-        SoundManager::getInstance().playSFX("zombie_hurt");
+        SoundManager::getInstance().playSFX("slime_hurt");
     }
     void playDeathSound() override
     {
-        SoundManager::getInstance().playSFX("zombie_death");
+        SoundManager::getInstance().playSFX("slime_death");
     }
 
     // ---- 技能：召唤大史莱姆 ----

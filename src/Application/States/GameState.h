@@ -7,8 +7,21 @@
 #include "UI/UIManager.h"
 #include "../../Weapon/weapon.h"
 #include "Projectile/ProjectileManager.h"
+#include "Projectile/MonsterProjectile.h"
 #include "Item/DropItemManager.h"
 #include <memory>
+
+struct AreaEffect
+{
+    sf::Vector2f position;
+    float radius;
+    float duration;
+    float timer;
+    int dps;
+    float damageAccum;
+    sf::Color color;
+    MonsterProjectile::AreaType type;
+};
 
 class GameState : public IState
 {
@@ -21,18 +34,22 @@ private:
     UIManager uiManager_;
     ProjectileManager projectileManager_;
     DropItemManager dropItemManager_;
+    std::vector<AreaEffect> areaEffects_;
 
     sf::Texture mapTexture_;
-    std::unique_ptr<sf::Sprite> mapSprite_; // 改为指针
-    int mapWidth_;                          // 瓦片数量
-    int mapHeight_;                         // 瓦片数量
-    int tileSize_;                          // 16 像素
+    std::unique_ptr<sf::Sprite> mapSprite_;
+    int mapWidth_;
+    int mapHeight_;
+    int tileSize_;
 
     void generateMap();
     float fractalNoise(float x, float y, int octaves);
     float getHeight(int x, int y);
     float getMoisture(int x, int y);
     int getTileType(int x, int y);
+    void updateAreaEffects(float deltaTime);
+    void renderAreaEffects(sf::RenderWindow &window);
+    void checkProjectilePlayerCollisions();
 
 public:
     GameState();

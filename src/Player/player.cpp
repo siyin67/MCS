@@ -58,8 +58,9 @@ void Player::update(float deltaTime)
         movement.y /= length;
     }
 
-    // 3. 计算新位置
-    sf::Vector2f newPos = shape_.getPosition() + movement * speed_ * deltaTime;
+    // 3. 计算新位置（含外力）
+    sf::Vector2f newPos = shape_.getPosition() + movement * speed_ * deltaTime + externalForce_ * deltaTime;
+    externalForce_ = {0.0f, 0.0f};
 
     // 4. 边界限制（地图 5000x5000，玩家实际大小 64*0.8=51.2，半宽约 25.6）
     float actualSize = 64.0f * 0.8f;    // 51.2
@@ -146,6 +147,14 @@ void Player::takeDamage(int damage, const sf::Vector2f &knockbackDir)
     float knockbackSpeed = 400.0f;
     knockbackVelocity_ = knockbackDir * knockbackSpeed;
     SoundManager::getInstance().playSFX("hit");
+}
+
+void Player::takeEnvironmentalDamage(int damage)
+{
+    // 环境伤害不触发无敌帧
+    health_ -= damage;
+    if (health_ < 0)
+        health_ = 0;
 }
 
 void Player::onCollideWithMonster(Monster &monster, const sf::Vector2f &knockbackDir)

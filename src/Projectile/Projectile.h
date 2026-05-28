@@ -15,6 +15,7 @@ protected:
     float lifetime_;
     float maxLifetime_;
     bool isActive_;
+    bool isFriendly_;
     std::string textureId_;
 
 public:
@@ -38,6 +39,8 @@ public:
     int getDamage() const;
     virtual void setActive(bool active);
     bool isActive() const;
+    void setFriendly(bool friendly) { isFriendly_ = friendly; }
+    bool isFriendly() const { return isFriendly_; }
     void setLifetime(float lifetime);
     float getLifetime() const;
 

@@ -11,7 +11,7 @@ SwordWeapon::SwordWeapon()
     baseDamage_ = 20;
     damage_ = 10;
     attackCooldown_ = 0.8f;
-    range_ = 180.0f;
+    range_ = 280.0f;
     level_ = 1;
 
     attackTimer_ = 0.0f;

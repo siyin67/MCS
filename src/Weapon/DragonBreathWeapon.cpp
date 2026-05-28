@@ -31,6 +31,7 @@ void DragonBreathWeapon::attack(const sf::Vector2f &playerPos,
 
 	auto area = std::make_unique<DragonBreathArea>(
 		playerPos, damage_, radius_, areaDuration_);
+	area->setFriendly(true);
 	area->setOnDestroy([this]() { onAreaDestroyed(); });
 	activeCount_++;
 

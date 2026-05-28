@@ -1,6 +1,8 @@
 #include "Spider.h"
 #include "Resourcemanager/ResourceManager.h"
 #include "Sound/SoundManager.h"
+#include "../Projectile/MonsterProjectile.h"
+#include <cmath>
 
 Spider::Spider()
 {
@@ -15,12 +17,28 @@ Spider::Spider()
 		shape_.setTexture(&tex);
 	}
 	shape_.setSize({64, 64});
+
+	setSkill([](Monster &self, const sf::Vector2f &playerPos)
+	{
+		sf::Vector2f dir = playerPos - self.getPosition();
+		float len = std::sqrt(dir.x * dir.x + dir.y * dir.y);
+		if (len > 0.01f) { dir.x /= len; dir.y /= len; }
+		auto web = std::make_unique<MonsterProjectile>();
+		web->setPosition(self.getPosition());
+		web->setDirection(dir);
+		web->setSpeed(250.0f);
+		web->setDamage(self.getDamage());
+		web->setLifetime(2.0f);
+		web->setTextureId("web");
+		web->setSize({24, 24});
+		Monster::pendingProjectiles.push_back(std::move(web));
+	}, 5.0f);
 }
 void Spider::playHitSound()
 {
-	SoundManager::getInstance().playSFX("zombie_hurt");
+	SoundManager::getInstance().playSFX("spider_hurt");
 }
 void Spider::playDeathSound()
 {
-	SoundManager::getInstance().playSFX("zombie_death");
+	SoundManager::getInstance().playSFX("spider_death");
 }

@@ -34,6 +34,7 @@ void BowWeapon::attack(const sf::Vector2f &playerPos,
     arrow->setVelocity(attackDir * projectileSpeed_);
     arrow->setDamage(damage_);
     arrow->setLifetime(projectileLifetime_);
+    arrow->setFriendly(true);
 
     // 使用基类方法发射（不再需要单独的回调）
     addProjectile(std::move(arrow));
