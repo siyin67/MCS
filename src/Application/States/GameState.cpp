@@ -36,9 +36,7 @@
 GameState::GameState() : mapWidth_(312), mapHeight_(312), tileSize_(16), mapSprite_(nullptr)
 {
     std::cout << "GameState constructor START" << std::endl;
-    player_.addWeapon(std::move(WeaponFactory::getInstance().create("sword")));
-    player_.addWeapon(std::move(WeaponFactory::getInstance().create("seaheart")));
-    player_.addWeapon(std::move(WeaponFactory::getInstance().create("lava")));
+    player_.addWeapon(std::move(WeaponFactory::getInstance().create("sword"))); // 添加一把默认的剑
 
     // ClockWeapon needs WeaponManager pointer
     for (auto &w : player_.getWeaponManager().getWeapons())
@@ -570,14 +568,16 @@ void GameState::updateLavaFloors(float deltaTime)
         sf::FloatRect lavaRect(l.position - sf::Vector2f(24.0f, 24.0f), {48.0f, 48.0f});
         for (auto &m : monsters_)
         {
-            if (!m->isAlive()) continue;
+            if (!m->isAlive())
+                continue;
             if (lavaRect.findIntersection(m->getBounds()).has_value())
                 m->getBuffManager().add(BuffType::Burn, static_cast<float>(l.dps), 0.6f);
         }
     }
     lavaFloors_.erase(
         std::remove_if(lavaFloors_.begin(), lavaFloors_.end(),
-                       [](const LavaFloor &l) { return l.timer <= 0.0f; }),
+                       [](const LavaFloor &l)
+                       { return l.timer <= 0.0f; }),
         lavaFloors_.end());
 }
 
