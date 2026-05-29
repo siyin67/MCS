@@ -2,6 +2,8 @@
 #include "SwordWeapon.h"
 #include "BowWeapon.h"
 #include "ShieldWeapon.h"
+#include "MaceWeapon.h"
+#include "LightningRodWeapon.h"
 
 void WeaponManager::addWeapon(std::unique_ptr<Weapon> weapon)
 {
@@ -40,6 +42,14 @@ void WeaponManager::render(sf::RenderWindow &window, const sf::Vector2f &playerP
         if (auto *shield = dynamic_cast<ShieldWeapon *>(weapon.get()))
         {
             shield->render(window, playerPos);
+        }
+        if (auto *mace = dynamic_cast<MaceWeapon *>(weapon.get()))
+        {
+            mace->render(window, playerPos);
+        }
+        if (auto *rod = dynamic_cast<LightningRodWeapon *>(weapon.get()))
+        {
+            rod->render(window, playerPos);
         }
     }
 }

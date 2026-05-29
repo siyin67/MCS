@@ -1,0 +1,14 @@
+{
+  "name": "Mace",
+  "textureId": "mace",
+  "baseDamage": 25,
+  "damage": 25,
+  "attackCooldown": 2.0,
+  "range": 180.0,
+  "levelUp": {
+    "cooldownDelta": -0.1,
+    "cooldownMin": 1.0,
+    "range": 20.0,
+    "damage": 10
+  }
+}

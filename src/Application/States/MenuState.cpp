@@ -44,11 +44,11 @@ MenuState::MenuState() : font_("assets/fonts/minecraft.ttf"), text_start_(font_)
     // 头像预览：优先使用已缓存的自定义皮肤
     if (!Player::customSkinPath.empty() && ResourceManager::GetInstance().HasTexture("player_skin"))
     {
-        head_preview_.setTexture(&ResourceManager::GetInstance().GetTexture("player_skin"));
+        head_preview_.setTexture(&ResourceManager::GetInstance().GetTexture("player_skin"), true);
     }
     else if (ResourceManager::GetInstance().HasTexture("player"))
     {
-        head_preview_.setTexture(&ResourceManager::GetInstance().GetTexture("player"));
+        head_preview_.setTexture(&ResourceManager::GetInstance().GetTexture("player"), true);
     }
     head_preview_.setSize({48, 48});
 
@@ -235,7 +235,7 @@ void MenuState::update(float deltaTime)
             {
                 auto &tex = ResourceManager::GetInstance().GetTexture("player_skin");
                 tex.setSmooth(false);
-                head_preview_.setTexture(&tex);
+                head_preview_.setTexture(&tex, true);
             }
             Player::customSkinPath = headResultPath_;
         }

@@ -2,8 +2,6 @@
 #include "../Net/json.hpp"
 #include <fstream>
 #include <iostream>
-#include <algorithm>
-#include <cctype>
 
 ResourceManager &ResourceManager::GetInstance()
 {
@@ -52,99 +50,7 @@ bool ResourceManager::LoadSoundBuffer(const std::string &id, const std::string &
 
 bool ResourceManager::LoadFromFile(const std::string &configPath)
 {
-    // Auto-detect JSON by extension
-    if (configPath.size() >= 5 &&
-        configPath.compare(configPath.size() - 5, 5, ".json") == 0)
-    {
-        return LoadFromJsonFile(configPath);
-    }
-
-    std::ifstream file(configPath);
-    if (!file.is_open())
-    {
-        std::cerr << "Failed to open config file: " << configPath << std::endl;
-        return false;
-    }
-
-    std::string line;
-    int lineNum = 0;
-    int loadedCount = 0;
-
-    while (std::getline(file, line))
-    {
-        lineNum++;
-
-        // 去除首尾空格
-        size_t start = line.find_first_not_of(" \t\r\n");
-        if (start == std::string::npos)
-            continue; // 空行
-        if (line[start] == '#')
-            continue; // 注释行
-
-        // 查找等号
-        size_t eqPos = line.find('=');
-        if (eqPos == std::string::npos)
-        {
-            std::cerr << "Invalid line " << lineNum << ": " << line << std::endl;
-            continue;
-        }
-
-        // 提取 id 和 path
-        std::string id = line.substr(start, eqPos - start);
-        std::string path = line.substr(eqPos + 1);
-
-        // 去除 id 末尾空格
-        id.erase(id.find_last_not_of(" \t\r\n") + 1);
-
-        // 去除 path 首尾空格
-        start = path.find_first_not_of(" \t\r\n");
-        if (start != std::string::npos)
-        {
-            path = path.substr(start);
-            path.erase(path.find_last_not_of(" \t\r\n") + 1);
-        }
-
-        if (id.empty() || path.empty())
-        {
-            std::cerr << "Empty id or path at line " << lineNum << std::endl;
-            continue;
-        }
-
-        // 根据路径扩展名判断类型
-        std::string ext;
-        size_t dotPos = path.find_last_of('.');
-        if (dotPos != std::string::npos)
-        {
-            ext = path.substr(dotPos);
-            for (auto &c : ext)
-                c = std::tolower(c);
-        }
-
-        bool success = false;
-        if (ext == ".png" || ext == ".jpg" || ext == ".bmp")
-        {
-            success = LoadTexture(id, path);
-        }
-        else if (ext == ".ttf" || ext == ".otf")
-        {
-            success = LoadFont(id, path);
-        }
-        else if (ext == ".wav" || ext == ".ogg" || ext == ".flac")
-        {
-            success = LoadSoundBuffer(id, path);
-        }
-        else
-        {
-            std::cerr << "Unknown file type: " << path << std::endl;
-            continue;
-        }
-
-        if (success)
-            loadedCount++;
-    }
-
-    std::cout << "Loaded " << loadedCount << " resources from " << configPath << std::endl;
-    return loadedCount > 0;
+    return LoadFromJsonFile(configPath);
 }
 
 bool ResourceManager::LoadFromJsonFile(const std::string &configPath)

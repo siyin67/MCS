@@ -9,6 +9,8 @@
 #include "DragonBreathWeapon.h"
 #include "SeaHeartWeapon.h"
 #include "LavaWeapon.h"
+#include "MaceWeapon.h"
+#include "LightningRodWeapon.h"
 
 #include "Weapon.h"
 
@@ -39,6 +41,10 @@ void WeaponFactory::registerDefaults()
                    { return std::make_unique<SeaHeartWeapon>(); });
     registerWeapon("lava", []()
                    { return std::make_unique<LavaWeapon>(); });
+    registerWeapon("mace", []()
+                   { return std::make_unique<MaceWeapon>(); });
+    registerWeapon("lightingrod", []()
+                   { return std::make_unique<LightningRodWeapon>(); });
 }
 
 void WeaponFactory::registerWeapon(const std::string &id,

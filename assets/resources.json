@@ -39,6 +39,8 @@
     "seaheart": "assets/images/item/seaheart.png",
     "bubble_button": "assets/images/item/bubble_button.png",
     "lava_bucket": "assets/images/item/lava_bucket.png",
+    "mace": "assets/images/item/mace.png",
+    "lightingrod": "assets/images/item/lightingrod.png",
 
     "menu_button": "assets/images/UI/menu_button.png",
     "menu_title": "assets/images/UI/menu_title.png",

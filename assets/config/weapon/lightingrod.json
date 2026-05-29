@@ -1,0 +1,18 @@
+{
+  "name": "Lightning Rod",
+  "textureId": "lightingrod",
+  "baseDamage": 30,
+  "damage": 30,
+  "attackCooldown": 10.0,
+  "range": 600.0,
+  "chainCount": 5,
+  "chainRadius": 300.0,
+  "chainDamagePercent": 0.25,
+  "levelUp": {
+    "cooldownDelta": -0.5,
+    "cooldownMin": 5.0,
+    "range": 20.0,
+    "damage": 15,
+    "chainCountEveryN": 3
+  }
+}
