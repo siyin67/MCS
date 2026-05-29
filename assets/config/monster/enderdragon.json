@@ -1,0 +1,9 @@
+{
+  "textureId": "enderdragon",
+  "speed": 70.0,
+  "health": 200,
+  "maxHealth": 200,
+  "damage": 8,
+  "expReward": 100,
+  "projectileSpeed": 250.0
+}

@@ -6,6 +6,7 @@ class Wither : public Monster
 private:
 	enum class AttackPattern { BurstFan, Circle, RapidSpray };
 
+	float projSpeed_ = 200.0f;
 	AttackPattern pattern_;
 	float patternTimer_;
 	float fireInterval_;

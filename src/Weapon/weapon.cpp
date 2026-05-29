@@ -24,9 +24,25 @@ void Weapon::dealDamage(Monster &monster)
 void Weapon::levelUp()
 {
     ++level_;
-    damage_ = baseDamage_ * level_;
-    attackCooldown_ = std::max(0.3f, attackCooldown_ - 0.05f);
-    range_ += 10.0f;
+    if (!levelUpCfg_.empty())
+    {
+        float cdDelta = levelUpCfg_.value("cooldownDelta", -0.05f);
+        float cdMin = levelUpCfg_.value("cooldownMin", 0.3f);
+        attackCooldown_ = std::max(cdMin, attackCooldown_ + cdDelta);
+        range_ += levelUpCfg_.value("range", 10.0f);
+
+        int dmg = levelUpCfg_.value("damage", 0);
+        if (dmg == 0)
+            damage_ = baseDamage_ * level_;
+        else
+            damage_ += dmg;
+    }
+    else
+    {
+        damage_ = baseDamage_ * level_;
+        attackCooldown_ = std::max(0.3f, attackCooldown_ - 0.05f);
+        range_ += 10.0f;
+    }
 }
 
 bool Weapon::canAttack() const

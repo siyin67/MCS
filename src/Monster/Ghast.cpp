@@ -1,24 +1,29 @@
 #include "Ghast.h"
 #include "Resourcemanager/ResourceManager.h"
 #include "Sound/SoundManager.h"
+#include "../Config/ConfigLoader.h"
 #include "../Projectile/MonsterProjectile.h"
 #include <cmath>
 
 Ghast::Ghast()
 {
-	speed_ = 60.0f;
-	health_ = 60;
-	maxHealth_ = 60;
-	damage_ = 3;
-	expReward_ = 20;
-	if (ResourceManager::GetInstance().HasTexture("ghast"))
+	auto cfg = loadJsonConfig("assets/config/monster/ghast.json");
+	speed_ = cfg.value("speed", 60.0f);
+	health_ = cfg.value("health", 60);
+	maxHealth_ = cfg.value("maxHealth", 60);
+	damage_ = cfg.value("damage", 3);
+	expReward_ = cfg.value("expReward", 20);
+	std::string texId = cfg.value("textureId", "ghast");
+	if (ResourceManager::GetInstance().HasTexture(texId))
 	{
-		sf::Texture &tex = ResourceManager::GetInstance().GetTexture("ghast");
+		sf::Texture &tex = ResourceManager::GetInstance().GetTexture(texId);
 		shape_.setTexture(&tex);
 	}
 	shape_.setSize({64, 64});
 
-	setSkill([](Monster &self, const sf::Vector2f &playerPos)
+	float skillCD = cfg.value("skillCooldown", 20.0f);
+	float projSpeed = cfg.value("projectileSpeed", 250.0f);
+	setSkill([projSpeed](Monster &self, const sf::Vector2f &playerPos)
 	{
 		sf::Vector2f dir = playerPos - self.getPosition();
 		float len = std::sqrt(dir.x * dir.x + dir.y * dir.y);
@@ -28,7 +33,7 @@ Ghast::Ghast()
 		auto fireball = std::make_unique<MonsterProjectile>();
 		fireball->setPosition(self.getPosition());
 		fireball->setDirection(dir);
-		fireball->setSpeed(250.0f);
+		fireball->setSpeed(projSpeed);
 		fireball->setDamage(self.getDamage());
 		fireball->setLifetime(4.0f);
 		fireball->setTextureId("fireball");
@@ -41,7 +46,7 @@ Ghast::Ghast()
 		});
 		Monster::pendingProjectiles.push_back(std::move(fireball));
 		SoundManager::getInstance().playSFX("ghast_shoot");
-	}, 20.0f);
+	}, skillCD);
 }
 void Ghast::playHitSound()
 {

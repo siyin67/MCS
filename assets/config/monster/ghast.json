@@ -1,0 +1,10 @@
+{
+  "textureId": "ghast",
+  "speed": 60.0,
+  "health": 60,
+  "maxHealth": 60,
+  "damage": 3,
+  "expReward": 20,
+  "skillCooldown": 20.0,
+  "projectileSpeed": 250.0
+}

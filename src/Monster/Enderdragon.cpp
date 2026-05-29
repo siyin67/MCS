@@ -1,17 +1,27 @@
 #include "Enderdragon.h"
 #include "Resourcemanager/ResourceManager.h"
 #include "Sound/SoundManager.h"
+#include "../Config/ConfigLoader.h"
 #include "../Projectile/MonsterProjectile.h"
 #include <cmath>
 #include <random>
 
 Enderdragon::Enderdragon()
 {
-	speed_ = 70.0f;
-	health_ = 200;
-	maxHealth_ = 200;
-	damage_ = 8;
-	expReward_ = 100;
+	auto cfg = loadJsonConfig("assets/config/monster/enderdragon.json");
+	speed_ = cfg.value("speed", 70.0f);
+	health_ = cfg.value("health", 200);
+	maxHealth_ = cfg.value("maxHealth", 200);
+	damage_ = cfg.value("damage", 8);
+	expReward_ = cfg.value("expReward", 100);
+	std::string texId = cfg.value("textureId", "enderdragon");
+	if (ResourceManager::GetInstance().HasTexture(texId))
+	{
+		sf::Texture &tex = ResourceManager::GetInstance().GetTexture(texId);
+		shape_.setTexture(&tex);
+	}
+	shape_.setSize({64, 64});
+	projSpeed_ = cfg.value("projectileSpeed", 250.0f);
 	laserTimer_ = 0.0f;
 	laserChargeTimer_ = 0.0f;
 	laserCharging_ = false;
@@ -20,12 +30,6 @@ Enderdragon::Enderdragon()
 	pattern_ = AttackPattern::BurstFan;
 	patternTimer_ = 0.0f;
 	fireInterval_ = 0.0f;
-	if (ResourceManager::GetInstance().HasTexture("enderdragon"))
-	{
-		sf::Texture &tex = ResourceManager::GetInstance().GetTexture("enderdragon");
-		shape_.setTexture(&tex);
-	}
-	shape_.setSize({64, 64});
 }
 void Enderdragon::playHitSound()
 {
@@ -41,7 +45,7 @@ void Enderdragon::fireFromAngle(const sf::Vector2f &dir)
 	auto dball = std::make_unique<MonsterProjectile>();
 	dball->setPosition(position_);
 	dball->setDirection(dir);
-	dball->setSpeed(250.0f);
+	dball->setSpeed(projSpeed_);
 	dball->setDamage(damage_);
 	dball->setLifetime(3.0f);
 	dball->setTextureId("dragon_fireball");
@@ -60,7 +64,6 @@ void Enderdragon::update(float deltaTime, const sf::Vector2f &playerPos,
 {
 	Monster::update(deltaTime, playerPos, allMonsters);
 
-	// ===== 弹幕模式状态机 =====
 	patternTimer_ += deltaTime;
 	float phaseDur = 0.0f;
 	switch (pattern_)
@@ -132,7 +135,6 @@ void Enderdragon::update(float deltaTime, const sf::Vector2f &playerPos,
 		break;
 	}
 
-	// ===== 激光（独立30s CD�?=====
 	laserTimer_ += deltaTime;
 
 	if (laserCharging_)

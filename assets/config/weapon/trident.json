@@ -1,0 +1,19 @@
+{
+  "name": "Trident",
+  "textureId": "trident",
+  "baseDamage": 20,
+  "damage": 20,
+  "attackCooldown": 1.5,
+  "range": 400.0,
+  "projectileSpeed": 600.0,
+  "maxOnField": 1,
+  "levelUp": {
+    "cooldownDelta": -0.05,
+    "cooldownMin": 0.3,
+    "range": 30.0,
+    "damage": 8,
+    "projectileSpeed": 50.0,
+    "maxOnFieldEveryN": 3,
+    "maxOnFieldMax": 5
+  }
+}

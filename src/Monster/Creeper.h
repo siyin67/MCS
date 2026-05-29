@@ -7,6 +7,10 @@ private:
 	bool flashing_;
 	float flashTimer_;
 	float fuseTime_;
+	float triggerDist_ = 200.0f;
+	float escapeDist_ = 300.0f;
+	float explosionRadius_ = 150.0f;
+	float explosionDamage_ = 3.0f;
 
 public:
 	Creeper();

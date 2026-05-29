@@ -2,20 +2,23 @@
 #include "BowWeapon.h"
 #include "Projectile/Arrow.h"
 #include "Sound/SoundManager.h"
+#include "../Config/ConfigLoader.h"
 
 BowWeapon::BowWeapon()
 {
-    name_ = "Bow";
-    textureId_ = "bow";
-    baseDamage_ = 15;
-    damage_ = 15;
-    attackCooldown_ = 0.6f;
-    range_ = 400.0f;
+    auto cfg = loadJsonConfig("assets/config/weapon/bow.json");
+    name_ = cfg.value("name", "Bow");
+    textureId_ = cfg.value("textureId", "bow");
+    baseDamage_ = cfg.value("baseDamage", 15);
+    damage_ = cfg.value("damage", 15);
+    attackCooldown_ = cfg.value("attackCooldown", 0.6f);
+    range_ = cfg.value("range", 400.0f);
     level_ = 1;
+    levelUpCfg_ = cfg.value("levelUp", nlohmann::json{});
 
-    projectileSpeed_ = 1600.0f;
-    projectileLifetime_ = 1.5f;
-    projectileId_ = "arrow";
+    projectileSpeed_ = cfg.value("projectileSpeed", 1600.0f);
+    projectileLifetime_ = cfg.value("projectileLifetime", 1.5f);
+    projectileId_ = cfg.value("projectileId", "arrow");
 }
 
 void BowWeapon::attack(const sf::Vector2f &playerPos,

@@ -1,20 +1,23 @@
 #include "DragonBreathWeapon.h"
 #include "../Projectile/DragonBreathArea.h"
 #include "../Monster/Monster.h"
+#include "../Config/ConfigLoader.h"
 
 DragonBreathWeapon::DragonBreathWeapon()
 {
-	name_ = "Dragon Breath";
-	textureId_ = "dragon";
-	baseDamage_ = 8;
-	damage_ = 8;
-	attackCooldown_ = 4.0f;
-	range_ = 0.0f;
+	auto cfg = loadJsonConfig("assets/config/weapon/dragon.json");
+	name_ = cfg.value("name", "Dragon Breath");
+	textureId_ = cfg.value("textureId", "dragon");
+	baseDamage_ = cfg.value("baseDamage", 8);
+	damage_ = cfg.value("damage", 8);
+	attackCooldown_ = cfg.value("attackCooldown", 4.0f);
+	range_ = cfg.value("range", 0.0f);
 	level_ = 1;
-	radius_ = 80.0f;
-	areaDuration_ = 2.0f;
-	maxLayers_ = 1;
+	radius_ = cfg.value("radius", 80.0f);
+	areaDuration_ = cfg.value("areaDuration", 2.0f);
+	maxLayers_ = cfg.value("maxLayers", 1);
 	activeCount_ = 0;
+	levelUpCfg_ = cfg.value("levelUp", nlohmann::json{});
 }
 
 void DragonBreathWeapon::attack(const sf::Vector2f &playerPos,
@@ -43,22 +46,34 @@ void DragonBreathWeapon::levelUp()
 {
 	++level_;
 
-	switch (level_)
+	if (!levelUpCfg_.empty() && levelUpCfg_.contains("levels"))
 	{
-	case 2: damage_ = 10; radius_ = 90;  areaDuration_ = 2.2f; attackCooldown_ = 3.8f; maxLayers_ = 1; break;
-	case 3: damage_ = 12; radius_ = 100; areaDuration_ = 2.4f; attackCooldown_ = 3.6f; maxLayers_ = 1; break;
-	case 4: damage_ = 14; radius_ = 110; areaDuration_ = 2.6f; attackCooldown_ = 3.4f; maxLayers_ = 2; break;
-	case 5: damage_ = 16; radius_ = 120; areaDuration_ = 2.8f; attackCooldown_ = 3.2f; maxLayers_ = 2; break;
-	case 6: damage_ = 20; radius_ = 130; areaDuration_ = 3.0f; attackCooldown_ = 3.0f; maxLayers_ = 3; break;
-	default:
-		damage_ += 4;
-		radius_ += 10.0f;
-		areaDuration_ += 0.2f;
-		attackCooldown_ = std::max(1.0f, attackCooldown_ - 0.2f);
-		if (level_ % 2 == 0 && maxLayers_ < 6)
-			maxLayers_++;
-		break;
+		std::string lvKey = std::to_string(level_);
+		if (levelUpCfg_["levels"].contains(lvKey))
+		{
+			auto &lv = levelUpCfg_["levels"][lvKey];
+			damage_ = lv.value("damage", damage_);
+			radius_ = lv.value("radius", radius_);
+			areaDuration_ = lv.value("areaDuration", areaDuration_);
+			attackCooldown_ = lv.value("attackCooldown", attackCooldown_);
+			maxLayers_ = lv.value("maxLayers", maxLayers_);
+			baseDamage_ = damage_;
+			return;
+		}
 	}
+
+	damage_ += levelUpCfg_.value("damage", 4);
+	radius_ += levelUpCfg_.value("radius", 10.0f);
+	areaDuration_ += levelUpCfg_.value("areaDuration", 0.2f);
+
+	float cdDelta = levelUpCfg_.value("cooldownDelta", -0.2f);
+	float cdMin = levelUpCfg_.value("cooldownMin", 1.0f);
+	attackCooldown_ = std::max(cdMin, attackCooldown_ + cdDelta);
+
+	int everyN = levelUpCfg_.value("maxLayersEveryN", 2);
+	int maxCap = levelUpCfg_.value("maxLayersMax", 6);
+	if (level_ % everyN == 0 && maxLayers_ < maxCap)
+		maxLayers_++;
 
 	baseDamage_ = damage_;
 }

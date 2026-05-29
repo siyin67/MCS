@@ -13,6 +13,7 @@ private:
 	sf::Vector2f laserDir_;
 	float laserLineLength_;
 
+	float projSpeed_ = 250.0f;
 	AttackPattern pattern_;
 	float patternTimer_;
 	float fireInterval_;

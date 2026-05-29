@@ -3,6 +3,10 @@
 
 class Breeze : public Monster
 {
+private:
+	float vortexRange_ = 200.0f;
+	float vortexStrength_ = 300.0f;
+
 public:
 	Breeze();
 	void playHitSound() override;

@@ -2,16 +2,19 @@
 #include "WeaponManager.h"
 #include "../Monster/Monster.h"
 #include "../Sound/SoundManager.h"
+#include "../Config/ConfigLoader.h"
 
 ClockWeapon::ClockWeapon()
 {
-	name_ = "Clock";
-	textureId_ = "clock";
-	baseDamage_ = 0;
-	damage_ = 0;
-	attackCooldown_ = 30.0f;
-	range_ = 0.0f;
+	auto cfg = loadJsonConfig("assets/config/weapon/clock.json");
+	name_ = cfg.value("name", "Clock");
+	textureId_ = cfg.value("textureId", "clock");
+	baseDamage_ = cfg.value("baseDamage", 0);
+	damage_ = cfg.value("damage", 0);
+	attackCooldown_ = cfg.value("attackCooldown", 30.0f);
+	range_ = cfg.value("range", 0.0f);
 	level_ = 1;
+	levelUpCfg_ = cfg.value("levelUp", nlohmann::json{});
 }
 
 void ClockWeapon::attack(const sf::Vector2f &playerPos,

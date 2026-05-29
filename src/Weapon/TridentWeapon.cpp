@@ -2,22 +2,25 @@
 #include "../Projectile/TridentProjectile.h"
 #include "../Monster/Monster.h"
 #include "../Sound/SoundManager.h"
+#include "../Config/ConfigLoader.h"
 #include <cmath>
 #include <algorithm>
 
 TridentWeapon::TridentWeapon()
 {
-	name_ = "Trident";
-	textureId_ = "trident";
-	baseDamage_ = 20;
-	damage_ = 20;
-	attackCooldown_ = 1.5f;
-	range_ = 400.0f;
+	auto cfg = loadJsonConfig("assets/config/weapon/trident.json");
+	name_ = cfg.value("name", "Trident");
+	textureId_ = cfg.value("textureId", "trident");
+	baseDamage_ = cfg.value("baseDamage", 20);
+	damage_ = cfg.value("damage", 20);
+	attackCooldown_ = cfg.value("attackCooldown", 1.5f);
+	range_ = cfg.value("range", 400.0f);
 	level_ = 1;
 
-	projectileSpeed_ = 600.0f;
-	maxOnField_ = 1;
+	projectileSpeed_ = cfg.value("projectileSpeed", 600.0f);
+	maxOnField_ = cfg.value("maxOnField", 1);
 	activeCount_ = 0;
+	levelUpCfg_ = cfg.value("levelUp", nlohmann::json{});
 }
 
 static float distSq(const sf::Vector2f &a, const sf::Vector2f &b)
@@ -38,7 +41,6 @@ void TridentWeapon::attack(const sf::Vector2f &playerPos,
 
 	SoundManager::getInstance().playSFX("trident_throw");
 
-	// 找到最近的活着的怪物
 	Monster *closest = nullptr;
 	float closestDist = 0.0f;
 	for (auto &m : monsters)
@@ -83,11 +85,10 @@ void TridentWeapon::levelUp()
 {
 	Weapon::levelUp();
 
-	damage_ += 8;
-	projectileSpeed_ += 50.0f;
-	range_ += 30.0f;
+	projectileSpeed_ += levelUpCfg_.value("projectileSpeed", 50.0f);
 
-	// 每3级增加场上一把三叉戟
-	if (level_ % 3 == 0 && maxOnField_ < 5)
+	int everyN = levelUpCfg_.value("maxOnFieldEveryN", 3);
+	int maxCap = levelUpCfg_.value("maxOnFieldMax", 5);
+	if (level_ % everyN == 0 && maxOnField_ < maxCap)
 		maxOnField_++;
 }

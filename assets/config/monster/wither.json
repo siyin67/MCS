@@ -1,0 +1,9 @@
+{
+  "textureId": "wither",
+  "speed": 50.0,
+  "health": 120,
+  "maxHealth": 120,
+  "damage": 5,
+  "expReward": 50,
+  "projectileSpeed": 200.0
+}

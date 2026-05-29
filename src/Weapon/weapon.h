@@ -5,6 +5,7 @@
 #include <SFML/System/Vector2.hpp>
 #include <functional>
 #include <Projectile/projectile.h>
+#include "../Net/json.hpp"
 
 class Monster;
 class Projectile;
@@ -16,10 +17,11 @@ protected:
     int level_;
     float attackCooldown_;
     float currentCooldown_;
-    float range_; // 攻击范围
+    float range_;
     std::string name_;
     std::string textureId_;
     std::function<void(std::unique_ptr<Projectile>)> addProjectileCallback_;
+    nlohmann::json levelUpCfg_;
 
 public:
     Weapon();

@@ -1,0 +1,10 @@
+{
+  "textureId": "skeleton",
+  "speed": 100.0,
+  "health": 25,
+  "maxHealth": 25,
+  "damage": 1,
+  "expReward": 4,
+  "skillCooldown": 10.0,
+  "projectileSpeed": 350.0
+}

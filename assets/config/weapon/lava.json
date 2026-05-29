@@ -1,0 +1,19 @@
+{
+  "name": "Lava Bucket",
+  "textureId": "lava_bucket",
+  "baseDamage": 5,
+  "damage": 5,
+  "attackCooldown": 4.0,
+  "range": 350.0,
+  "projectileSpeed": 500.0,
+  "floorDamage": 8,
+  "floorDuration": 5.0,
+  "levelUp": {
+    "cooldownDelta": -0.3,
+    "cooldownMin": 2.0,
+    "range": 10.0,
+    "damage": 3,
+    "floorDamage": 4,
+    "floorDuration": 1.0
+  }
+}

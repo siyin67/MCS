@@ -1,0 +1,11 @@
+{
+  "textureId": "blaze",
+  "speed": 70.0,
+  "health": 30,
+  "maxHealth": 30,
+  "damage": 2,
+  "expReward": 8,
+  "skillCooldown": 12.0,
+  "projectileSpeed": 400.0,
+  "fireballCount": 6
+}

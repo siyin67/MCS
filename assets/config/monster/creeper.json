@@ -1,0 +1,13 @@
+{
+  "textureId": "creeper",
+  "speed": 150.0,
+  "health": 30,
+  "maxHealth": 30,
+  "damage": 1,
+  "expReward": 8,
+  "fuseTime": 1.5,
+  "triggerDistance": 200.0,
+  "escapeDistance": 300.0,
+  "explosionRadius": 150.0,
+  "explosionDamage": 3.0
+}

@@ -1,0 +1,20 @@
+{
+  "name": "Sea Heart",
+  "textureId": "seaheart",
+  "baseDamage": 2,
+  "damage": 2,
+  "attackCooldown": 3.0,
+  "range": 400.0,
+  "dropletCount": 3,
+  "bounceCount": 5,
+  "dropletSpeed": 800.0,
+  "levelUp": {
+    "cooldownDelta": -0.2,
+    "cooldownMin": 1.0,
+    "range": 10.0,
+    "damage": 2,
+    "bounceCount": 1,
+    "dropletSpeed": 50.0,
+    "dropletCountEveryN": 3
+  }
+}

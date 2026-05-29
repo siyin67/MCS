@@ -1,0 +1,18 @@
+{
+  "name": "Axe",
+  "textureId": "axe",
+  "baseDamage": 35,
+  "damage": 35,
+  "attackCooldown": 2.0,
+  "range": 350.0,
+  "projectileSpeed": 500.0,
+  "spinRadius": 80.0,
+  "levelUp": {
+    "cooldownDelta": -0.1,
+    "cooldownMin": 0.5,
+    "range": 10.0,
+    "damage": 12,
+    "projectileSpeed": 40.0,
+    "spinRadius": 10.0
+  }
+}

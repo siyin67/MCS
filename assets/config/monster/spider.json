@@ -1,0 +1,10 @@
+{
+  "textureId": "spider",
+  "speed": 150.0,
+  "health": 20,
+  "maxHealth": 20,
+  "damage": 1,
+  "expReward": 3,
+  "skillCooldown": 10.0,
+  "webSpeed": 250.0
+}

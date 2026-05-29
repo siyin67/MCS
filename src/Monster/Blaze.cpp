@@ -1,24 +1,30 @@
 #include "Blaze.h"
 #include "Resourcemanager/ResourceManager.h"
 #include "Sound/SoundManager.h"
+#include "../Config/ConfigLoader.h"
 #include "../Projectile/MonsterProjectile.h"
 #include <cmath>
 
 Blaze::Blaze()
 {
-	speed_ = 70.0f;
-	health_ = 30;
-	maxHealth_ = 30;
-	damage_ = 2;
-	expReward_ = 8;
-	if (ResourceManager::GetInstance().HasTexture("blaze"))
+	auto cfg = loadJsonConfig("assets/config/monster/blaze.json");
+	speed_ = cfg.value("speed", 70.0f);
+	health_ = cfg.value("health", 30);
+	maxHealth_ = cfg.value("maxHealth", 30);
+	damage_ = cfg.value("damage", 2);
+	expReward_ = cfg.value("expReward", 8);
+	std::string texId = cfg.value("textureId", "blaze");
+	if (ResourceManager::GetInstance().HasTexture(texId))
 	{
-		sf::Texture &tex = ResourceManager::GetInstance().GetTexture("blaze");
+		sf::Texture &tex = ResourceManager::GetInstance().GetTexture(texId);
 		shape_.setTexture(&tex);
 	}
 	shape_.setSize({64, 64});
 
-	setSkill([](Monster &self, const sf::Vector2f &playerPos)
+	float skillCD = cfg.value("skillCooldown", 12.0f);
+	float projSpeed = cfg.value("projectileSpeed", 400.0f);
+	int fireballCount = cfg.value("fireballCount", 6);
+	setSkill([projSpeed, fireballCount](Monster &self, const sf::Vector2f &playerPos)
 	{
 		sf::Vector2f dir = playerPos - self.getPosition();
 		float len = std::sqrt(dir.x * dir.x + dir.y * dir.y);
@@ -26,12 +32,12 @@ Blaze::Blaze()
 		dir /= len;
 
 		sf::Vector2f spawnPos = self.getPosition();
-		for (int i = 0; i < 6; ++i)
+		for (int i = 0; i < fireballCount; ++i)
 		{
 			auto fireball = std::make_unique<MonsterProjectile>();
 			fireball->setPosition(spawnPos);
 			fireball->setDirection(dir);
-			fireball->setSpeed(400.0f);
+			fireball->setSpeed(projSpeed);
 			fireball->setDamage(self.getDamage());
 			fireball->setLifetime(2.5f);
 			fireball->setTextureId("fireball");
@@ -40,7 +46,7 @@ Blaze::Blaze()
 			spawnPos += dir * 24.0f;
 		}
 		SoundManager::getInstance().playSFX("blaze_shoot");
-	}, 12.0f);
+	}, skillCD);
 }
 void Blaze::playHitSound()
 {

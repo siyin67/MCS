@@ -3,6 +3,10 @@
 
 class Witch : public Monster
 {
+private:
+	float healRange_ = 250.0f;
+	int healAmount_ = 5;
+
 public:
 	Witch();
 	void playHitSound() override;

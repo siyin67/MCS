@@ -1,0 +1,8 @@
+{
+  "textureId": "zombie",
+  "speed": 80.0,
+  "health": 30,
+  "maxHealth": 30,
+  "damage": 1,
+  "expReward": 5
+}

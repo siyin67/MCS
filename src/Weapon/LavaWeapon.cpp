@@ -1,18 +1,21 @@
 #include "LavaWeapon.h"
 #include "../Projectile/LavaProjectile.h"
+#include "../Config/ConfigLoader.h"
 
 LavaWeapon::LavaWeapon()
 {
-	name_ = "Lava Bucket";
-	textureId_ = "lava_bucket";
-	baseDamage_ = 5;
-	damage_ = 5;
-	range_ = 350.0f;
-	attackCooldown_ = 4.0f;
+	auto cfg = loadJsonConfig("assets/config/weapon/lava.json");
+	name_ = cfg.value("name", "Lava Bucket");
+	textureId_ = cfg.value("textureId", "lava_bucket");
+	baseDamage_ = cfg.value("baseDamage", 5);
+	damage_ = cfg.value("damage", 5);
+	range_ = cfg.value("range", 350.0f);
+	attackCooldown_ = cfg.value("attackCooldown", 4.0f);
 	currentCooldown_ = 0.0f;
-	projectileSpeed_ = 500.0f;
-	floorDamage_ = 8;
-	floorDuration_ = 5.0f;
+	projectileSpeed_ = cfg.value("projectileSpeed", 500.0f);
+	floorDamage_ = cfg.value("floorDamage", 8);
+	floorDuration_ = cfg.value("floorDuration", 5.0f);
+	levelUpCfg_ = cfg.value("levelUp", nlohmann::json{});
 }
 
 void LavaWeapon::update(float deltaTime)
@@ -39,8 +42,6 @@ void LavaWeapon::attack(const sf::Vector2f &playerPos,
 void LavaWeapon::levelUp()
 {
 	Weapon::levelUp();
-	damage_ += 3;
-	floorDamage_ += 4;
-	floorDuration_ += 1.0f;
-	attackCooldown_ = std::max(2.0f, attackCooldown_ - 0.3f);
+	floorDamage_ += levelUpCfg_.value("floorDamage", 4);
+	floorDuration_ += levelUpCfg_.value("floorDuration", 1.0f);
 }

@@ -1,22 +1,25 @@
 #include "ShieldWeapon.h"
 #include "../Monster/Monster.h"
 #include "../Resourcemanager/ResourceManager.h"
+#include "../Config/ConfigLoader.h"
 #include <cmath>
 
 ShieldWeapon::ShieldWeapon()
 {
-    name_ = "Shield";
-    textureId_ = "shield";
-    baseDamage_ = 10;
-    damage_ = 10;
-    attackCooldown_ = 0.0f;
-    range_ = 100.0f;
+    auto cfg = loadJsonConfig("assets/config/weapon/shield.json");
+    name_ = cfg.value("name", "Shield");
+    textureId_ = cfg.value("textureId", "shield");
+    baseDamage_ = cfg.value("baseDamage", 10);
+    damage_ = cfg.value("damage", 10);
+    attackCooldown_ = cfg.value("attackCooldown", 0.0f);
+    range_ = cfg.value("range", 100.0f);
     level_ = 1;
 
-    radius_ = 80.0f;
-    rotationSpeed_ = 3.0f;
-    maxShields_ = 1;
-    hitCooldown_ = 0.5f;
+    radius_ = cfg.value("radius", 80.0f);
+    rotationSpeed_ = cfg.value("rotationSpeed", 3.0f);
+    maxShields_ = cfg.value("maxShields", 1);
+    hitCooldown_ = cfg.value("hitCooldown", 0.5f);
+    levelUpCfg_ = cfg.value("levelUp", nlohmann::json{});
 
     // 加载盾牌纹理
     if (ResourceManager::GetInstance().HasTexture("shield"))
@@ -124,50 +127,35 @@ void ShieldWeapon::levelUp()
 {
     Weapon::levelUp();
 
-    if (level_ == 2 && maxShields_ < 2)
+    // 读取盾牌数量升级点
+    if (!levelUpCfg_.empty() && levelUpCfg_.contains("maxShieldsAt"))
     {
-        maxShields_ = 2;
-        createShield();
-        float angleStep = 2 * 3.14159f / shields_.size();
-        for (size_t i = 0; i < shields_.size(); i++)
+        for (const auto &v : levelUpCfg_["maxShieldsAt"])
         {
-            shields_[i].angle = angleStep * i;
-        }
-    }
-    else if (level_ == 4 && maxShields_ < 3)
-    {
-        maxShields_ = 3;
-        createShield();
-        float angleStep = 2 * 3.14159f / shields_.size();
-        for (size_t i = 0; i < shields_.size(); i++)
-        {
-            shields_[i].angle = angleStep * i;
-        }
-    }
-    else if (level_ == 6 && maxShields_ < 4)
-    {
-        maxShields_ = 4;
-        createShield();
-        float angleStep = 2 * 3.14159f / shields_.size();
-        for (size_t i = 0; i < shields_.size(); i++)
-        {
-            shields_[i].angle = angleStep * i;
+            int lv = v.get<int>();
+            if (level_ == lv && maxShields_ < lv)
+            {
+                maxShields_ = lv;
+                createShield();
+                float angleStep = 2 * 3.14159f / shields_.size();
+                for (size_t i = 0; i < shields_.size(); i++)
+                    shields_[i].angle = angleStep * i;
+                break;
+            }
         }
     }
 
-    // 升级提升属性
-    damage_ += 2;
-    radius_ += 5.0f;
+    // 额外属性
+    int dmg = levelUpCfg_.value("damage", 2);
+    damage_ += dmg;
+    radius_ += levelUpCfg_.value("radius", 5.0f);
     rotationSpeed_ += 0.5f;
 
-    // 升级改变颜色（叠加颜色）
     int r = 100 + level_ * 10;
     int g = 150 + level_ * 5;
     sf::Color color(std::min(r, 255), std::min(g, 255), 200, 200);
     for (auto &shield : shields_)
-    {
         shield.shape.setFillColor(color);
-    }
 }
 
 void ShieldWeapon::render(sf::RenderWindow &window, const sf::Vector2f &playerPos) const

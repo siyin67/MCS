@@ -1,21 +1,26 @@
 #include "Breeze.h"
 #include "Resourcemanager/ResourceManager.h"
 #include "Sound/SoundManager.h"
+#include "../Config/ConfigLoader.h"
 #include <cmath>
 
 Breeze::Breeze()
 {
-	speed_ = 110.0f;
-	health_ = 28;
-	maxHealth_ = 28;
-	damage_ = 1;
-	expReward_ = 5;
-	if (ResourceManager::GetInstance().HasTexture("breeze"))
+	auto cfg = loadJsonConfig("assets/config/monster/breeze.json");
+	speed_ = cfg.value("speed", 110.0f);
+	health_ = cfg.value("health", 28);
+	maxHealth_ = cfg.value("maxHealth", 28);
+	damage_ = cfg.value("damage", 1);
+	expReward_ = cfg.value("expReward", 5);
+	std::string texId = cfg.value("textureId", "breeze");
+	if (ResourceManager::GetInstance().HasTexture(texId))
 	{
-		sf::Texture &tex = ResourceManager::GetInstance().GetTexture("breeze");
+		sf::Texture &tex = ResourceManager::GetInstance().GetTexture(texId);
 		shape_.setTexture(&tex);
 	}
 	shape_.setSize({64, 64});
+	vortexRange_ = cfg.value("vortexRange", 200.0f);
+	vortexStrength_ = cfg.value("vortexStrength", 300.0f);
 }
 void Breeze::playHitSound()
 {
@@ -32,15 +37,13 @@ void Breeze::update(float deltaTime, const sf::Vector2f &playerPos,
 
 	sf::Vector2f toPlayer = playerPos - position_;
 	float dist = std::sqrt(toPlayer.x * toPlayer.x + toPlayer.y * toPlayer.y);
-	float vortexRange = 200.0f;
 
-	if (dist < vortexRange && dist > 10.0f)
+	if (dist < vortexRange_ && dist > 10.0f)
 	{
-		float strength = (1.0f - dist / vortexRange) * 300.0f;
+		float strength = (1.0f - dist / vortexRange_) * vortexStrength_;
 		sf::Vector2f pullDir = toPlayer / dist;
 		Monster::pendingPlayerForce -= pullDir * strength;
 
-		// 涡流音效（低频率播放）
 		static float soundTimer = 0.0f;
 		soundTimer += deltaTime;
 		if (soundTimer >= 2.0f)

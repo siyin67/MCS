@@ -1,0 +1,14 @@
+{
+  "name": "Clock",
+  "textureId": "clock",
+  "baseDamage": 0,
+  "damage": 0,
+  "attackCooldown": 30.0,
+  "range": 0.0,
+  "levelUp": {
+    "cooldownDelta": -2.0,
+    "cooldownMin": 10.0,
+    "range": 0,
+    "damage": 0
+  }
+}

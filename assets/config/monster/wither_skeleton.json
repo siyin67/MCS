@@ -1,0 +1,8 @@
+{
+  "textureId": "wither_skeleton",
+  "speed": 100.0,
+  "health": 45,
+  "maxHealth": 45,
+  "damage": 2,
+  "expReward": 10
+}

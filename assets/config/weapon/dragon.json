@@ -1,0 +1,28 @@
+{
+  "name": "Dragon Breath",
+  "textureId": "dragon",
+  "baseDamage": 8,
+  "damage": 8,
+  "attackCooldown": 4.0,
+  "range": 0.0,
+  "radius": 80.0,
+  "areaDuration": 2.0,
+  "maxLayers": 1,
+  "levelUp": {
+    "cooldownDelta": -0.2,
+    "cooldownMin": 1.0,
+    "range": 0,
+    "damage": 4,
+    "radius": 10.0,
+    "areaDuration": 0.2,
+    "maxLayersEveryN": 2,
+    "maxLayersMax": 6,
+    "levels": {
+      "2":  { "damage": 10, "radius": 90,  "areaDuration": 2.2, "attackCooldown": 3.8, "maxLayers": 1 },
+      "3":  { "damage": 12, "radius": 100, "areaDuration": 2.4, "attackCooldown": 3.6, "maxLayers": 1 },
+      "4":  { "damage": 14, "radius": 110, "areaDuration": 2.6, "attackCooldown": 3.4, "maxLayers": 2 },
+      "5":  { "damage": 16, "radius": 120, "areaDuration": 2.8, "attackCooldown": 3.2, "maxLayers": 2 },
+      "6":  { "damage": 20, "radius": 130, "areaDuration": 3.0, "attackCooldown": 3.0, "maxLayers": 3 }
+    }
+  }
+}

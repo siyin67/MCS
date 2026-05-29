@@ -1,19 +1,22 @@
 #include "AxeWeapon.h"
 #include "../Projectile/AxeProjectile.h"
 #include "../Monster/Monster.h"
+#include "../Config/ConfigLoader.h"
 #include <cmath>
 
 AxeWeapon::AxeWeapon()
 {
-	name_ = "Axe";
-	textureId_ = "axe";
-	baseDamage_ = 35;
-	damage_ = 35;
-	attackCooldown_ = 2.0f;
-	range_ = 350.0f;
+	auto cfg = loadJsonConfig("assets/config/weapon/axe.json");
+	name_ = cfg.value("name", "Axe");
+	textureId_ = cfg.value("textureId", "axe");
+	baseDamage_ = cfg.value("baseDamage", 35);
+	damage_ = cfg.value("damage", 35);
+	attackCooldown_ = cfg.value("attackCooldown", 2.0f);
+	range_ = cfg.value("range", 350.0f);
 	level_ = 1;
-	projectileSpeed_ = 500.0f;
-	spinRadius_ = 80.0f;
+	projectileSpeed_ = cfg.value("projectileSpeed", 500.0f);
+	spinRadius_ = cfg.value("spinRadius", 80.0f);
+	levelUpCfg_ = cfg.value("levelUp", nlohmann::json{});
 }
 
 static float distSq(const sf::Vector2f &a, const sf::Vector2f &b)
@@ -70,8 +73,6 @@ void AxeWeapon::attack(const sf::Vector2f &playerPos,
 void AxeWeapon::levelUp()
 {
 	Weapon::levelUp();
-	damage_ += 12;
-	projectileSpeed_ += 40.0f;
-	spinRadius_ += 10.0f;
-	attackCooldown_ = std::max(0.5f, attackCooldown_ - 0.1f);
+	projectileSpeed_ += levelUpCfg_.value("projectileSpeed", 40.0f);
+	spinRadius_ += levelUpCfg_.value("spinRadius", 10.0f);
 }

@@ -1,18 +1,21 @@
 #include "SwordWeapon.h"
 #include "../Monster/Monster.h"
 #include "../Sound/SoundManager.h"
+#include "../Config/ConfigLoader.h"
 #include <cmath>
 #include <iostream>
 
 SwordWeapon::SwordWeapon()
 {
-    name_ = "Iron Sword";
-    textureId_ = "iron_sword";
-    baseDamage_ = 20;
-    damage_ = 10;
-    attackCooldown_ = 0.8f;
-    range_ = 280.0f;
+    auto cfg = loadJsonConfig("assets/config/weapon/sword.json");
+    name_ = cfg.value("name", "Iron Sword");
+    textureId_ = cfg.value("textureId", "iron_sword");
+    baseDamage_ = cfg.value("baseDamage", 20);
+    damage_ = cfg.value("damage", 10);
+    attackCooldown_ = cfg.value("attackCooldown", 0.8f);
+    range_ = cfg.value("range", 280.0f);
     level_ = 1;
+    levelUpCfg_ = cfg.value("levelUp", nlohmann::json{});
 
     attackTimer_ = 0.0f;
     isAttacking_ = false;

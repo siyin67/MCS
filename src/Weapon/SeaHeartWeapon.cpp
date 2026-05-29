@@ -1,19 +1,22 @@
 #include "SeaHeartWeapon.h"
 #include "../Monster/Monster.h"
 #include "../Projectile/BubbleProjectile.h"
+#include "../Config/ConfigLoader.h"
 
 SeaHeartWeapon::SeaHeartWeapon()
 {
-	name_ = "Sea Heart";
-	textureId_ = "seaheart";
-	baseDamage_ = 2;
-	damage_ = 2;
-	range_ = 400.0f;
-	attackCooldown_ = 3.0f;
+	auto cfg = loadJsonConfig("assets/config/weapon/seaheart.json");
+	name_ = cfg.value("name", "Sea Heart");
+	textureId_ = cfg.value("textureId", "seaheart");
+	baseDamage_ = cfg.value("baseDamage", 2);
+	damage_ = cfg.value("damage", 2);
+	range_ = cfg.value("range", 400.0f);
+	attackCooldown_ = cfg.value("attackCooldown", 3.0f);
 	currentCooldown_ = 0.0f;
-	dropletCount_ = 1;
-	bounceCount_ = 3;
-	dropletSpeed_ = 600.0f;
+	dropletCount_ = cfg.value("dropletCount", 1);
+	bounceCount_ = cfg.value("bounceCount", 3);
+	dropletSpeed_ = cfg.value("dropletSpeed", 600.0f);
+	levelUpCfg_ = cfg.value("levelUp", nlohmann::json{});
 }
 
 void SeaHeartWeapon::update(float deltaTime)
@@ -69,10 +72,10 @@ void SeaHeartWeapon::attack(const sf::Vector2f &playerPos,
 void SeaHeartWeapon::levelUp()
 {
 	Weapon::levelUp();
-	damage_ += 2;
-	bounceCount_ += 1;
-	dropletSpeed_ += 50.0f;
-	if (level_ % 3 == 0)
+	bounceCount_ += levelUpCfg_.value("bounceCount", 1);
+	dropletSpeed_ += levelUpCfg_.value("dropletSpeed", 50.0f);
+
+	int everyN = levelUpCfg_.value("dropletCountEveryN", 3);
+	if (level_ % everyN == 0)
 		dropletCount_ += 1;
-	attackCooldown_ = std::max(1.0f, attackCooldown_ - 0.2f);
 }

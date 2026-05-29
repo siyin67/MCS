@@ -7,7 +7,6 @@ game.exe
 # 临时文件
 *.log
 debug.log
-*.json
 *.claude/
 tasks.json
 *.sh

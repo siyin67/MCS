@@ -1,21 +1,24 @@
 #include "TNTWeapon.h"
 #include "../Projectile/TNTProjectile.h"
+#include "../Config/ConfigLoader.h"
 #include <cmath>
 #include <random>
 
 TNTWeapon::TNTWeapon()
 {
-	name_ = "TNT";
-	textureId_ = "tnt";
-	baseDamage_ = 30;
-	damage_ = 30;
-	attackCooldown_ = 2.0f;
-	range_ = 350.0f;
-	level_ = 1;
+    auto cfg = loadJsonConfig("assets/config/weapon/tnt.json");
+    name_ = cfg.value("name", "TNT");
+    textureId_ = cfg.value("textureId", "tnt");
+    baseDamage_ = cfg.value("baseDamage", 30);
+    damage_ = cfg.value("damage", 30);
+    attackCooldown_ = cfg.value("attackCooldown", 2.0f);
+    range_ = cfg.value("range", 350.0f);
+    level_ = 1;
 
-	explosionRadius_ = 120.0f;
-	projectileSpeed_ = 500.0f;
-	throwCount_ = 1;
+    explosionRadius_ = cfg.value("explosionRadius", 120.0f);
+    projectileSpeed_ = cfg.value("projectileSpeed", 500.0f);
+    throwCount_ = cfg.value("throwCount", 1);
+    levelUpCfg_ = cfg.value("levelUp", nlohmann::json{});
 }
 
 void TNTWeapon::attack(const sf::Vector2f &playerPos,
@@ -53,11 +56,8 @@ void TNTWeapon::levelUp()
 {
 	Weapon::levelUp();
 
-	damage_ += 10;
-	explosionRadius_ += 15.0f;
-	attackCooldown_ = std::max(0.8f, attackCooldown_ - 0.1f);
+	explosionRadius_ += levelUpCfg_.value("explosionRadius", 15.0f);
 
-	// 每2级增加投掷数量
 	if (level_ % 2 == 0 && throwCount_ < 6)
 		throwCount_++;
 }
