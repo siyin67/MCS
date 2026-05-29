@@ -1,4 +1,5 @@
 #include "ResourceManager.h"
+#include "../Net/json.hpp"
 #include <fstream>
 #include <iostream>
 #include <algorithm>
@@ -51,6 +52,13 @@ bool ResourceManager::LoadSoundBuffer(const std::string &id, const std::string &
 
 bool ResourceManager::LoadFromFile(const std::string &configPath)
 {
+    // Auto-detect JSON by extension
+    if (configPath.size() >= 5 &&
+        configPath.compare(configPath.size() - 5, 5, ".json") == 0)
+    {
+        return LoadFromJsonFile(configPath);
+    }
+
     std::ifstream file(configPath);
     if (!file.is_open())
     {
@@ -134,6 +142,52 @@ bool ResourceManager::LoadFromFile(const std::string &configPath)
         if (success)
             loadedCount++;
     }
+
+    std::cout << "Loaded " << loadedCount << " resources from " << configPath << std::endl;
+    return loadedCount > 0;
+}
+
+bool ResourceManager::LoadFromJsonFile(const std::string &configPath)
+{
+    std::ifstream file(configPath);
+    if (!file.is_open())
+    {
+        std::cerr << "Failed to open JSON config: " << configPath << std::endl;
+        return false;
+    }
+
+    nlohmann::json j;
+    try
+    {
+        file >> j;
+    }
+    catch (const nlohmann::json::parse_error &e)
+    {
+        std::cerr << "JSON parse error in " << configPath << ": " << e.what() << std::endl;
+        return false;
+    }
+
+    int loadedCount = 0;
+    auto loadCategory = [&](const char *key, const std::string &type) {
+        if (!j.contains(key))
+            return;
+        for (const auto &[id, path] : j[key].items())
+        {
+            std::string pathStr = path.get<std::string>();
+            bool ok = false;
+            if (type == "texture")
+                ok = LoadTexture(id, pathStr);
+            else if (type == "font")
+                ok = LoadFont(id, pathStr);
+            else if (type == "sound")
+                ok = LoadSoundBuffer(id, pathStr);
+            if (ok) loadedCount++;
+        }
+    };
+
+    loadCategory("textures", "texture");
+    loadCategory("fonts", "font");
+    loadCategory("sounds", "sound");
 
     std::cout << "Loaded " << loadedCount << " resources from " << configPath << std::endl;
     return loadedCount > 0;

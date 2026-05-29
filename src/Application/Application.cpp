@@ -6,7 +6,7 @@
 Application::Application()
     : isRunning_(true)
 {
-    ResourceManager::GetInstance().LoadFromFile("assets/resources.txt");
+    ResourceManager::GetInstance().LoadFromFile("assets/resources.json");
     window_.create(sf::VideoMode({1280, 720}), "MinecraftSurvivor");
     window_.setMaximumSize(sf::Vector2u(2560, 1440));
     window_.setMinimumSize(sf::Vector2u(1280, 720));
@@ -44,5 +44,7 @@ void Application::handleGlobalEvents()
             window_.close();
             isRunning_ = false;
         }
+        if (stateManager_.getCurrentState())
+            stateManager_.getCurrentState()->handleEvent(*event);
     }
 }

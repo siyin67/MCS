@@ -17,10 +17,13 @@ Player::Player()
     shape_.setOrigin({32, 32}); // 设置原点为中心
     shape_.setScale({0.8f, 0.8f});
 
-    if (ResourceManager::GetInstance().HasTexture("player"))
+    if (ResourceManager::GetInstance().HasTexture("player_skin"))
     {
-        sf::Texture &bgTex = ResourceManager::GetInstance().GetTexture("player");
-        shape_.setTexture(&bgTex);
+        shape_.setTexture(&ResourceManager::GetInstance().GetTexture("player_skin"));
+    }
+    else if (ResourceManager::GetInstance().HasTexture("player"))
+    {
+        shape_.setTexture(&ResourceManager::GetInstance().GetTexture("player"));
     }
     else
     {

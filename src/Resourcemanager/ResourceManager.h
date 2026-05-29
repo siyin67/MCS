@@ -15,7 +15,6 @@ private:
     ResourceManager(const ResourceManager &) = delete;
     ResourceManager &operator=(const ResourceManager &) = delete;
 
-    bool LoadTexture(const std::string &id, const std::string &path);
     bool LoadFont(const std::string &id, const std::string &path);
     bool LoadSoundBuffer(const std::string &id, const std::string &path);
 
@@ -23,6 +22,8 @@ public:
     static ResourceManager &GetInstance();
 
     bool LoadFromFile(const std::string &configPath);
+    bool LoadFromJsonFile(const std::string &configPath);
+    bool LoadTexture(const std::string &id, const std::string &path);
 
     sf::Texture &GetTexture(const std::string &id);
     sf::Font &GetFont(const std::string &id);

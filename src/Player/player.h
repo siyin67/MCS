@@ -86,4 +86,6 @@ public:
     const BuffManager &getBuffManager() const { return buffManager_; }
     float getEffectiveSpeed() const { return speed_ * buffManager_.getSpeedMultiplier(); }
     float getEffectiveDamage(float baseDamage) const { return baseDamage * buffManager_.getDamageMultiplier(); }
+
+    static inline std::string customSkinPath;
 };
