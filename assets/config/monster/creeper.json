@@ -9,5 +9,6 @@
   "triggerDistance": 200.0,
   "escapeDistance": 300.0,
   "explosionRadius": 150.0,
-  "explosionDamage": 3.0
+  "explosionDamage": 3.0,
+  "size": [64, 64]
 }

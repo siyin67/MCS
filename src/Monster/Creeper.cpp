@@ -19,7 +19,7 @@ Creeper::Creeper()
 		sf::Texture &tex = ResourceManager::GetInstance().GetTexture(texId);
 		shape_.setTexture(&tex);
 	}
-	shape_.setSize({64, 64});
+	shape_.setSize({cfg.value("size", std::vector<float>{64, 64})[0], cfg.value("size", std::vector<float>{64, 64})[1]});
 	flashing_ = false;
 	flashTimer_ = 0.0f;
 	fuseTime_ = cfg.value("fuseTime", 1.5f);
@@ -38,7 +38,7 @@ void Creeper::playDeathSound()
 }
 
 void Creeper::update(float deltaTime, const sf::Vector2f &playerPos,
-					  const std::vector<std::unique_ptr<Monster>> &allMonsters)
+					 const std::vector<std::unique_ptr<Monster>> &allMonsters)
 {
 	Monster::update(deltaTime, playerPos, allMonsters);
 

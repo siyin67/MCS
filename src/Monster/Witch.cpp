@@ -18,7 +18,7 @@ Witch::Witch()
 		sf::Texture &tex = ResourceManager::GetInstance().GetTexture(texId);
 		shape_.setTexture(&tex);
 	}
-	shape_.setSize({64, 64});
+	shape_.setSize({cfg.value("size", std::vector<float>{64, 64})[0], cfg.value("size", std::vector<float>{64, 64})[1]});
 
 	float skillCD = cfg.value("skillCooldown", 5.0f);
 	healRange_ = cfg.value("healRange", 250.0f);

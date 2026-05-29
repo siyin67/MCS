@@ -7,5 +7,6 @@
   "expReward": 6,
   "skillCooldown": 10.0,
   "tridentSpeed": 600.0,
-  "tridentReturnSpeed": 350.0
+  "tridentReturnSpeed": 350.0,
+  "size": [64, 64]
 }

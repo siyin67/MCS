@@ -7,5 +7,6 @@
   "expReward": 8,
   "skillCooldown": 12.0,
   "projectileSpeed": 400.0,
-  "fireballCount": 6
+  "fireballCount": 6,
+  "size": [64, 64]
 }

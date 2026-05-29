@@ -6,5 +6,6 @@
   "damage": 1,
   "expReward": 5,
   "vortexRange": 200.0,
-  "vortexStrength": 300.0
+  "vortexStrength": 300.0,
+  "size": [64, 64]
 }

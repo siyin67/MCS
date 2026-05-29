@@ -6,5 +6,6 @@
   "damage": 1,
   "expReward": 3,
   "skillCooldown": 10.0,
-  "webSpeed": 250.0
+  "webSpeed": 250.0,
+  "size": [64, 64]
 }

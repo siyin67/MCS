@@ -19,7 +19,7 @@ Drowned::Drowned()
         sf::Texture &tex = ResourceManager::GetInstance().GetTexture(texId);
         shape_.setTexture(&tex);
     }
-    shape_.setSize({64, 64});
+    shape_.setSize({cfg.value("size", std::vector<float>{64, 64})[0], cfg.value("size", std::vector<float>{64, 64})[1]});
 
     float skillCD = cfg.value("skillCooldown", 10.0f);
     float tridentSpeed = cfg.value("tridentSpeed", 600.0f);

@@ -4,5 +4,6 @@
   "health": 40,
   "maxHealth": 40,
   "damage": 2,
-  "expReward": 10
+  "expReward": 10,
+  "size": [64, 64]
 }

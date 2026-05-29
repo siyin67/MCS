@@ -6,5 +6,9 @@
   "damage": 3,
   "expReward": 20,
   "skillCooldown": 20.0,
-  "projectileSpeed": 250.0
+  "projectileSpeed": 250.0,
+  "size": [
+    128,
+    128
+  ]
 }

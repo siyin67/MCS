@@ -18,7 +18,7 @@ Breeze::Breeze()
 		sf::Texture &tex = ResourceManager::GetInstance().GetTexture(texId);
 		shape_.setTexture(&tex);
 	}
-	shape_.setSize({64, 64});
+	shape_.setSize({cfg.value("size", std::vector<float>{64, 64})[0], cfg.value("size", std::vector<float>{64, 64})[1]});
 	vortexRange_ = cfg.value("vortexRange", 200.0f);
 	vortexStrength_ = cfg.value("vortexStrength", 300.0f);
 }

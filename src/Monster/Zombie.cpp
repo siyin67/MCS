@@ -17,7 +17,7 @@ Zombie::Zombie()
         sf::Texture &bgTex = ResourceManager::GetInstance().GetTexture(texId);
         shape_.setTexture(&bgTex);
     }
-    shape_.setSize({64, 64});
+    shape_.setSize({cfg.value("size", std::vector<float>{64, 64})[0], cfg.value("size", std::vector<float>{64, 64})[1]});
 }
 void Zombie::playHitSound()
 {

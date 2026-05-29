@@ -19,7 +19,7 @@ Enderman::Enderman()
 		sf::Texture &tex = ResourceManager::GetInstance().GetTexture(texId);
 		shape_.setTexture(&tex);
 	}
-	shape_.setSize({64, 64});
+	shape_.setSize({cfg.value("size", std::vector<float>{64, 64})[0], cfg.value("size", std::vector<float>{64, 64})[1]});
 	teleportCooldown_ = 0.0f;
 }
 void Enderman::playHitSound()
