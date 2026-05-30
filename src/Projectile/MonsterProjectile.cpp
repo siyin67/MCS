@@ -7,6 +7,18 @@ MonsterProjectile::MonsterProjectile()
 	  areaBuffType_(BuffType::Wither)
 {
 	setSize({24, 24});
+	std::random_device rd;
+	rng_ = std::mt19937(rd());
+}
+
+bool MonsterProjectile::shouldSpawnArea()
+{
+	if (areaDuration_ <= 0.0f || !onSpawnArea_)
+		return false;
+	if (areaChance_ >= 1.0f)
+		return true;
+	std::uniform_real_distribution<float> dist(0.0f, 1.0f);
+	return dist(rng_) < areaChance_;
 }
 
 void MonsterProjectile::update(float deltaTime)
@@ -20,7 +32,7 @@ void MonsterProjectile::update(float deltaTime)
 	lifetime_ -= deltaTime;
 	if (lifetime_ <= 0.0f)
 	{
-		if (areaDuration_ > 0.0f && onSpawnArea_)
+		if (shouldSpawnArea())
 			onSpawnArea_(position_, areaRadius_, areaDuration_, areaBuffType_, areaDamage_);
 		isActive_ = false;
 	}
@@ -29,7 +41,7 @@ void MonsterProjectile::update(float deltaTime)
 void MonsterProjectile::onHit(Monster &monster)
 {
 	monster.takeDamage(damage_);
-	if (areaDuration_ > 0.0f && onSpawnArea_)
+	if (shouldSpawnArea())
 		onSpawnArea_(position_, areaRadius_, areaDuration_, areaBuffType_, areaDamage_);
 	isActive_ = false;
 }

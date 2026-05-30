@@ -7,5 +7,9 @@
   "expReward": 3,
   "skillCooldown": 10.0,
   "webSpeed": 250.0,
+  "webLifetime": 2.0,
+  "webSize": 24,
+  "slowValue": 0.7,
+  "slowDuration": 3.0,
   "size": [64, 64]
 }

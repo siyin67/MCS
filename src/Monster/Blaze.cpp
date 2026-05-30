@@ -24,7 +24,10 @@ Blaze::Blaze()
 	float skillCD = cfg.value("skillCooldown", 12.0f);
 	float projSpeed = cfg.value("projectileSpeed", 400.0f);
 	int fireballCount = cfg.value("fireballCount", 6);
-	setSkill([projSpeed, fireballCount](Monster &self, const sf::Vector2f &playerPos)
+	float lifetime = cfg.value("projLifetime", 2.5f);
+	int projSize = cfg.value("projSize", 22);
+	float spawnOffset = cfg.value("spawnOffset", 24.0f);
+	setSkill([projSpeed, fireballCount, lifetime, projSize, spawnOffset](Monster &self, const sf::Vector2f &playerPos)
 	{
 		sf::Vector2f dir = playerPos - self.getPosition();
 		float len = std::sqrt(dir.x * dir.x + dir.y * dir.y);
@@ -39,11 +42,11 @@ Blaze::Blaze()
 			fireball->setDirection(dir);
 			fireball->setSpeed(projSpeed);
 			fireball->setDamage(self.getDamage());
-			fireball->setLifetime(2.5f);
+			fireball->setLifetime(lifetime);
 			fireball->setTextureId("fireball");
-			fireball->setSize({22, 22});
+			fireball->setSize({(float)projSize, (float)projSize});
 			Monster::pendingProjectiles.push_back(std::move(fireball));
-			spawnPos += dir * 24.0f;
+			spawnPos += dir * spawnOffset;
 		}
 		SoundManager::getInstance().playSFX("blaze_shoot");
 	}, skillCD);

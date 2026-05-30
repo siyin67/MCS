@@ -18,45 +18,55 @@ if (-not (Test-Path $ExePath)) {
 Write-Host "  $ExeName : OK"
 
 Write-Host ""
-Write-Host "=== Step 2: Collect DLLs ==="
-# System DLLs to skip
-$SystemDlls = @(
-    "KERNEL32.DLL", "ADVAPI32.DLL", "SHELL32.DLL", "USER32.DLL",
-    "GDI32.DLL", "OPENGL32.DLL", "WINMM.DLL", "WS2_32.DLL",
-    "OLE32.DLL", "COMCTL32.DLL", "CRYPT32.DLL", "BCRYPT.DLL",
-    "MSVCRT.DLL", "UCRTBASE.DLL", "SETUPAPI.DLL", "IPHLPAPI.DLL",
-    "POWRPROF.DLL", "SHLWAPI.DLL", "KERNELBASE.DLL", "RPCRT4.DLL",
-    "IMM32.DLL", "OLEAUT32.DLL", "SECHOST.DLL", "SSPICLI.DLL",
-    "VCRUNTIME140.DLL", "VCRUNTIME140D.DLL", "MSVCP140.DLL", "MSVCP140D.DLL",
-    "API-MS-WIN-*.DLL", "EXT-MS-WIN-*.DLL"
-)
+Write-Host "=== Step 2: Scan DLL dependencies ==="
+
+$SearchDirs = @($BinDir, "C:\msys64\ucrt64\bin")
+$SysDlls = @("KERNEL32.dll", "USER32.dll", "GDI32.dll", "ADVAPI32.dll", "SHELL32.dll",
+    "OPENGL32.dll", "WINMM.dll", "WS2_32.dll", "OLE32.dll", "COMCTL32.dll", "CRYPT32.dll",
+    "BCRYPT.dll", "MSVCRT.dll", "UCRTBASE.dll", "KERNELBASE.dll", "RPCRT4.dll", "IMM32.dll",
+    "OLEAUT32.dll", "SHLWAPI.dll", "SETUPAPI.dll", "IPHLPAPI.dll", "POWRPROF.dll", "SECHOST.dll",
+    "SSPICLI.dll", "WTSAPI32.dll", "NTDLL.dll", "VERSION.dll")
 
 $NeededDlls = @()
+$Scanned = @{}  # track already-scanned DLLs to avoid infinite recursion
 
-# Check common SFML deps
-$SearchDirs = @($BinDir, "C:\msys64\ucrt64\bin")
-$KnownDlls = @(
-    "libsfml-graphics-3.dll", "libsfml-window-3.dll", "libsfml-system-3.dll",
-    "libsfml-audio-3.dll", "libsfml-network-3.dll",
-    "libfreetype-6.dll", "libopenal-1.dll",
-    "libogg-0.dll",
-    "libvorbis-0.dll", "libvorbisenc-2.dll", "libvorbisfile-3.dll",
-    "libFLAC.dll",
-    "libpng16-16.dll",
-    "libbz2-1.dll",
-    "libzstd.dll",
-    "libgcc_s_seh-1.dll", "libstdc++-6.dll", "libwinpthread-1.dll"
-)
+$Objdump = "C:\msys64\ucrt64\bin\objdump.exe"
 
-foreach ($dll in $KnownDlls) {
-    foreach ($dir in $SearchDirs) {
-        $path = "$dir\$dll"
-        if (Test-Path $path) {
-            $NeededDlls += $path
-            break
+function Resolve-DllDeps($Exe, $Depth) {
+    if ($Depth -gt 3) { return }  # max recursion depth
+    if ($Scanned.ContainsKey($Exe)) { return }
+    $Scanned[$Exe] = $true
+
+    $deps = & $Objdump -p $Exe 2>$null | Select-String "DLL Name" | ForEach-Object { ($_ -split "DLL Name:")[-1].Trim() }
+
+    foreach ($dll in $deps) {
+        $lower = $dll.ToLower()
+        $isSys = $SysDlls | Where-Object { $lower -eq $_ }
+        if ($isSys -or $lower.StartsWith("api-ms-win") -or $lower.StartsWith("ext-ms-win")) {
+            continue
+        }
+
+        $found = $null
+        foreach ($dir in $SearchDirs) {
+            $p = Join-Path $dir $dll
+            if (Test-Path $p) { $found = $p; break }
+        }
+        if (-not $found) {
+            Write-Host "  WARNING: $dll not found in search paths"
+            continue
+        }
+
+        if ($NeededDlls -notcontains $found) {
+            $NeededDlls += $found
+            Write-Host "  + $dll"
+            # recursively scan this DLL's own dependencies
+            Resolve-DllDeps $found ($Depth + 1)
         }
     }
 }
+
+Write-Host "  Scanning $ExePath ..."
+Resolve-DllDeps $ExePath 0
 
 Write-Host ""
 Write-Host "=== Step 3: Prepare dist/ ==="
@@ -78,7 +88,9 @@ foreach ($dll in $NeededDlls) {
 
 Write-Host "=== Step 6: Copy assets ==="
 Copy-Item -Recurse $AssetsDir "$DistDir\assets"
+Copy-Item "$ProjectDir\README.md" "$DistDir\" -ErrorAction SilentlyContinue
 Write-Host "  assets/: OK"
+Write-Host "  README.md"
 
 Write-Host ""
 Write-Host "=== Step 7: Create zip ==="

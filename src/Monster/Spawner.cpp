@@ -143,7 +143,7 @@ Spawner::Tier Spawner::rollTier() const
 		commonPct = 50.0;
 		uncommonPct = 40.0;
 		rarePct = 9.0;
-		bossPct = 1.0;
+		bossPct = 0.5;
 	}
 	else if (currentWave_ <= 15)
 	{
@@ -157,14 +157,14 @@ Spawner::Tier Spawner::rollTier() const
 		commonPct = 30.0;
 		uncommonPct = 45.0;
 		rarePct = 23.0;
-		bossPct = 2.0;
+		bossPct = 1.5;
 	}
 	else
 	{
 		commonPct = 20.0;
 		uncommonPct = 45.0;
 		rarePct = 30.0;
-		bossPct = 5.0;
+		bossPct = 2.0;
 	}
 
 	// 按概率区间选择 Tier，若该 Tier 当前波次无可用怪物则跳过
@@ -254,10 +254,18 @@ void Spawner::update(float deltaTime, const sf::Vector2f &playerPos,
 			int hpBonus = 0;
 			switch (tier)
 			{
-			case Tier::Common:   hpBonus = 2 * currentWave_; break;
-			case Tier::Uncommon: hpBonus = 3 * currentWave_; break;
-			case Tier::Rare:     hpBonus = 5 * currentWave_; break;
-			case Tier::Boss:     hpBonus = 10 * currentWave_; break;
+			case Tier::Common:
+				hpBonus = 2 * currentWave_;
+				break;
+			case Tier::Uncommon:
+				hpBonus = 3 * currentWave_;
+				break;
+			case Tier::Rare:
+				hpBonus = 5 * currentWave_;
+				break;
+			case Tier::Boss:
+				hpBonus = 20 * currentWave_;
+				break;
 			}
 			monster->addHealth(hpBonus);
 

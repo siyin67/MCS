@@ -13,15 +13,25 @@ private:
 	sf::Vector2f laserDir_;
 	float laserLineLength_;
 
+	float laserCooldown_ = 30.0f;
+	float laserChargeTime_ = 3.0f;
+	float laserFireTime_ = 1.0f;
 	float projSpeed_ = 250.0f;
+	float projLifetime_ = 3.0f;
+	int projSize_ = 28;
+	float areaRadius_ = 100.0f;
+	float areaChance_ = 1.0f;
+	float areaDuration_ = 5.0f;
+	int areaDamage_ = 4;
+	float burstDuration_ = 10.0f, circleDuration_ = 6.0f, sprayDuration_ = 4.0f;
+	float burstInterval_ = 1.0f, circleInterval_ = 0.6f, sprayInterval_ = 0.12f;
+	int burstCount_ = 5, circleCount_ = 16, sprayCount_ = 9;
+	float burstAngle_ = 0.15f;
 	AttackPattern pattern_;
 	float patternTimer_;
 	float fireInterval_;
 
 	void fireFromAngle(const sf::Vector2f &dir);
-	static constexpr float BURST_DURATION = 10.0f;
-	static constexpr float CIRCLE_DURATION = 6.0f;
-	static constexpr float SPRAY_DURATION = 4.0f;
 
 public:
 	Enderdragon();

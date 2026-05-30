@@ -1,5 +1,6 @@
 #include "MenuState.h"
 #include <iostream>
+#include <fstream>
 #include "Resourcemanager/ResourceManager.h"
 #include "GameState.h"
 #include "../Statemanager.h"
@@ -124,7 +125,20 @@ void MenuState::tryLoadHead()
 
     headThread_ = std::thread([this, name]() {
         std::string path = "assets/images/skin/" + name + ".png";
-        bool ok = MojangAPI::fetchPlayerHead(name, path);
+        bool ok = false;
+        // 优先从本地缓存加载
+        std::ifstream testFile(path, std::ios::binary);
+        if (testFile.good())
+        {
+            testFile.close();
+            std::cout << "[Menu] Using cached skin: " << path << std::endl;
+            ok = true;
+        }
+        else
+        {
+            std::cout << "[Menu] Fetching from Mojang API..." << std::endl;
+            ok = MojangAPI::fetchPlayerHead(name, path);
+        }
         headResultPath_ = path;
         headResultOk_ = ok;
         headReady_ = true;

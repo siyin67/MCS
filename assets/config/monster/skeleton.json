@@ -7,5 +7,6 @@
   "expReward": 4,
   "skillCooldown": 10.0,
   "projectileSpeed": 350.0,
+  "projLifetime": 3.0,
   "size": [64, 64]
 }

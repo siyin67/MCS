@@ -22,6 +22,22 @@ Wither::Wither()
 	}
 	shape_.setSize({cfg.value("size", std::vector<float>{64, 64})[0], cfg.value("size", std::vector<float>{64, 64})[1]});
 	projSpeed_ = cfg.value("projectileSpeed", 200.0f);
+	projLifetime_ = cfg.value("projLifetime", 3.0f);
+	projSize_ = cfg.value("projSize", 24);
+	areaChance_ = cfg.value("areaChance", 1.0f);
+	areaRadius_ = cfg.value("areaRadius", 100.0f);
+	areaDuration_ = cfg.value("areaDuration", 4.0f);
+	areaDamage_ = cfg.value("areaDamage", 3);
+	burstAngle_ = cfg.value("burstAngle", 0.2f);
+	burstCount_ = cfg.value("burstCount", 3);
+	burstInterval_ = cfg.value("burstInterval", 1.0f);
+	burstDuration_ = cfg.value("burstDuration", 10.0f);
+	circleCount_ = cfg.value("circleCount", 12);
+	circleInterval_ = cfg.value("circleInterval", 0.6f);
+	circleDuration_ = cfg.value("circleDuration", 6.0f);
+	sprayCount_ = cfg.value("sprayCount", 7);
+	sprayInterval_ = cfg.value("sprayInterval", 0.16f);
+	sprayDuration_ = cfg.value("sprayDuration", 4.0f);
 	pattern_ = AttackPattern::BurstFan;
 	patternTimer_ = 0.0f;
 	fireInterval_ = 0.0f;
@@ -42,10 +58,11 @@ void Wither::fireFromAngle(const sf::Vector2f &dir)
 	skull->setDirection(dir);
 	skull->setSpeed(projSpeed_);
 	skull->setDamage(damage_);
-	skull->setLifetime(3.0f);
+	skull->setLifetime(projLifetime_);
 	skull->setTextureId("wither_skull");
-	skull->setSize({24, 24});
-	skull->setAreaParams(BuffType::Wither, 100.0f, 4.0f, 3);
+	skull->setSize({(float)projSize_, (float)projSize_});
+	skull->setAreaChance(areaChance_);
+	skull->setAreaParams(BuffType::Wither, areaRadius_, areaDuration_, areaDamage_);
 	skull->setOnSpawnArea([](sf::Vector2f pos, float r, float dur, BuffType t, int v)
 	{
 		if (Monster::spawnAreaCallback)
@@ -64,9 +81,9 @@ void Wither::update(float deltaTime, const sf::Vector2f &playerPos,
 	float phaseDur = 0.0f;
 	switch (pattern_)
 	{
-	case AttackPattern::BurstFan:  phaseDur = BURST_DURATION; break;
-	case AttackPattern::Circle:    phaseDur = CIRCLE_DURATION; break;
-	case AttackPattern::RapidSpray: phaseDur = SPRAY_DURATION; break;
+	case AttackPattern::BurstFan:  phaseDur = burstDuration_; break;
+	case AttackPattern::Circle:    phaseDur = circleDuration_; break;
+	case AttackPattern::RapidSpray: phaseDur = sprayDuration_; break;
 	}
 
 	if (patternTimer_ >= phaseDur)
@@ -90,12 +107,12 @@ void Wither::update(float deltaTime, const sf::Vector2f &playerPos,
 	{
 	case AttackPattern::BurstFan:
 		fireInterval_ += deltaTime;
-		if (fireInterval_ >= 1.0f)
+		if (fireInterval_ >= burstInterval_)
 		{
 			fireInterval_ = 0.0f;
-			for (int i = -1; i <= 1; ++i)
+			for (int i = -(burstCount_/2); i <= burstCount_/2; ++i)
 			{
-				float angle = i * 0.2f;
+				float angle = i * burstAngle_;
 				float cosA = std::cos(angle), sinA = std::sin(angle);
 				fireFromAngle({baseDir.x * cosA - baseDir.y * sinA,
 							   baseDir.x * sinA + baseDir.y * cosA});
@@ -104,10 +121,10 @@ void Wither::update(float deltaTime, const sf::Vector2f &playerPos,
 		break;
 	case AttackPattern::Circle:
 		fireInterval_ += deltaTime;
-		if (fireInterval_ >= 0.6f)
+		if (fireInterval_ >= circleInterval_)
 		{
 			fireInterval_ = 0.0f;
-			for (int i = 0; i < 12; ++i)
+			for (int i = 0; i < circleCount_; ++i)
 			{
 				float angle = i * 3.14159265358979323846f * 2.0f / 12.0f;
 				fireFromAngle({std::cos(angle), std::sin(angle)});
@@ -116,13 +133,13 @@ void Wither::update(float deltaTime, const sf::Vector2f &playerPos,
 		break;
 	case AttackPattern::RapidSpray:
 		fireInterval_ += deltaTime;
-		if (fireInterval_ >= 0.16f)
+		if (fireInterval_ >= sprayInterval_)
 		{
 			fireInterval_ = 0.0f;
 			static std::random_device rd;
 			static std::mt19937 gen(rd());
 			static std::uniform_real_distribution<> angleDis(0.0, 6.283185307179586);
-			for (int i = 0; i < 7; ++i)
+			for (int i = 0; i < sprayCount_; ++i)
 			{
 				float angle = angleDis(gen);
 				fireFromAngle({std::cos(angle), std::sin(angle)});

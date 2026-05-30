@@ -23,7 +23,12 @@ Ghast::Ghast()
 
 	float skillCD = cfg.value("skillCooldown", 20.0f);
 	float projSpeed = cfg.value("projectileSpeed", 250.0f);
-	setSkill([projSpeed](Monster &self, const sf::Vector2f &playerPos)
+	float lifetime = cfg.value("projLifetime", 4.0f);
+	int projSize = cfg.value("projSize", 32);
+	float areaR = cfg.value("areaRadius", 80.0f);
+	float areaDur = cfg.value("areaDuration", 0.3f);
+	int areaDmg = cfg.value("areaDamage", 6);
+	setSkill([projSpeed, lifetime, projSize, areaR, areaDur, areaDmg](Monster &self, const sf::Vector2f &playerPos)
 	{
 		sf::Vector2f dir = playerPos - self.getPosition();
 		float len = std::sqrt(dir.x * dir.x + dir.y * dir.y);
@@ -35,10 +40,10 @@ Ghast::Ghast()
 		fireball->setDirection(dir);
 		fireball->setSpeed(projSpeed);
 		fireball->setDamage(self.getDamage());
-		fireball->setLifetime(4.0f);
+		fireball->setLifetime(lifetime);
 		fireball->setTextureId("fireball");
-		fireball->setSize({32, 32});
-		fireball->setAreaParams(BuffType::Burn, 80.0f, 0.3f, 6);
+		fireball->setSize({(float)projSize, (float)projSize});
+		fireball->setAreaParams(BuffType::Burn, areaR, areaDur, areaDmg);
 		fireball->setOnSpawnArea([](sf::Vector2f pos, float r, float dur, BuffType t, int v)
 		{
 			if (Monster::spawnAreaCallback)

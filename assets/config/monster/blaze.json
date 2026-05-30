@@ -8,5 +8,8 @@
   "skillCooldown": 12.0,
   "projectileSpeed": 400.0,
   "fireballCount": 6,
+  "projLifetime": 2.5,
+  "projSize": 22,
+  "spawnOffset": 24.0,
   "size": [64, 64]
 }

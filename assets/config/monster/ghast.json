@@ -7,8 +7,10 @@
   "expReward": 20,
   "skillCooldown": 20.0,
   "projectileSpeed": 250.0,
-  "size": [
-    128,
-    128
-  ]
+  "projLifetime": 4.0,
+  "projSize": 32,
+  "areaRadius": 80.0,
+  "areaDuration": 0.3,
+  "areaDamage": 6,
+  "size": [128, 128]
 }

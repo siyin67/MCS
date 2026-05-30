@@ -23,7 +23,8 @@ Skeleton::Skeleton()
 
     float skillCD = cfg.value("skillCooldown", 10.0f);
     float arrowSpeed = cfg.value("projectileSpeed", 350.0f);
-    setSkill([arrowSpeed](Monster &self, const sf::Vector2f &playerPos)
+    float lifetime = cfg.value("projLifetime", 3.0f);
+    setSkill([arrowSpeed, lifetime](Monster &self, const sf::Vector2f &playerPos)
     {
         sf::Vector2f dir = playerPos - self.getPosition();
         float len = std::sqrt(dir.x * dir.x + dir.y * dir.y);
@@ -32,7 +33,7 @@ Skeleton::Skeleton()
         arrow->setPosition(self.getPosition());
         arrow->setVelocity(dir * arrowSpeed);
         arrow->setDamage(self.getDamage());
-        arrow->setLifetime(3.0f);
+        arrow->setLifetime(lifetime);
         Monster::pendingProjectiles.push_back(std::move(arrow));
         SoundManager::getInstance().playSFX("skeleton_shoot");
     }, skillCD);

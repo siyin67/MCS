@@ -23,7 +23,11 @@ Spider::Spider()
 
     float skillCD = cfg.value("skillCooldown", 10.0f);
     float webSpeed = cfg.value("webSpeed", 250.0f);
-    setSkill([webSpeed](Monster &self, const sf::Vector2f &playerPos)
+    float webLifetime = cfg.value("webLifetime", 2.0f);
+    int webSize = cfg.value("webSize", 24);
+    float slowValue = cfg.value("slowValue", 0.7f);
+    float slowDuration = cfg.value("slowDuration", 3.0f);
+    setSkill([webSpeed, webLifetime, webSize, slowValue, slowDuration](Monster &self, const sf::Vector2f &playerPos)
     {
         sf::Vector2f dir = playerPos - self.getPosition();
         float len = std::sqrt(dir.x * dir.x + dir.y * dir.y);
@@ -33,10 +37,10 @@ Spider::Spider()
         web->setDirection(dir);
         web->setSpeed(webSpeed);
         web->setDamage(self.getDamage());
-        web->setLifetime(2.0f);
+        web->setLifetime(webLifetime);
         web->setTextureId("web");
-        web->setSize({24, 24});
-        web->setHitBuff(BuffType::SpeedDown, 0.7f, 3.0f);
+        web->setSize({(float)webSize, (float)webSize});
+        web->setHitBuff(BuffType::SpeedDown, slowValue, slowDuration);
         Monster::pendingProjectiles.push_back(std::move(web));
         SoundManager::getInstance().playSFX("spider_shoot");
     }, skillCD);
