@@ -14,7 +14,8 @@ $BuildScript = Join-Path $ProjectDir "build.ps1"
 if (Test-Path $BuildScript) {
     & $BuildScript
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-} else {
+}
+else {
     Write-Host "  build.ps1 not found, using existing exe"
 }
 
@@ -103,7 +104,6 @@ Copy-Item -Recurse $AssetsDir "$DistDir\assets"
 Copy-Item "$ProjectDir\README.md" "$DistDir\" -ErrorAction SilentlyContinue
 Write-Host "  assets/: OK"
 Write-Host "  README.md"
-
 Write-Host ""
 Write-Host "=== Step 7: Create zip ==="
 $ZipPath = "$ProjectDir\dist\$ZipName"
