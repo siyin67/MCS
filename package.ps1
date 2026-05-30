@@ -35,7 +35,7 @@ $SysDlls = @("KERNEL32.dll", "USER32.dll", "GDI32.dll", "ADVAPI32.dll", "SHELL32
     "OPENGL32.dll", "WINMM.dll", "WS2_32.dll", "OLE32.dll", "COMCTL32.dll", "CRYPT32.dll",
     "BCRYPT.dll", "MSVCRT.dll", "UCRTBASE.dll", "KERNELBASE.dll", "RPCRT4.dll", "IMM32.dll",
     "OLEAUT32.dll", "SHLWAPI.dll", "SETUPAPI.dll", "IPHLPAPI.dll", "POWRPROF.dll", "SECHOST.dll",
-    "SSPICLI.dll", "WTSAPI32.dll", "NTDLL.dll", "VERSION.dll")
+    "SSPICLI.dll", "WTSAPI32.dll", "NTDLL.dll", "VERSION.dll", "DWrite.dll", "USP10.dll", "WININET.dll")
 
 $NeededDlls = @()
 $Scanned = @{}  # track already-scanned DLLs to avoid infinite recursion
@@ -68,8 +68,6 @@ function Resolve-DllDeps($Exe, $Depth) {
 
         if ($NeededDlls -notcontains $found) {
             $NeededDlls += $found
-            Write-Host "  + $dll"
-            # recursively scan this DLL's own dependencies
             Resolve-DllDeps $found ($Depth + 1)
         }
     }
@@ -77,6 +75,10 @@ function Resolve-DllDeps($Exe, $Depth) {
 
 Write-Host "  Scanning $ExePath ..."
 Resolve-DllDeps $ExePath 0
+Write-Host "  Found $($NeededDlls.Count) DLL(s):"
+foreach ($dll in $NeededDlls) {
+    Write-Host "    + $(Split-Path $dll -Leaf)"
+}
 
 Write-Host ""
 Write-Host "=== Step 3: Prepare dist/ ==="
