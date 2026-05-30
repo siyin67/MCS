@@ -1,0 +1,112 @@
+# Build script - compile game.exe
+$ErrorActionPreference = "Stop"
+
+$Gpp = "C:\msys64\ucrt64\bin\g++.exe"
+$Out = "bin\game.exe"
+$Include = "C:/msys64/ucrt64/include"
+$Lib = "C:/msys64/ucrt64/lib"
+
+$Src = @(
+    "src/main.cpp"
+    "src/Application/Application.cpp"
+    "src/Application/Statemanager.cpp"
+    "src/Application/States/MenuState.cpp"
+    "src/Application/States/GameState.cpp"
+    "src/Application/States/PauseState.cpp"
+    "src/Application/States/GameOverState.cpp"
+    "src/Application/States/UpgradeState.cpp"
+    "src/Collision/Collision.cpp"
+    "src/Collision/CollisionResolver.cpp"
+    "src/Sound/SoundManager.cpp"
+    "src/Monster/Monster.cpp"
+    "src/Monster/Spawner.cpp"
+    "src/Monster/Zombie.cpp"
+    "src/Monster/Skeleton.cpp"
+    "src/Monster/Spider.cpp"
+    "src/Monster/Drowned.cpp"
+    "src/Monster/Breeze.cpp"
+    "src/Monster/Creeper.cpp"
+    "src/Monster/Enderman.cpp"
+    "src/Monster/Witch.cpp"
+    "src/Monster/Blaze.cpp"
+    "src/Monster/WitherSkeleton.cpp"
+    "src/Monster/Ghast.cpp"
+    "src/Monster/Wither.cpp"
+    "src/Monster/Enderdragon.cpp"
+    "src/Resourcemanager/ResourceManager.cpp"
+    "src/Player/player.cpp"
+    "src/UI/UIManager.cpp"
+    "src/Weapon/weapon.cpp"
+    "src/Weapon/WeaponFactory.cpp"
+    "src/weapon/WeaponManager.cpp"
+    "src/weapon/SwordWeapon.cpp"
+    "src/weapon/BowWeapon.cpp"
+    "src/weapon/ShieldWeapon.cpp"
+    "src/weapon/TNTWeapon.cpp"
+    "src/weapon/TridentWeapon.cpp"
+    "src/weapon/ClockWeapon.cpp"
+    "src/weapon/AxeWeapon.cpp"
+    "src/weapon/DragonBreathWeapon.cpp"
+    "src/Weapon/SeaHeartWeapon.cpp"
+    "src/Weapon/LavaWeapon.cpp"
+    "src/Weapon/MaceWeapon.cpp"
+    "src/Weapon/LightningRodWeapon.cpp"
+    "src/Projectile/Arrow.cpp"
+    "src/Projectile/Projectile.cpp"
+    "src/Projectile/MonsterProjectile.cpp"
+    "src/Projectile/ProjectileManager.cpp"
+    "src/Projectile/TNTProjectile.cpp"
+    "src/Projectile/TridentProjectile.cpp"
+    "src/Projectile/AxeProjectile.cpp"
+    "src/Projectile/DragonBreathArea.cpp"
+    "src/Projectile/BubbleProjectile.cpp"
+    "src/Projectile/LavaProjectile.cpp"
+    "src/Item/DropItem.cpp"
+    "src/Item/XpOrb.cpp"
+    "src/Item/DropItemManager.cpp"
+    "src/Item/PotionItem.cpp"
+    "src/Net/MojangAPI.cpp"
+)
+
+$Flags = @(
+    "-I", "src"
+    "-o", $Out
+    "-std=c++20"
+    "-I", $Include
+    "-L", $Lib
+    "-Os"
+    "-s"
+    "-lmingw32"
+    "-lsfml-graphics"
+    "-lsfml-window"
+    "-lsfml-system"
+    "-lsfml-main"
+    "-lsfml-audio"
+    "-lsfml-network"
+    "-lfreetype"
+    "-lwininet"
+    "-lgdi32"
+    "-lopengl32"
+    "-lwinmm"
+    "-luser32"
+    "-lws2_32"
+    "-mwindows"
+)
+
+Write-Host "=== Building $Out ==="
+Write-Host "  Sources: $($Src.Count) files"
+Write-Host "  Target:  $Out"
+Write-Host ""
+
+$GppArgs = $Src + $Flags
+& $Gpp @GppArgs 2>&1 | ForEach-Object { Write-Host $_ }
+
+if ($LASTEXITCODE -eq 0) {
+    $Size = [math]::Round((Get-Item $Out).Length / 1KB, 1)
+    Write-Host ""
+    Write-Host "=== Build OK ($Size KB) ==="
+} else {
+    Write-Host ""
+    Write-Host "=== Build FAILED (exit $LASTEXITCODE) ==="
+    exit $LASTEXITCODE
+}

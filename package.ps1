@@ -9,6 +9,16 @@ $ExeName = "game.exe"
 $Timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
 $ZipName = "sfmlgame-$Timestamp.zip"
 
+Write-Host "=== Step 0: Build ==="
+$BuildScript = Join-Path $ProjectDir "build.ps1"
+if (Test-Path $BuildScript) {
+    & $BuildScript
+    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+} else {
+    Write-Host "  build.ps1 not found, using existing exe"
+}
+
+Write-Host ""
 Write-Host "=== Step 1: Verify exe ==="
 $ExePath = "$BinDir\$ExeName"
 if (-not (Test-Path $ExePath)) {
