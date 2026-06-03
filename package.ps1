@@ -93,7 +93,8 @@ foreach ($b in $AllMsys2Bins) {
 }
 if ($Objdump) {
     Write-Host "  objdump: $Objdump"
-} else {
+}
+else {
     Write-Host "  objdump: NOT FOUND (will use static DLL list)"
 }
 
@@ -188,7 +189,8 @@ function Resolve-One($filePath, $depth) {
         if ($found) {
             Add-Dll $found "objdump depth=$depth"
             Resolve-One $found ($depth + 1)
-        } else {
+        }
+        else {
             Write-Host "    ? $dll not found (maybe optional)"
         }
     }
@@ -263,11 +265,13 @@ if ($Objdump) {
     }
     if ($missing.Count -eq 0) {
         Write-Host "  OK - All required DLLs present!"
-    } else {
+    }
+    else {
         Write-Host "  MISSING ($($missing.Count)):"
         foreach ($d in $missing) { Write-Host "    ! $d" }
     }
-} else {
+}
+else {
     Write-Host "  Skipped (objdump not available)"
 }
 
