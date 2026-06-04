@@ -141,7 +141,7 @@ $SysDllPatterns = @(
     "SensApi", "Srvcli", "wevtapi", "Wkscli", "wtsapi32"
 )
 
-function Is-SystemDll($dllName) {
+function Test-SystemDll($dllName) {
     $lower = $dllName.ToLower()
     if ($lower.StartsWith("api-ms-win") -or $lower.StartsWith("ext-ms-win")) { return $true }
     foreach ($p in $SysDllPatterns) {
@@ -179,7 +179,7 @@ function Resolve-One($filePath, $depth) {
     $dlls = $lines | Select-String "DLL Name" | ForEach-Object { ($_.Line -split "DLL Name:")[-1].Trim() }
 
     foreach ($dll in $dlls) {
-        if (Is-SystemDll $dll) { continue }
+        if (Test-SystemDll $dll) { continue }
 
         $found = $null
         foreach ($dir in $SearchDirs) {
@@ -258,7 +258,7 @@ if ($Objdump) {
     $lines = if ($raw -is [string]) { @($raw) } else { $raw }
     $verDeps = $lines | Select-String "DLL Name" | ForEach-Object { ($_.Line -split "DLL Name:")[-1].Trim() }
     foreach ($dll in $verDeps) {
-        if (Is-SystemDll $dll) { continue }
+        if (Test-SystemDll $dll) { continue }
         if (-not (Test-Path "$DistDir\$dll")) {
             $missing += $dll
         }
