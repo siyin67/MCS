@@ -32,7 +32,7 @@ void ClockWeapon::attack(const sf::Vector2f &playerPos,
 	if (firstTrigger_)
 	{
 		firstTrigger_ = false;
-		SoundManager::getInstance().playBGM("assets/bgm/heaven.mp3", true);
+		SoundManager::getInstance().playBGM("assets/audio/bgm/heaven.mp3", true);
 	}
 
 	// 刷新所有武器冷却

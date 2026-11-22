@@ -54,6 +54,7 @@ void Enderman::update(float deltaTime, const sf::Vector2f &playerPos,
 		float offset = distDis(gen);
 		position_ = playerPos + sf::Vector2f(std::cos(angle), std::sin(angle)) * offset;
 		shape_.setPosition(position_);
+		SoundManager::getInstance().playSFX("enderman_teleport");
 		teleportCooldown_ = 3.0f;
 	}
 }

@@ -1,0 +1,68 @@
+{
+  "display": "English (US)",
+  "english": "English (United States)",
+  "strings": {
+    "menu.start": "Start Game",
+    "menu.settings": "Settings",
+    "menu.exit": "Exit Game",
+
+    "pause.title": "Pause",
+    "pause.resume": "Resume Game",
+    "pause.settings": "Settings",
+    "pause.exit": "Main Menu",
+
+    "gameover.title": "Game Over",
+    "gameover.menu": "Main Menu",
+
+    "options.title": "Options",
+    "options.sound": "Music & Sound Options...",
+    "options.language": "Language...",
+    "options.done": "Done",
+
+    "sound.title": "Music & Sound Options",
+    "sound.master": "Master Volume",
+    "sound.weapon": "Weapon Volume",
+    "sound.monster": "Monster Volume",
+    "sound.bgm": "Music",
+    "sound.sfx": "Sound Effects",
+    "sound.done": "Done",
+
+    "language.title": "Language",
+    "language.note": "(Translations may not be 100% accurate)",
+    "language.done": "Done",
+
+    "hud.level": "Lv. {0}",
+
+    "upgrade.title": "LEVEL UP!",
+    "upgrade.type_new": "NEW",
+    "upgrade.type_upgrade": "UPGRADE",
+    "upgrade.level_from_to": "Lv.{0} -> Lv.{1}",
+    "upgrade.level_new": "Lv.1",
+    "upgrade.stats": "Dmg {0}   CD {1}s",
+
+    "weapon.sword.name": "Iron Sword",
+    "weapon.sword.desc": "Swing in a wide arc",
+    "weapon.bow.name": "Bow",
+    "weapon.bow.desc": "Shoot arrows from distance",
+    "weapon.shield.name": "Shield",
+    "weapon.shield.desc": "Orbiting shields block enemies",
+    "weapon.tnt.name": "TNT",
+    "weapon.tnt.desc": "Throw explosive TNT",
+    "weapon.trident.name": "Trident",
+    "weapon.trident.desc": "Piercing auto-aim trident",
+    "weapon.clock.name": "Clock",
+    "weapon.clock.desc": "Reset cooldowns, freeze at Lv10",
+    "weapon.axe.name": "Axe",
+    "weapon.axe.desc": "Throw spinning axe, area damage",
+    "weapon.dragon.name": "Dragon Breath",
+    "weapon.dragon.desc": "Create damaging breath circle",
+    "weapon.seaheart.name": "Sea Heart",
+    "weapon.seaheart.desc": "Burst bubbles around you",
+    "weapon.lava.name": "Lava Bucket",
+    "weapon.lava.desc": "Pour lava that burns the ground",
+    "weapon.mace.name": "Mace",
+    "weapon.mace.desc": "Heavy smash that knocks back",
+    "weapon.lightingrod.name": "Lightning Rod",
+    "weapon.lightingrod.desc": "Call down chain lightning"
+  }
+}

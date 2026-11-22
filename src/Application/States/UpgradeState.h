@@ -24,20 +24,34 @@ struct UpgradeOption
 	int weaponIndex;		 // 玩家武器列表索引（升级已有武器时使用）
 };
 
+// 一张升级卡片：图形对象与文字对象都只建一次，之后只改内容/位置
+struct UpgradeCard
+{
+	sf::RectangleShape frame;
+	sf::RectangleShape iconBg;
+	sf::Text typeText;
+	sf::Text nameText;
+	sf::Text descText;
+	sf::Text attrText;
+
+	explicit UpgradeCard(const sf::Font &font)
+		: typeText(font), nameText(font), descText(font), attrText(font) {}
+};
+
 class UpgradeState : public IState
 {
 private:
 	Player *player_;
-	int selectedIndex_;
+	int selectedIndex_ = 0;
 	std::vector<UpgradeOption> options_;
+	std::vector<UpgradeCard> cards_;
 
 	sf::RectangleShape bg_;
 	sf::Font font_;
 	sf::Text titleText_;
 
 	sf::RectangleShape panelBg_;
-	sf::RectangleShape iconFrame_;
-	sf::RectangleShape icon_;
+	int langVersion_ = -1;
 
 public:
 	UpgradeState(Player *player);
@@ -52,4 +66,6 @@ private:
 	void applyOption(int index);
 	void skip();
 	void updateLayout(sf::Vector2u winSize);
+	void buildCards();
+	void refreshTexts();
 };

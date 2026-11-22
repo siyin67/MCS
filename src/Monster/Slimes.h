@@ -192,11 +192,11 @@ public:
 
     void playHitSound() override
     {
-        SoundManager::getInstance().playSFX("slime_hurt");
+        SoundManager::getInstance().playSFX("slime_big_hurt");
     }
     void playDeathSound() override
     {
-        SoundManager::getInstance().playSFX("slime_death");
+        SoundManager::getInstance().playSFX("slime_big_death");
     }
 
     // ---- 技能：召唤小史莱姆 ----
@@ -380,11 +380,11 @@ public:
 
     void playHitSound() override
     {
-        SoundManager::getInstance().playSFX("slime_hurt");
+        SoundManager::getInstance().playSFX("slime_big_hurt");
     }
     void playDeathSound() override
     {
-        SoundManager::getInstance().playSFX("slime_death");
+        SoundManager::getInstance().playSFX("slime_big_death");
     }
 
     // ---- 技能：召唤大史莱姆 ----

@@ -1,5 +1,7 @@
 #include "GameOverState.h"
 #include "../StateManager.h"
+#include "Localization/Localization.h"
+#include "Localization/UiText.h"
 #include "MenuState.h"
 #include "Resourcemanager/ResourceManager.h"
 #include "Sound/SoundManager.h"
@@ -20,16 +22,22 @@ GameOverState::GameOverState()
 	}
 	button_.setSize({400, 50});
 
-	gameOverText_.setString("GAME OVER");
 	gameOverText_.setCharacterSize(64);
 	gameOverText_.setFillColor(sf::Color::White);
 
-	buttonText_.setString("Main Menu");
 	buttonText_.setCharacterSize(28);
 	buttonText_.setFillColor(sf::Color::White);
+	applyLanguage();
 	SoundManager::getInstance().stopBGM();
-	SoundManager::getInstance().setSFXVolume(20);
-	SoundManager::getInstance().playSFX("gameover");
+	// 只压低这一条收尾音，不再永久改写全局 SFX 音量（旧实现会把整局音量卡在 20）
+	SoundManager::getInstance().playSFX("gameover", 0.2f);
+}
+
+void GameOverState::applyLanguage()
+{
+	langVersion_ = Localization::getInstance().version();
+	ui_text::set(gameOverText_, tr("gameover.title"));
+	ui_text::set(buttonText_, tr("gameover.menu"));
 }
 
 void GameOverState::updateLayout(sf::Vector2u winSize)
@@ -69,6 +77,7 @@ void GameOverState::handleInput(sf::RenderWindow &window)
 
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && !wasPressed)
 		{
+			SoundManager::getInstance().playSFX("ui_click");
 			sf::Mouse::setPosition(sf::Vector2i(0, 0), window);
 			std::cout << "Button clicked, back to menu" << std::endl;
 			stateManager_->clearAndPush(std::make_unique<MenuState>());
@@ -91,6 +100,10 @@ void GameOverState::render(sf::RenderWindow &window)
 {
 	sf::Vector2u winSize = window.getSize();
 	window.setView(sf::View(sf::Vector2f(winSize.x / 2.f, winSize.y / 2.f), sf::Vector2f(winSize)));
+	if (langVersion_ != Localization::getInstance().version())
+	{
+		applyLanguage();
+	}
 	updateLayout(winSize);
 
 	window.draw(background_);

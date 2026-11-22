@@ -1,5 +1,6 @@
 #include "PotionItem.h"
 #include "../Resourcemanager/ResourceManager.h"
+#include "../Sound/SoundManager.h"
 #include "../Player/player.h"
 #include <cmath>
 
@@ -102,6 +103,7 @@ void PotionItem::render(sf::RenderWindow &window)
 
 void PotionItem::onCollect(Player &player)
 {
+	SoundManager::getInstance().playSFX("potion_drink");
 	if (buffType_ == BuffType::Heal && buffDuration_ <= 0.1f)
 	{
 		// 瞬间治疗：直接回血

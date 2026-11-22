@@ -2,6 +2,9 @@
 #include "../Player/player.h"
 #include "../Weapon/weapon.h"
 #include "../Resourcemanager/ResourceManager.h"
+#include "Localization/Localization.h"
+#include "Localization/UiText.h"
+#include <algorithm>
 #include <iomanip>
 #include <sstream>
 
@@ -148,7 +151,7 @@ void UIManager::render(sf::RenderWindow &window)
         window.draw(xpFull);
 
         // 等级文字（经验条右侧）
-        xpLevelText_.setString("Lv." + std::to_string(playerLevel_));
+        ui_text::set(xpLevelText_, trf("hud.level", {std::to_string(playerLevel_)}));
         sf::FloatRect xpLvBounds = xpLevelText_.getLocalBounds();
         xpLevelText_.setPosition({hotbarX + xpBarWidth + 6.0f,
                                   xpBarY + (XP_BAR_HEIGHT - xpLvBounds.size.y) / 2.0f});
@@ -189,6 +192,25 @@ void UIManager::render(sf::RenderWindow &window)
 
         sprite.setPosition({slotCenterX - iconW / 2.0f, slotCenterY - iconH / 2.0f});
         window.draw(sprite);
+
+        // 冷却遮罩：原版没有专用贴图，就是一块半透明白色，从底部覆盖剩余冷却比例，
+        // 随时间「从上往下」退去（顶边逐渐下移），冷却结束完全消失。
+        const float cdTotal = weapon->getAttackCooldown();
+        if (cdTotal > 0.01f)
+        {
+            const float remain = std::clamp(weapon->getCurrentCooldown() / cdTotal, 0.0f, 1.0f);
+            if (remain > 0.001f)
+            {
+                constexpr float INSET = 3.0f; // 别糊住槽位的边框
+                const float innerW = slotWidth - INSET * 2.0f;
+                const float innerH = slotHeight - INSET * 2.0f;
+                sf::RectangleShape cooldownShade({innerW, innerH * remain});
+                cooldownShade.setPosition({hotbarX + slotWidth * static_cast<float>(i) + INSET,
+                                           hotbarY + INSET + innerH * (1.0f - remain)});
+                cooldownShade.setFillColor(sf::Color(255, 255, 255, 130));
+                window.draw(cooldownShade);
+            }
+        }
 
         // 右下角等级文字
         sf::Text levelText(font_);

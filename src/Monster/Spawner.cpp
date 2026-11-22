@@ -2,6 +2,7 @@
 #include <random>
 #include <cmath>
 #include <iostream>
+#include "Sound/SoundManager.h"
 #include "Zombie.h"
 #include "Slimes.h"
 #include "Skeleton.h"
@@ -265,6 +266,7 @@ void Spawner::update(float deltaTime, const sf::Vector2f &playerPos,
 				break;
 			case Tier::Boss:
 				hpBonus = 20 * currentWave_;
+				SoundManager::getInstance().playSFX("boss_spawn");
 				break;
 			}
 			monster->addHealth(hpBonus);

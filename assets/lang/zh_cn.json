@@ -1,0 +1,68 @@
+{
+  "display": "简体中文（中国大陆）",
+  "english": "Chinese (Simplified)",
+  "strings": {
+    "menu.start": "开始游戏",
+    "menu.settings": "设置",
+    "menu.exit": "退出游戏",
+
+    "pause.title": "暂停",
+    "pause.resume": "继续游戏",
+    "pause.settings": "设置",
+    "pause.exit": "返回主菜单",
+
+    "gameover.title": "游戏结束",
+    "gameover.menu": "返回主菜单",
+
+    "options.title": "选项",
+    "options.sound": "音乐和声音...",
+    "options.language": "语言...",
+    "options.done": "完成",
+
+    "sound.title": "音乐和声音选项",
+    "sound.master": "主音量",
+    "sound.weapon": "武器音量",
+    "sound.monster": "敌对生物音量",
+    "sound.bgm": "音乐",
+    "sound.sfx": "音效",
+    "sound.done": "完成",
+
+    "language.title": "语言",
+    "language.note": "（语言翻译不一定 100% 准确）",
+    "language.done": "完成",
+
+    "hud.level": "等级 {0}",
+
+    "upgrade.title": "升级！",
+    "upgrade.type_new": "新武器",
+    "upgrade.type_upgrade": "升级",
+    "upgrade.level_from_to": "Lv.{0} → Lv.{1}",
+    "upgrade.level_new": "Lv.1",
+    "upgrade.stats": "伤害 {0}   冷却 {1}s",
+
+    "weapon.sword.name": "铁剑",
+    "weapon.sword.desc": "大范围横扫",
+    "weapon.bow.name": "弓",
+    "weapon.bow.desc": "远程射箭",
+    "weapon.shield.name": "盾牌",
+    "weapon.shield.desc": "环绕的盾牌阻挡敌人",
+    "weapon.tnt.name": "TNT",
+    "weapon.tnt.desc": "投掷会爆炸的 TNT",
+    "weapon.trident.name": "三叉戟",
+    "weapon.trident.desc": "自动追踪的穿透三叉戟",
+    "weapon.clock.name": "时钟",
+    "weapon.clock.desc": "重置冷却，10 级时冻结时间",
+    "weapon.axe.name": "斧头",
+    "weapon.axe.desc": "投掷旋转斧头，范围伤害",
+    "weapon.dragon.name": "龙息",
+    "weapon.dragon.desc": "制造持续伤害的龙息区域",
+    "weapon.seaheart.name": "海洋之心",
+    "weapon.seaheart.desc": "在身边炸开水泡",
+    "weapon.lava.name": "岩浆桶",
+    "weapon.lava.desc": "倒出岩浆灼烧地面",
+    "weapon.mace.name": "重锤",
+    "weapon.mace.desc": "蓄力重击，震飞周围敌人",
+    "weapon.lightingrod.name": "避雷针",
+    "weapon.lightingrod.desc": "召来连锁闪电"
+  }
+}

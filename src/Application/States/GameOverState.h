@@ -19,4 +19,6 @@ public:
 
 private:
     void updateLayout(sf::Vector2u winSize);
+    void applyLanguage();
+    int langVersion_ = -1;
 };

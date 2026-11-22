@@ -64,7 +64,12 @@ std::unique_ptr<Weapon> WeaponFactory::create(const std::string &id)
     auto it = creators_.find(id);
     if (it != creators_.end())
     {
-        return it->second();
+        auto weapon = it->second();
+        if (weapon)
+        {
+            weapon->setId(id); // 记住工厂 key，界面用 weapon.<id>.name 取本地化名字
+        }
+        return weapon;
     }
     return nullptr;
 }

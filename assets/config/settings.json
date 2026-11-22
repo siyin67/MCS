@@ -1,0 +1,10 @@
+{
+  "audio": {
+    "bgm": 20,
+    "master": 100,
+    "monster": 100,
+    "sfx": 50,
+    "weapon": 100
+  },
+  "language": "zh_cn"
+}

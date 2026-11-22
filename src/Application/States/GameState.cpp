@@ -61,13 +61,13 @@ GameState::GameState() : mapWidth_(312), mapHeight_(312), tileSize_(16), mapSpri
     camera_.setSize({1920, 1080});
     // bgm初始化
     std::vector<std::string> playlist = {
-        "assets/bgm/Anthem of the Savannah.mp3",
-        "assets/bgm/Lamentation et triomphe.mp3",
-        "assets/bgm/To Light the Aeon Dark.mp3"};
-    SoundManager::getInstance().setSFXVolume(5);
+        "assets/audio/bgm/Anthem of the Savannah.mp3",
+        "assets/audio/bgm/Lamentation et triomphe.mp3",
+        "assets/audio/bgm/To Light the Aeon Dark.mp3"};
+    // 音量统一由 SoundManager 默认值 + 设置界面管理，这里不再覆盖，
+    // 否则每次开始游戏都会把玩家调好的音量重置掉
     SoundManager::getInstance().setBGMPlaylist(playlist);
     SoundManager::getInstance().playRandomBGM();
-    SoundManager::getInstance().setBGMVolume(5);
     setupWeaponCallbacks();
     std::cout << "GameState constructor END" << std::endl;
 }
@@ -211,6 +211,7 @@ void GameState::update(float deltaTime)
     int collected = dropItemManager_.checkPlayerCollision(player_);
     if (collected > 0)
     {
+        SoundManager::getInstance().playSFX("xp_pickup");
         int levelUps = player_.addXP(collected);
         if (levelUps > 0)
         {

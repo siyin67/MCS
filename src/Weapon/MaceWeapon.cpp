@@ -89,8 +89,9 @@ void MaceWeapon::attack(const sf::Vector2f &playerPos,
 	if (!effectTextures_.empty())
 		effectShape_.setTexture(&effectTextures_[0]);
 
-	SoundManager::getInstance().playSFX("sword_swing");
+	SoundManager::getInstance().playSFX("mace_swing");
 
+	bool hitAny = false;
 	for (auto &monster : monsters)
 	{
 		if (!monster->isAlive())
@@ -101,8 +102,14 @@ void MaceWeapon::attack(const sf::Vector2f &playerPos,
 		float distance = std::sqrt(dx * dx + dy * dy);
 
 		if (distance <= range_)
+		{
 			monster->takeDamage(damage_);
+			hitAny = true;
+		}
 	}
+
+	if (hitAny)
+		SoundManager::getInstance().playSFX("mace_hit");
 
 	resetCooldown();
 }

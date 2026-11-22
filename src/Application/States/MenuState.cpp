@@ -1,20 +1,24 @@
 #include "MenuState.h"
 #include <iostream>
 #include <fstream>
+#include "Localization/Localization.h"
+#include "Localization/UiText.h"
 #include "Resourcemanager/ResourceManager.h"
 #include "GameState.h"
+#include "SettingsState.h"
 #include "../Statemanager.h"
 #include "Sound/SoundManager.h"
 #include "../../Net/MojangAPI.h"
 #include "../../Player/player.h"
 
-MenuState::MenuState() : font_("assets/fonts/minecraft.ttf"), text_start_(font_), text_exit_(font_),
-    input_text_(font_), headLoaded_(false)
+MenuState::MenuState() : font_("assets/fonts/minecraft.ttf"), text_start_(font_), text_settings_(font_),
+    text_exit_(font_), input_text_(font_), headLoaded_(false)
 {
     if (ResourceManager::GetInstance().HasTexture("menu_button"))
     {
         sf::Texture &bgTex = ResourceManager::GetInstance().GetTexture("menu_button");
         start_button_.setTexture(&bgTex);
+        settings_button_.setTexture(&bgTex);
         exit_button_.setTexture(&bgTex);
     }
     if (ResourceManager::GetInstance().HasTexture("menu_title"))
@@ -53,11 +57,13 @@ MenuState::MenuState() : font_("assets/fonts/minecraft.ttf"), text_start_(font_)
     }
     head_preview_.setSize({48, 48});
 
-    text_start_.setString("Start Game");
-    text_exit_.setString("Exit Game");
-    input_text_.setString("");
+    ui_text::set(text_start_, tr("menu.start"));
+    ui_text::set(text_settings_, tr("menu.settings"));
+    ui_text::set(text_exit_, tr("menu.exit"));
+    ui_text::set(input_text_, "");
 
     start_button_.setSize({400, 50});
+    settings_button_.setSize({400, 50});
     exit_button_.setSize({400, 50});
     input_bg_.setSize({320, 40});
     confirm_button_.setSize({60, 40});
@@ -65,27 +71,36 @@ MenuState::MenuState() : font_("assets/fonts/minecraft.ttf"), text_start_(font_)
     title_.setSize({700, 250});
 
     text_start_.setCharacterSize(20);
+    text_settings_.setCharacterSize(20);
     text_exit_.setCharacterSize(20);
     input_text_.setCharacterSize(18);
 
     text_start_.setFillColor(sf::Color::White);
+    text_settings_.setFillColor(sf::Color::White);
     text_exit_.setFillColor(sf::Color::White);
     input_text_.setFillColor(sf::Color::White);
 
     // 首页bgm播放
     std::vector<std::string> playlist = {
-        "assets/bgm/13 Wet Hands.mp3",
-        "assets/bgm/18 Sweden.mp3",
-        "assets/bgm/03 Subwoofer Lullaby.mp3"};
+        "assets/audio/bgm/13 Wet Hands.mp3",
+        "assets/audio/bgm/18 Sweden.mp3",
+        "assets/audio/bgm/03 Subwoofer Lullaby.mp3"};
     SoundManager::getInstance().setBGMPlaylist(playlist);
     SoundManager::getInstance().playRandomBGM();
-    SoundManager::getInstance().setBGMVolume(20);
 }
 
 MenuState::~MenuState()
 {
     if (headThread_.joinable())
         headThread_.detach();
+}
+
+void MenuState::applyLanguage()
+{
+    langVersion_ = Localization::getInstance().version();
+    ui_text::set(text_start_, tr("menu.start"));
+    ui_text::set(text_settings_, tr("menu.settings"));
+    ui_text::set(text_exit_, tr("menu.exit"));
 }
 
 void MenuState::updateLayout(sf::Vector2u winSize)
@@ -96,19 +111,22 @@ void MenuState::updateLayout(sf::Vector2u winSize)
     background_.setSize(sf::Vector2f(winSize.x, winSize.y));
     background_.setPosition({0, 0});
 
-    start_button_.setPosition({cx - 200, cy + 50});
-    exit_button_.setPosition({cx - 200, cy + 120});
-    input_bg_.setPosition({cx - 200, cy + 190});
-    confirm_button_.setPosition({cx + 130, cy + 190});
-    head_preview_.setPosition({cx + 200, cy + 190});
+    start_button_.setPosition({cx - 200, cy + 40});
+    settings_button_.setPosition({cx - 200, cy + 105});
+    exit_button_.setPosition({cx - 200, cy + 170});
+    input_bg_.setPosition({cx - 200, cy + 240});
+    confirm_button_.setPosition({cx + 130, cy + 240});
+    head_preview_.setPosition({cx + 200, cy + 240});
 
     title_.setPosition({cx - 350, winSize.y * 0.20f - 70});
 
     text_start_.setPosition({cx - text_start_.getLocalBounds().size.x / 2,
-                              cy + 50 + 25 - text_start_.getLocalBounds().size.y / 2});
+                              cy + 40 + 25 - text_start_.getLocalBounds().size.y / 2});
+    text_settings_.setPosition({cx - text_settings_.getLocalBounds().size.x / 2,
+                                cy + 105 + 25 - text_settings_.getLocalBounds().size.y / 2});
     text_exit_.setPosition({cx - text_exit_.getLocalBounds().size.x / 2,
-                            cy + 120 + 25 - text_exit_.getLocalBounds().size.y / 2});
-    input_text_.setPosition({cx - 190, cy + 190 + 20 - input_text_.getLocalBounds().size.y / 2});
+                            cy + 170 + 25 - text_exit_.getLocalBounds().size.y / 2});
+    input_text_.setPosition({cx - 190, cy + 240 + 20 - input_text_.getLocalBounds().size.y / 2});
 }
 
 void MenuState::tryLoadHead()
@@ -165,6 +183,7 @@ void MenuState::handleInput(sf::RenderWindow &window)
 
         if (leftPressed && !wasPressed)
         {
+            SoundManager::getInstance().playSFX("ui_click");
             std::cout << "Start Game, Player: " << playerName_ << std::endl;
             stateManager_->changeState(std::make_unique<GameState>());
             return;
@@ -175,6 +194,24 @@ void MenuState::handleInput(sf::RenderWindow &window)
         start_button_.setOutlineThickness(0);
     }
 
+    if (settings_button_.getGlobalBounds().contains(mouseCoords))
+    {
+        settings_button_.setOutlineThickness(3);
+        settings_button_.setOutlineColor(sf::Color::White);
+
+        if (leftPressed && !wasPressed)
+        {
+            SoundManager::getInstance().playSFX("ui_click");
+            std::cout << "Open settings" << std::endl;
+            stateManager_->pushState(std::make_unique<SettingsState>());
+            return;
+        }
+    }
+    else
+    {
+        settings_button_.setOutlineThickness(0);
+    }
+
     if (exit_button_.getGlobalBounds().contains(mouseCoords))
     {
         exit_button_.setOutlineThickness(3);
@@ -182,6 +219,7 @@ void MenuState::handleInput(sf::RenderWindow &window)
 
         if (leftPressed && !wasPressed)
         {
+            SoundManager::getInstance().playSFX("ui_click");
             std::cout << "Exit Game" << std::endl;
             exit(0);
         }
@@ -198,6 +236,7 @@ void MenuState::handleInput(sf::RenderWindow &window)
 
         if (leftPressed && !wasPressed)
         {
+            SoundManager::getInstance().playSFX("ui_click");
             std::cout << "Fetching head for: " << playerName_ << std::endl;
             tryLoadHead();
         }
@@ -225,7 +264,7 @@ void MenuState::handleEvent(const sf::Event &event)
             if (playerName_.size() < 16)
                 playerName_ += static_cast<char>(ch);
         }
-        input_text_.setString(playerName_);
+        ui_text::set(input_text_, playerName_);
         headLoaded_ = false; // 名字变了，允许重新加载
     }
 }
@@ -261,16 +300,22 @@ void MenuState::render(sf::RenderWindow &window)
 {
     sf::Vector2u winSize = window.getSize();
     window.setView(sf::View(sf::Vector2f(winSize.x / 2.f, winSize.y / 2.f), sf::Vector2f(winSize)));
+    if (langVersion_ != Localization::getInstance().version())
+    {
+        applyLanguage();
+    }
     updateLayout(winSize);
 
     window.draw(background_);
     window.draw(start_button_);
+    window.draw(settings_button_);
     window.draw(exit_button_);
     window.draw(input_bg_);
     window.draw(confirm_button_);
     window.draw(head_preview_);
     window.draw(title_);
     window.draw(text_start_);
+    window.draw(text_settings_);
     window.draw(text_exit_);
     window.draw(input_text_);
 }

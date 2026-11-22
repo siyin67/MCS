@@ -2,11 +2,16 @@
 #include "PauseState.h"
 #include "../Statemanager.h"
 #include <iostream>
+#include "Localization/Localization.h"
+#include "Localization/UiText.h"
 #include "MenuState.h"
+#include "SettingsState.h"
 #include "Resourcemanager/ResourceManager.h"
+#include "Sound/SoundManager.h"
 
 PauseState::PauseState() : font_("assets/fonts/minecraft.ttf"),
 						   resumeText_(font_),
+						   settingsText_(font_),
 						   exit_Text_(font_),
 						   pauseText_(font_)
 {
@@ -16,26 +21,41 @@ PauseState::PauseState() : font_("assets/fonts/minecraft.ttf"),
 	{
 		sf::Texture &btnTex = ResourceManager::GetInstance().GetTexture("menu_button");
 		button_resume_.setTexture(&btnTex);
+		button_settings_.setTexture(&btnTex);
 		button_exit_.setTexture(&btnTex);
 	}
 	button_resume_.setSize({400, 50});
+	button_settings_.setSize({400, 50});
 	button_exit_.setSize({400, 50});
 
-	resumeText_.setString("Resume Game");
+	ui_text::set(resumeText_, tr("pause.resume"));
 	resumeText_.setCharacterSize(28);
 	resumeText_.setFillColor(sf::Color::White);
 
-	exit_Text_.setString("Main Menu");
+	ui_text::set(settingsText_, tr("pause.settings"));
+	settingsText_.setCharacterSize(28);
+	settingsText_.setFillColor(sf::Color::White);
+
+	ui_text::set(exit_Text_, tr("pause.exit"));
 	exit_Text_.setCharacterSize(28);
 	exit_Text_.setFillColor(sf::Color::White);
 
-	pauseText_.setString("Pause");
+	ui_text::set(pauseText_, tr("pause.title"));
 	pauseText_.setCharacterSize(64);
 	pauseText_.setFillColor(sf::Color::White);
 
 	background_.setFillColor(sf::Color(0, 0, 0, 180));
 
 	lastEscapePressed_ = false;
+}
+
+void PauseState::applyLanguage()
+{
+	langVersion_ = Localization::getInstance().version();
+	ui_text::set(resumeText_, tr("pause.resume"));
+	ui_text::set(settingsText_, tr("pause.settings"));
+	ui_text::set(exit_Text_, tr("pause.exit"));
+	ui_text::set(pauseText_, tr("pause.title"));
 }
 
 void PauseState::updateLayout(sf::Vector2u winSize)
@@ -58,11 +78,17 @@ void PauseState::updateLayout(sf::Vector2u winSize)
 	resumeText_.setPosition({cx - resumeText_.getLocalBounds().size.x / 2,
 							 cy + 40 + buttonHeight / 2 - resumeText_.getLocalBounds().size.y / 2});
 
+	button_settings_.setSize({buttonWidth, buttonHeight});
+	button_settings_.setPosition({cx - buttonWidth / 2, cy + 40 + buttonHeight + verticalSpacing});
+
+	settingsText_.setPosition({cx - settingsText_.getLocalBounds().size.x / 2,
+							   cy + 40 + buttonHeight + verticalSpacing + buttonHeight / 2 - settingsText_.getLocalBounds().size.y / 2});
+
 	button_exit_.setSize({buttonWidth, buttonHeight});
-	button_exit_.setPosition({cx - buttonWidth / 2, cy + 40 + buttonHeight + verticalSpacing});
+	button_exit_.setPosition({cx - buttonWidth / 2, cy + 40 + (buttonHeight + verticalSpacing) * 2});
 
 	exit_Text_.setPosition({cx - exit_Text_.getLocalBounds().size.x / 2,
-							cy + 40 + buttonHeight + verticalSpacing + buttonHeight / 2 - exit_Text_.getLocalBounds().size.y / 2});
+							cy + 40 + (buttonHeight + verticalSpacing) * 2 + buttonHeight / 2 - exit_Text_.getLocalBounds().size.y / 2});
 }
 
 void PauseState::handleInput(sf::RenderWindow &window)
@@ -83,6 +109,7 @@ void PauseState::handleInput(sf::RenderWindow &window)
 
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && !wasPressed)
 		{
+			SoundManager::getInstance().playSFX("ui_click");
 			std::cout << "Resume button clicked" << std::endl;
 			stateManager_->popState();
 			return;
@@ -93,6 +120,24 @@ void PauseState::handleInput(sf::RenderWindow &window)
 		button_resume_.setOutlineThickness(0);
 	}
 
+	if (button_settings_.getGlobalBounds().contains(mouseCoords))
+	{
+		button_settings_.setOutlineThickness(3);
+		button_settings_.setOutlineColor(sf::Color::White);
+
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && !wasPressed)
+		{
+			SoundManager::getInstance().playSFX("ui_click");
+			std::cout << "Settings button clicked" << std::endl;
+			stateManager_->pushState(std::make_unique<SettingsState>());
+			return;
+		}
+	}
+	else
+	{
+		button_settings_.setOutlineThickness(0);
+	}
+
 	if (button_exit_.getGlobalBounds().contains(mouseCoords))
 	{
 		button_exit_.setOutlineThickness(3);
@@ -100,6 +145,7 @@ void PauseState::handleInput(sf::RenderWindow &window)
 
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && !wasPressed)
 		{
+			SoundManager::getInstance().playSFX("ui_click");
 			sf::Mouse::setPosition(sf::Vector2i(0, 0), window);
 			std::cout << "Exit button clicked" << std::endl;
 			stateManager_->clearAndPush(std::make_unique<MenuState>());
@@ -122,12 +168,18 @@ void PauseState::render(sf::RenderWindow &window)
 {
 	sf::Vector2u winSize = window.getSize();
 	window.setView(sf::View(sf::Vector2f(winSize.x / 2.f, winSize.y / 2.f), sf::Vector2f(winSize)));
+	if (langVersion_ != Localization::getInstance().version())
+	{
+		applyLanguage();
+	}
 	updateLayout(winSize);
 
 	window.draw(background_);
 	window.draw(pauseText_);
 	window.draw(button_resume_);
 	window.draw(resumeText_);
+	window.draw(button_settings_);
+	window.draw(settingsText_);
 	window.draw(button_exit_);
 	window.draw(exit_Text_);
 }

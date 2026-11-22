@@ -12,12 +12,14 @@ private:
     sf::RectangleShape background_;
     sf::RectangleShape title_;
     sf::RectangleShape start_button_;
+    sf::RectangleShape settings_button_;
     sf::RectangleShape exit_button_;
     sf::RectangleShape input_bg_;
     sf::RectangleShape confirm_button_;
     sf::RectangleShape head_preview_;
     sf::Font font_;
     sf::Text text_start_;
+    sf::Text text_settings_;
     sf::Text text_exit_;
     sf::Text input_text_;
     std::string playerName_;
@@ -40,4 +42,6 @@ public:
 private:
     void updateLayout(sf::Vector2u winSize);
     void tryLoadHead();
+    void applyLanguage();
+    int langVersion_ = -1;
 };

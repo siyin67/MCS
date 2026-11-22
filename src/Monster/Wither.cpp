@@ -110,6 +110,7 @@ void Wither::update(float deltaTime, const sf::Vector2f &playerPos,
 		if (fireInterval_ >= burstInterval_)
 		{
 			fireInterval_ = 0.0f;
+			SoundManager::getInstance().playSFX("wither_shoot");
 			for (int i = -(burstCount_/2); i <= burstCount_/2; ++i)
 			{
 				float angle = i * burstAngle_;
@@ -124,6 +125,7 @@ void Wither::update(float deltaTime, const sf::Vector2f &playerPos,
 		if (fireInterval_ >= circleInterval_)
 		{
 			fireInterval_ = 0.0f;
+			SoundManager::getInstance().playSFX("wither_shoot");
 			for (int i = 0; i < circleCount_; ++i)
 			{
 				float angle = i * 3.14159265358979323846f * 2.0f / 12.0f;
@@ -136,6 +138,7 @@ void Wither::update(float deltaTime, const sf::Vector2f &playerPos,
 		if (fireInterval_ >= sprayInterval_)
 		{
 			fireInterval_ = 0.0f;
+			SoundManager::getInstance().playSFX("wither_shoot");
 			static std::random_device rd;
 			static std::mt19937 gen(rd());
 			static std::uniform_real_distribution<> angleDis(0.0, 6.283185307179586);

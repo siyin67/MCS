@@ -20,6 +20,7 @@ protected:
     float range_;
     std::string name_;
     std::string textureId_;
+    std::string id_; // 工厂 key（sword / bow / …），本地化查表用
     std::function<void(std::unique_ptr<Projectile>)> addProjectileCallback_;
     nlohmann::json levelUpCfg_;
 
@@ -47,10 +48,12 @@ public:
     float getRange() const { return range_; }
     const std::string &getName() const { return name_; }
     const std::string &getTextureId() const { return textureId_; }
+    const std::string &getId() const { return id_; }
 
     // Setter
     void setName(const std::string &name) { name_ = name; }
     void setTextureId(const std::string &id) { textureId_ = id; }
+    void setId(const std::string &id) { id_ = id; }
     void setRange(float range) { range_ = range; }
 
     void setAddProjectileCallback(std::function<void(std::unique_ptr<Projectile>)> callback)

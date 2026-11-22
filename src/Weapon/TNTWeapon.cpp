@@ -1,6 +1,7 @@
 #include "TNTWeapon.h"
 #include "../Projectile/TNTProjectile.h"
 #include "../Config/ConfigLoader.h"
+#include "../Sound/SoundManager.h"
 #include <cmath>
 #include <random>
 
@@ -49,6 +50,7 @@ void TNTWeapon::attack(const sf::Vector2f &playerPos,
 		addProjectile(std::move(tnt));
 	}
 
+	SoundManager::getInstance().playSFX("tnt_throw");
 	resetCooldown();
 }
 

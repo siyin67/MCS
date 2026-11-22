@@ -2,6 +2,7 @@
 #include "../Projectile/AxeProjectile.h"
 #include "../Monster/Monster.h"
 #include "../Config/ConfigLoader.h"
+#include "../Sound/SoundManager.h"
 #include <cmath>
 
 AxeWeapon::AxeWeapon()
@@ -67,6 +68,7 @@ void AxeWeapon::attack(const sf::Vector2f &playerPos,
 		playerPos, dir, damage_, range_, projectileSpeed_, spinRadius_);
 	axe->setFriendly(true);
 	addProjectile(std::move(axe));
+	SoundManager::getInstance().playSFX("axe_throw");
 	resetCooldown();
 }
 

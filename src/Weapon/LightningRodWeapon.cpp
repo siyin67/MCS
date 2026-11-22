@@ -4,6 +4,8 @@
 #include "../Config/ConfigLoader.h"
 #include <cmath>
 #include <algorithm>
+#include <string>
+#include <vector>
 
 LightningRodWeapon::LightningRodWeapon()
 {
@@ -96,7 +98,10 @@ void LightningRodWeapon::attack(const sf::Vector2f &playerPos,
 	if (!primary)
 		return;
 
-	SoundManager::getInstance().playSFX("sword_swing");
+	// 雷声三选一随机播放（素材包没有 lightning_bolt.impact，用 weather/thunder1-3 代替），音量 0.85
+	static const std::vector<std::string> kThunderIds = {
+		"lightning_strike_1", "lightning_strike_2", "lightning_strike_3"};
+	SoundManager::getInstance().playSFXRandom(kThunderIds, 0.85f);
 
 	currentBolts_.clear();
 

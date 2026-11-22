@@ -2,6 +2,7 @@
 #include "../Monster/Monster.h"
 #include "../Resourcemanager/ResourceManager.h"
 #include "../Config/ConfigLoader.h"
+#include "../Sound/SoundManager.h"
 #include <cmath>
 
 ShieldWeapon::ShieldWeapon()
@@ -114,6 +115,7 @@ void ShieldWeapon::updateShields(float deltaTime, const sf::Vector2f &playerPos,
                 if (shieldBounds.findIntersection(monster->getBounds()).has_value())
                 {
                     monster->takeDamage(damage_);
+                    SoundManager::getInstance().playSFX("shield_block");
                     shield.canDamage = false;
                     shield.cooldown = hitCooldown_;
                     break;

@@ -1,6 +1,7 @@
 #include "LavaWeapon.h"
 #include "../Projectile/LavaProjectile.h"
 #include "../Config/ConfigLoader.h"
+#include "../Sound/SoundManager.h"
 
 LavaWeapon::LavaWeapon()
 {
@@ -36,6 +37,7 @@ void LavaWeapon::attack(const sf::Vector2f &playerPos,
 	auto proj = std::make_unique<LavaProjectile>(playerPos, target, floorDamage_, projectileSpeed_);
 	proj->setFriendly(true);
 	addProjectile(std::move(proj));
+	SoundManager::getInstance().playSFX("lava_throw");
 	resetCooldown();
 }
 

@@ -2,6 +2,7 @@
 #include "../Monster/Monster.h"
 #include "../Projectile/BubbleProjectile.h"
 #include "../Config/ConfigLoader.h"
+#include "../Sound/SoundManager.h"
 
 SeaHeartWeapon::SeaHeartWeapon()
 {
@@ -66,6 +67,7 @@ void SeaHeartWeapon::attack(const sf::Vector2f &playerPos,
 		addProjectile(std::move(bubble));
 	}
 
+	SoundManager::getInstance().playSFX("seaheart_shoot");
 	resetCooldown();
 }
 

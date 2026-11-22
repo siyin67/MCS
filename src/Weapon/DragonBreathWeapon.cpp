@@ -2,6 +2,7 @@
 #include "../Projectile/DragonBreathArea.h"
 #include "../Monster/Monster.h"
 #include "../Config/ConfigLoader.h"
+#include "../Sound/SoundManager.h"
 
 DragonBreathWeapon::DragonBreathWeapon()
 {
@@ -39,6 +40,7 @@ void DragonBreathWeapon::attack(const sf::Vector2f &playerPos,
 	activeCount_++;
 
 	addProjectile(std::move(area));
+	SoundManager::getInstance().playSFX("dragon_breath");
 	resetCooldown();
 }
 

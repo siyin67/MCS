@@ -1,5 +1,6 @@
 #include "Application.h"
 #include "Resourcemanager/ResourceManager.h"
+#include "Localization/Localization.h"
 #include "States/MenuState.h"
 #include "States/GameState.h"
 
@@ -7,6 +8,8 @@ Application::Application()
     : isRunning_(true)
 {
     ResourceManager::GetInstance().LoadFromFile("assets/resources.json");
+    // 语言表要在任何界面构造之前就位（界面构造时就会取字符串）
+    Localization::getInstance().initialize("assets/lang", "assets/config/settings.json");
     window_.create(sf::VideoMode({1280, 720}), "MinecraftSurvivor");
     window_.setMaximumSize(sf::Vector2u(2560, 1440));
     window_.setMinimumSize(sf::Vector2u(1280, 720));
