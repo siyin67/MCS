@@ -13,3 +13,9 @@ debug.log
 tasks.json
 *.sh
 dist/
+# 本地报告与测试脚本（只留在本机，不进版本库）
+docs/ui_smoke_test.ps1
+docs/audio_texture_rebind_log.md
+docs/项目报告.md
+docs/C++课程设计报告-MinecraftSurvivor.md
+docs/类图.png
